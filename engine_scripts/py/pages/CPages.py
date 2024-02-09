@@ -35,14 +35,14 @@ class CPages:
                 return False
         return name
 
-    def set_render_page(self, page_id: PAGE_ID, variable=None, **context):
+    def set_render_page(self, page_id: PAGE_ID, *kwargs):
         name = self.get_page_template_name_from_page_id(page_id)
 
         self.__debug_unit.debug_print(page_id, name)
         if name is not False:
             if len(name) > 0:
                 self.__debug_unit.debug_print(f"Найден шаблон {name}. Прогружаю!")
-                return render_template(f"{name}.html", variable=context)
+                return render_template(f"{name}.html", kwargs)
         self.__debug_unit.debug_print(f"Не найден шаблон {name}. Прогружаю 404!")
         return render_template(f"{self.__page_name_404}.html")
 

@@ -61,12 +61,14 @@ def account_main():
 
     return cpages.set_render_page(PAGE_ID.ACCOUNT_MAIN)
 
+
 @app.route('/config')
 def account_config():
     # if cuser_sessions.is_sessions_start() is False:
-        #return cpages.redirect_on_page(PAGE_ID.LOGIN)
+    # return cpages.redirect_on_page(PAGE_ID.LOGIN)
 
     return cpages.set_render_page(PAGE_ID.ACCOUNT_CONFIG)
+
 
 @app.route('/ulogout')
 def logout():
@@ -85,12 +87,18 @@ def ulogin():
         # получаем данные от кнопок и полей
         user_name = request.form['user_name']
         user_pass = request.form['user_pass']
-        user_save_me = request.form['user_save_me']
+        user_save_me = get_checkbox_state(request.form.get('user_save_me'))
+
         print(user_name)
         print(user_pass)
         print(user_save_me)
-        # result = login_actions.set_login(user_name, user_pass, bool(user_save_me))
-        # print(result)
+        result = login_actions.set_login(user_name, user_pass, bool(user_save_me))
+        print(result)
+        if isinstance(result, tuple):
+            error_text = result[1]
+            return cpages.set_render_page(PAGE_ID.LOGIN, errors=error_text)
+            # cpages.set_render_page(PAGE_ID.LOGIN, errors=error_text)
+            # render_template("login.html", errors=error_text)
 
     return cpages.set_render_page(PAGE_ID.LOGIN)
 
@@ -109,6 +117,14 @@ def about():
 @app.route('/user/<string:name>/<int:uid>')
 def user(name=str, uid=int):
     return "User Page Name: " + str(name) + " ID:" + str(uid)
+
+
+def get_checkbox_state(value):
+    if value == 'on':
+        value = True
+    else:
+        value = False
+    return value
 
 
 if __name__ == "__main__":
