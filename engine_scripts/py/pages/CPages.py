@@ -1,5 +1,7 @@
 from engine_scripts.py.pages.enums import PAGE_ID
 from flask import Flask, render_template, request, redirect, url_for, session
+
+
 class CPages:
     def __init__(self, debug_unit):
         self.__page_name_login = 'login'
@@ -13,7 +15,7 @@ class CPages:
 
         self.__debug_unit = debug_unit
 
-    def get_page_template_name_from_page_id(self,  page_id: PAGE_ID) -> bool | str:
+    def get_page_template_name_from_page_id(self, page_id: PAGE_ID) -> bool | str:
         match page_id:
             case PAGE_ID.LOGIN:
                 name = self.__page_name_login
@@ -33,20 +35,23 @@ class CPages:
                 return False
         return name
 
-    def set_render_page(self, page_id: PAGE_ID, variables=None, **context):
+    def set_render_page(self, page_id: PAGE_ID, variable=None, **context):
         name = self.get_page_template_name_from_page_id(page_id)
+
+        self.__debug_unit.debug_print(page_id, name)
         if name is not False:
             if len(name) > 0:
                 self.__debug_unit.debug_print(f"Найден шаблон {name}. Прогружаю!")
-                return render_template(f"{name}.html", variables=context)
-            self.__debug_unit.debug_print(f"Не найден шаблон {name}. Прогружаю 404!")
-            return render_template(f"{self.__page_name_404}.html", variables=context)
+                return render_template(f"{name}.html", variable=context)
+        self.__debug_unit.debug_print(f"Не найден шаблон {name}. Прогружаю 404!")
+        return render_template(f"{self.__page_name_404}.html")
 
     def redirect_on_page(self, page_id: PAGE_ID):
         name = self.get_page_template_name_from_page_id(page_id)
+        self.__debug_unit.debug_print(page_id, name)
         if name is not False:
             if len(name) > 0:
                 self.__debug_unit.debug_print(f"Найден шаблон {name}. Редиректую!")
                 return redirect(f"/{name}")
-            self.__debug_unit.debug_print(f"Не найден шаблон {name}. Редиректую 404!")
-            return redirect(f"/{self.__page_name_404}")
+        self.__debug_unit.debug_print(f"Не найден шаблон {name}. Редиректую 404!")
+        return redirect(f"/{self.__page_name_404}")

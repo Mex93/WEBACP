@@ -61,9 +61,23 @@ def account_main():
 
     return cpages.set_render_page(PAGE_ID.ACCOUNT_MAIN)
 
+@app.route('/config')
+def account_config():
+    # if cuser_sessions.is_sessions_start() is False:
+        #return cpages.redirect_on_page(PAGE_ID.LOGIN)
 
-@app.route('/login', methods=['POST', 'GET'])
-def user_login():
+    return cpages.set_render_page(PAGE_ID.ACCOUNT_CONFIG)
+
+@app.route('/ulogout')
+def logout():
+    # if cuser_sessions.is_sessions_start() is False:
+    #     return cpages.redirect_on_page(PAGE_ID.LOGIN)
+
+    return cpages.set_render_page(PAGE_ID.LOGOUT)
+
+
+@app.route('/ulogin', methods=['POST', 'GET'])
+def ulogin():
     if cuser_sessions.is_sessions_start() is True:
         return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
 
@@ -75,10 +89,10 @@ def user_login():
         print(user_name)
         print(user_pass)
         print(user_save_me)
-        result = login_actions.set_login(user_name, user_pass, bool(user_save_me))
-        print(result)
+        # result = login_actions.set_login(user_name, user_pass, bool(user_save_me))
+        # print(result)
 
-    return cpages.set_render_page(PAGE_ID.ACCOUNT_MAIN)
+    return cpages.set_render_page(PAGE_ID.LOGIN)
 
 
 @app.route('/about')
@@ -86,10 +100,10 @@ def about():
     return cpages.set_render_page(PAGE_ID.ABOUT)
 
 
-@app.errorhandler(404)
-def page_not_found(error_str):
-
-    return cpages.set_render_page(PAGE_ID.PAGE_NOT_FOUND)
+# @app.errorhandler(404)
+# def page_not_found(error_str):
+#
+#     return cpages.set_render_page(PAGE_ID.PAGE_NOT_FOUND)
 
 
 @app.route('/user/<string:name>/<int:uid>')
