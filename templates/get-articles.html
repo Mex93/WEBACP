@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Просмотр новостей
+{% endblock %}
+
+{% block body %}
+
+<div class = 'container'>
+    <h1>Просмотр добавленных статей</h1>
+
+    {% for i in articles %}
+    <div class ='alert alert-info'>
+        <h2>
+            <h2>
+                Дата: {{ i.date.date() }}
+            </h2>
+            <p>
+                Оглавление: {{ i.title }}
+            </p>
+            <p>
+                <b>
+                    Текст: {{ i.text }}
+                </b>
+            </p>
+            <a href = "/get-articles/{{ i.id }}" class="btn btn-warning">Раскрыть</a>
+        </h2>
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}
+

@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Главная страница сайта
+{% endblock %}
+
+
+{% block body %}
+<div class = 'container'>
+<header class="py-5 border-bottom">
+  <div class="container-xxl bd-gutter pt-md-1 pb-md-4">
+      <div class="row">
+        <div class="col-xl-8">
+          <h1 class="bd-title mt-0">Examples</h1>
+          <p class="bd-lead">Quickly get a project started with any of our examples ranging from using parts of the framework to custom components and layouts.</p>
+
+          <div class="d-flex flex-column flex-md-row gap-3">
+            <a href="https://github.com/twbs/bootstrap/releases/download/v5.3.2/bootstrap-5.3.2-examples.zip" class="btn btn-lg bd-btn-lg btn-bd-primary d-flex align-items-center justify-content-center fw-semibold" onclick="ga('send', 'event', 'Examples', 'Hero', 'Download Examples');">
+              <svg class="bi me-2" aria-hidden="true"><use xlink:href="#box-seam"></use></svg>
+              Download examples
+            </a>
+            <a href="https://github.com/twbs/bootstrap/archive/v5.3.2.zip" class="btn btn-lg bd-btn-lg btn-outline-secondary" onclick="ga('send', 'event', 'Examples', 'Hero', 'Download');">
+              Download source code
+            </a>
+          </div>
+
+        </div>
+        <div class="col-xl-4 d-lg-flex justify-content-xl-end">
+          <script async="" src="https://cdn.carbonads.com/carbon.js?serve=CKYIKKJL&amp;placement=getbootstrapcom" id="_carbonads_js"></script>
+
+        </div>
+      </div>
+    </div>
+  </header>
+</div>
+{% endblock %}
+
