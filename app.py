@@ -2,7 +2,6 @@ from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from datetime import datetime
-from flask_socketio import SocketIO, emit
 
 import json
 
@@ -13,7 +12,6 @@ from wtforms.validators import DataRequired
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://test_user:sadmin@192.168.7.182:5432/test_db"
 db = SQLAlchemy(app)
-socketio = SocketIO(app, coors_allowed_origins='*')  # для безопасности нужно типо
 migrate = Migrate(app, db)
 
 
