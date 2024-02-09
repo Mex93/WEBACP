@@ -1,183 +1,100 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from datetime import datetime
+from datetime import timedelta
+from engine_scripts.py.users.CUserSessions import CUserSessions
+
+from engine_scripts.py.pages.CPages import CPages
+from engine_scripts.py.pages.enums import PAGE_ID
+
+import engine_scripts.py.pages.login.login_actions as login_actions
+from engine_scripts.py.debug.CDebug import CDebug
 
 import json
-
+import engine_scripts.py.sql.config as sql_config
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired
+from engine_scripts.py.sql.sql_data import SQL_TABLE_NAME, SQL_USERS_FIELDS
+from engine_scripts.py.users.common import MAX_USER_NICKNAME_LEN
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://test_user:sadmin@192.168.7.182:5432/test_db"
+app.permanent_session_lifetime = timedelta(days=1)
+
+app.config['SECRET_KEY'] = '192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf'
+app.config['TESTING'] = True
+app.config['WTF_CSRF_ENABLED'] = True
+app.config['SQLALCHEMY_DATABASE_URI'] = (
+    f"postgresql://{sql_config.db_standart_connect_params[sql_config.KEY_VALUE_NAME_USER]}:"
+    f"{sql_config.db_standart_connect_params[sql_config.KEY_VALUE_NAME_PASS]}@"
+    f"{sql_config.db_standart_connect_params[sql_config.KEY_VALUE_NAME_HOST]}:"
+    f"{sql_config.db_standart_connect_params[sql_config.KEY_VALUE_NAME_PORT]}/"
+    f"{sql_config.db_standart_connect_params[sql_config.KEY_VALUE_NAME_DATABASE]}")
+
+cuser_sessions = CUserSessions()
+cdebug = CDebug()
+cdebug.debug_system_on(True)
+
+cpages = CPages(cdebug)
+
+
+@app.route('/logo.ico')
+def favicon():
+    return url_for('static', filename='/static/img/logo.ico')
+
+
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 
-class Article(db.Model):  # для бд создание ячеек
-    __tablename__ = 'articles'  # название таблицы зарезервированное слово походу
-
-    # Для миграции устанавливается пакет Flask-Migrate
-    # Созданипе бд в таблице и создание папки для миграций (в консоли питона писать)
-    # $ flask db init
-    # $ flask db migrate
-    # $ flask db upgrade Команда flask db upgrade выполняет миграцию и создает нашу таблицу:
-    # sqlalchemy_db_upgrade В случае, если мы добавляем, удаляем или
-    # изменяем какие - либостолбцы, мы всегда можем выполнить команды migrate и
-    # upgrade, чтобы отразить эти изменения и в нашей базе данных.
-
-    # названия в таблицу походу берутся от названия преременных
-    # статься где всё вычитал:
-    # https://stackabuse.com/using sqlalchemy-with-flask-and-postgresql/
-
-    id = db.Column(db.Integer, primary_key=True)  # уникальный индекс
-    text = db.Column(db.Text, nullable=False)
-    title = db.Column(db.String(100), nullable=False)  # ullable нельзя установить нулевое значение
-    intro = db.Column(db.String(300), nullable=False)
-    date = db.Column(db.DateTime,
-                     default=datetime.utcnow)
-    # установка времени по умолчанию с даты создания штамп или полноценная дата ?
-
-    def __init__(self, text, title, intro):
-        self.text = text
-        self.title = title
-        self.intro = intro
-
-    """С помощью этого метода будет выдаваться сам объект и его ID при обращении на основе объекта класса
-    Нужно что бы получать саму запись из БД
-
-    Из комментов:
-    _repr_ ты описал немного неправильно. 
-    он  в данном случае дает возможность вывести объект в том виде как ты хочешь. 
-    но не выводит сам объект и атрибуты с параметрами. для начинающих - это то, что увидишь если сделать print(article)
-
-    """
-
-    def __repr__(self):
-        return '<Article %r>' % self.id
-
-
-class LoginForm(FlaskForm):
-    username = StringField('u_nickname', validators=[DataRequired()])
-    password = PasswordField('u_pass', validators=[DataRequired()])
-    remember_me = BooleanField('Запомнить меня')
-    submit = SubmitField('Войти')
-
-
 @app.route('/')
 @app.route('/home')
+@app.route('/index')
 def index():
+    return cpages.set_render_page(PAGE_ID.INDEX)
 
-    from engine_scripts.py.sql.sql_engine import csql_eng as sql
-    csql = sql()
-    csql.set_default_connect_data()
-    handle_one = csql.sql_connect("Europe/Moscow")
 
-    csql.sql_query_and_get_result(handle_one, "SELECT * FROM articles WHERE id > 1", mode="_1")
-    # print(result)
+@app.route('/account')
+def account_main():
+    if cuser_sessions.is_sessions_start() is False:
+        return cpages.redirect_on_page(PAGE_ID.LOGIN)
 
-    return render_template('index.html')
+    return cpages.set_render_page(PAGE_ID.ACCOUNT_MAIN)
+
+
+@app.route('/login', methods=['POST', 'GET'])
+def user_login():
+    if cuser_sessions.is_sessions_start() is True:
+        return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
+
+    if request.method == 'POST':
+        # получаем данные от кнопок и полей
+        user_name = request.form['user_name']
+        user_pass = request.form['user_pass']
+        user_save_me = request.form['user_save_me']
+        print(user_name)
+        print(user_pass)
+        print(user_save_me)
+        result = login_actions.set_login(user_name, user_pass, bool(user_save_me))
+        print(result)
+
+    return cpages.set_render_page(PAGE_ID.ACCOUNT_MAIN)
 
 
 @app.route('/about')
 def about():
-    return render_template('about.html')
-
-
-@app.route('/test')
-def test():
-    return render_template('test.html')
-
-
-@app.route('/get-articles')
-def garticles():
-    art_unit = Article.query.order_by(Article.id.desc()).all()  # запросить всё из таблицы и отсортировать по индексу
-    # results = [
-    #     {
-    #         "post_date": art_unit.date,
-    #         "intro": art_unit.intro,
-    #         "title": art_unit.title,
-    #         "text": art_unit.text
-    #     } можем ли мы словарь передать ?
-    # ]
-
-    return render_template('get-articles.html', articles=art_unit)
-
-
-@app.route('/get-articles/<int:pid>')
-def art_detail(pid):
-    art_unit = Article.query.get(pid)
-    return render_template('post-detail.html', article=art_unit)
-
-
-@app.route('/get-articles/<int:pid>/del')
-def art_del(pid):
-    art_unit = Article.query.get_or_404(pid)
-    try:
-        db.session.delete(art_unit)
-        db.session.commit()
-        return redirect("/get-articles")
-
-    except Exception as err:
-        return f"При удалении статьи произошла ошибка {err}"
-
-
-@app.route('/create-article', methods=['POST', 'GET'])
-def create_article():
-    if request.method == 'POST':
-        # получаем данные от кнопок и полей
-        title = request.form['title']
-        intro = request.form['intro']
-        text = request.form['text']
-
-        article = Article(text=text, title=title, intro=intro)
-
-        try:
-            db.session.add(article)
-            db.session.commit()
-
-            return redirect('/get-articles')
-        except Exception as err:
-            return "Error" + str(err)
-
-    else:  # Иначе метод Get
-        pass
-
-    return render_template('create-article.html')
-
-
-@app.route('/get-articles/<int:pid>/update', methods=['POST', 'GET'])
-def update_article(pid):
-    art_unit = Article.query.get_or_404(pid)
-    if request.method == 'POST':
-
-        art_unit.title = request.form['title']
-        art_unit.intro = request.form['intro']
-        art_unit.text = request.form['text']
-
-        try:
-            db.session.commit()
-            return redirect("/get-articles")
-        except Exception as err:
-            return f"При редактировании статьи произошла ошибка {err}"
-    return render_template('create-article.html')
-
-
-@app.route('/user/<string:name>/<int:uid>')
-def user(name=str, uid=int):
-    return "User Page Name: " + str(name) + " ID:" + str(uid)
-
-
-@app.route('/user/login/')
-def user_login():
-    return render_template('ulogin.html')
+    return cpages.set_render_page(PAGE_ID.ABOUT)
 
 
 @app.errorhandler(404)
 def page_not_found(error_str):
 
-    return render_template('404.html')
+    return cpages.set_render_page(PAGE_ID.PAGE_NOT_FOUND)
+
+
+@app.route('/user/<string:name>/<int:uid>')
+def user(name=str, uid=int):
+    return "User Page Name: " + str(name) + " ID:" + str(uid)
 
 
 if __name__ == "__main__":
