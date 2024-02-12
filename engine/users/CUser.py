@@ -1,5 +1,6 @@
 import re
 import engine.users.common as ccommon
+from engine.users.enums import USER_ALEVEL
 
 
 class CUser:
@@ -53,4 +54,13 @@ class CUser:
                 if CUser.is_nickname_valid(user_nickname):
                     return True
 
+        return False
+
+    @staticmethod
+    def check_alevel_for_user(alevel: int) -> bool:
+        for level in USER_ALEVEL:
+            if level != alevel:
+                continue
+            else:
+                return True
         return False

@@ -1,14 +1,18 @@
 from engine.users.CUser import CUser
 
 
-def set_login(nickname: str, password: str, remember_me: bool):
+def check_login_params(nickname: str, password: str, remember_me: bool) -> tuple[bool, list]:
+    error_messages = list()
     if nickname == "" or password == "":
-        return False, "Ничего не указано!"
+        error_messages.append("Одно из полей не заполнено!")
 
     if CUser.check_user_nickname(nickname) is False:
-        return False, "Login указан не верно!"
+        error_messages.append("Login указан не верно!")
 
     if CUser.check_user_password(password) is False:
-        return False, "Пароль указан не верно!"
+        error_messages.append("Пароль указан не верно!")
 
-    return True
+    if len(error_messages) > 0:
+        return False, error_messages
+
+    return True, []

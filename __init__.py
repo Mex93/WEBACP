@@ -5,10 +5,11 @@ from flask_migrate import Migrate
 from datetime import timedelta
 
 import engine.sql.config as sql_config
+from engine.sql.main import SqlAgent_Main
 from engine.pages.CPages import CPages
 from engine.users.CUserSessions import CUserSessions
 from engine.debug.CDebug import CDebug
-
+from engine.users.CUser import CUser
 
 app = Flask(__name__)
 app.permanent_session_lifetime = timedelta(days=1)
@@ -27,7 +28,9 @@ cdb = SQLAlchemy(app)
 cmigrate = Migrate(app, cdb)
 
 cuser_sessions = CUserSessions()
+cuser = CUser()
 cdebug = CDebug()
+csql = SqlAgent_Main()
 cdebug.debug_system_on(True)
 
 cpages = CPages(cdebug)

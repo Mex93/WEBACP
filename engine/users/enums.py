@@ -1,5 +1,6 @@
 from enum import IntEnum, auto
 
+
 class USER_SESSION_TYPE(IntEnum):
     ACC_INDEX = auto(),
     NICKNAME = auto(),
@@ -26,3 +27,8 @@ class USER_SESSION_TYPE(IntEnum):
     ACCESS_ASR_ADD = auto(),
 
 
+class USER_ALEVEL(IntEnum):
+    ULEVEL_NONE = 0,
+    ULEVEL_LINE_MASTER = 1,
+    ULEVEL_LINE_TECHNOLOGY = 2,
+    ULEVEL_SUPER = 3,
