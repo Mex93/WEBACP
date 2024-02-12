@@ -7,7 +7,9 @@
 
 <div class = 'container'>
     <div class = 'container_login'>
-           {{ errors }}
+           {% for error in errors.values() %}
+                {{ error }}
+           {% endfor %}
         <h1>Авторизация</h1>
         <form method="post">
             <input type="text" name = "user_name" class = "form-control" placeholder="Введите Ваш login:"><br>

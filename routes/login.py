@@ -22,9 +22,9 @@ def ulogin():
         print(user_pass)
         print(user_save_me)
         result = login.set_login(user_name, user_pass, bool(user_save_me))
-        print(result)
         if isinstance(result, tuple):
             error_text = result[1]
+            print(error_text)
             return cpages.set_render_page(PAGE_ID.LOGIN, errors=error_text)
             # cpages.set_render_page(PAGE_ID.LOGIN, errors=error_text)
             # render_template("login.html", errors=error_text)
