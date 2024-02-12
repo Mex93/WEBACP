@@ -2,7 +2,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-
 from datetime import timedelta
 
 import engine.sql.config as sql_config
@@ -24,8 +23,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = (
     f"{sql_config.db_standart_connect_params[sql_config.KEY_VALUE_NAME_PORT]}/"
     f"{sql_config.db_standart_connect_params[sql_config.KEY_VALUE_NAME_DATABASE]}")
 
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
+cdb = SQLAlchemy(app)
+cmigrate = Migrate(app, cdb)
 
 cuser_sessions = CUserSessions()
 cdebug = CDebug()

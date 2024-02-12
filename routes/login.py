@@ -4,7 +4,9 @@ from engine.pages.enums import PAGE_ID
 from engine.common import get_checkbox_state
 from engine.pages.login import login_actions as login
 
-name = cpages.get_page_template_name_from_page_id(PAGE_ID.LOGIN)
+name = cpages.get_page_route_name_from_page_id(PAGE_ID.LOGIN)
+
+
 @app.route(f'/{name}', methods=['POST', 'GET'])
 def ulogin():
     if cuser_sessions.is_sessions_start() is True:

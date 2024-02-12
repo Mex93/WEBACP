@@ -1,7 +1,7 @@
 from __init__ import app, cpages, cuser_sessions
 from engine.pages.enums import PAGE_ID
 
-name = cpages.get_page_template_name_from_page_id(PAGE_ID.ACCOUNT_MAIN)
+name = cpages.get_page_route_name_from_page_id(PAGE_ID.ACCOUNT_MAIN)
 
 
 @app.route(f'/{name}')
