@@ -12,11 +12,15 @@
         <form method="post">
             <input type="text" name = "user_name" class = "form-control" placeholder="Введите Ваш login:"><br>
             <input type="password" name = "user_pass" class = "form-control" placeholder="Введите Ваш пароль"><br>
-
             <div>
-                <input type = "checkbox" name = "user_save_me"  id = "user_save_me" class = "btn btn-success">
-                <label for="user_save_me">Запомнить меня</label><br><br>
-            </div>
+                <div>
+                  <label class="checkbox style-g">
+                    <input type="checkbox" name = "user_save_me"  id = "user_save_me"/>
+                    <div class="checkbox__checkmark"></div>
+                    <div class="checkbox__body">Запомнить меня</div>
+                  </label>
+                </div>
+            </div><br>
             <input type = "submit" class = "btn btn-success" value  = "Войти">
         </form>
     </div>
