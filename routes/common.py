@@ -3,7 +3,11 @@ from __init__ import app, url_for
 
 @app.route('/logo.ico')
 def favicon():
-    return url_for('static', filename='/static/img/logo.ico')
+    return url_for('static', filename='/img/logo.ico')
+
+@app.route('/config_db.png')
+def conf_db_png():
+    return url_for('static', filename='/img/config_db.png')
 
 # @app.errorhandler(404)
 # def page_not_found(error_str):
