@@ -1,4 +1,5 @@
 from flask import request, flash, render_template
+from __init__ import csrf
 
 from engine.pages.enums import PAGE_ID
 from engine.common import get_checkbox_state, convert_date_from_sql_format
@@ -14,13 +15,13 @@ from engine.users.CUserSessions import CUserSessions
 from engine.debug.CDebug import CDebug
 from engine.users.CUser import CUser
 
-
 cdebug = CDebug()
 cdebug.debug_system_on(True)
 
 cpages = CPages(cdebug)
 cuser_sessions = CUserSessions()
 cuser = CUser()
+
 
 def ulogin():
     if cuser_sessions.is_sessions_start() is True:

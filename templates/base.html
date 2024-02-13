@@ -28,8 +28,11 @@
             <ul class="drop-menu">
               <li><a href="/account/main">Главная</a></li>
               <li><a href="/account/config">Настройки</a></li>
-              <li><a href="/account/login">Войти</a></li>
-              <li><a href="/account/logout">Выход</a></li>
+                {% if session_start %}
+                <li><a href="/account/logout">Выход</a></li>
+                {% else %}
+                <li><a href="/account/login">Войти</a></li>
+                {% endif %}
             </ul>
           </li>
           <li>

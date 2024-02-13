@@ -16,9 +16,11 @@
         {% endif %}
 
         <h1>Авторизация</h1>
-        <form method="post">
-            <input type="text" name = "user_name" class = "form-control" placeholder="Введите Ваш login:"><br>
-            <input type="password" name = "user_pass" class = "form-control" placeholder="Введите Ваш пароль"><br>
+        <form method="post" class = "form-control">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+            <input type="text" required="yes" name = "user_name" class = "form-control" placeholder="Введите Ваш login:"><br>
+            <input type="password" required="yes" name = "user_pass" class = "form-control" placeholder="Введите Ваш пароль"><br>
             <div>
                 <div>
                   <label class="checkbox style-g">
