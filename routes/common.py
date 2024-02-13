@@ -1,4 +1,5 @@
-from __init__ import app, url_for
+from __init__ import app
+from flask import url_for
 
 
 @app.route('/logo.ico')

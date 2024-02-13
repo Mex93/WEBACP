@@ -1,18 +1,19 @@
 {% extends 'base.html' %}
 {% block title %}
-Вход на сайт
+Авторизация в аккаунт пользователя
 {% endblock %}
-
 {% block body %}
+<link rel="stylesheet" href="{{ url_for('.static', filename = 'css/login.css') }}">
 
 <div class = 'container'>
-
     <div class = 'container_login'>
-           {% for error in errors.values() %}
+        {% if errors %}
+            {% for error in errors.values() %}
                 {% for item in error %}
                 <div class = "error_message">{{ item }}</div><br>
                  {% endfor %}
-           {% endfor %}
+            {% endfor %}
+        {% endif %}
 
         <h1>Авторизация</h1>
         <form method="post">

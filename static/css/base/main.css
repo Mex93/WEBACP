@@ -611,3 +611,22 @@
   border-radius: 20px;
   background-color: red;
 }
+
+.success_message {
+  display: inline-block;
+  justify-content: center;
+  border-top: 1px solid #eee;
+  margin: 12px 12px 12px 12px;
+  padding: 12px 12px 12px 12px;
+  border-radius: 20px;
+  background-color: green;
+}
+
+
+.form-contact .invalid {
+         display: inline-block;
+         background: #FF9898;
+}
+.form-contact .invalid-feedback {
+         color: #CC0000;
+}

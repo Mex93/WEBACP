@@ -1,15 +1,10 @@
-
-from flask import Flask, render_template, request, redirect, url_for, session
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
+from flask import Flask
 from datetime import timedelta
 
 import engine.sql.config as sql_config
-from engine.sql.main import SqlAgent_Main
-from engine.pages.CPages import CPages
-from engine.users.CUserSessions import CUserSessions
-from engine.debug.CDebug import CDebug
-from engine.users.CUser import CUser
+
+# Импорт эскизов
+from page_account.account import bp_page_account
 
 app = Flask(__name__)
 app.permanent_session_lifetime = timedelta(days=1)
@@ -24,13 +19,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = (
     f"{sql_config.db_standart_connect_params[sql_config.KEY_VALUE_NAME_PORT]}/"
     f"{sql_config.db_standart_connect_params[sql_config.KEY_VALUE_NAME_DATABASE]}")
 
-cdb = SQLAlchemy(app)
-cmigrate = Migrate(app, cdb)
+# Соединение эскизов
+app.register_blueprint(bp_page_account, url_prefix='/account')
 
-cuser_sessions = CUserSessions()
-cuser = CUser()
-cdebug = CDebug()
-csql = SqlAgent_Main()
-cdebug.debug_system_on(True)
-
-cpages = CPages(cdebug)
