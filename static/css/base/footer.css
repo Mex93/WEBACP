@@ -23,8 +23,7 @@ body{
   padding-top: 7rem;
     padding-bottom: 80px;
   background-image: url(https://arena.km.ua/wp-content/uploads/3538533.jpg);
-
-
+  
 }
 #footer2{
   background: #f7f7f7;
@@ -34,10 +33,6 @@ body{
   padding-top: 7rem;
     padding-bottom: 80px;
   background-image: url(../images/cards/v748-toon-111.png);
-
-  position: relative;
-    top: 30%;
-    right: -10%;
 }
 .logo-footer{
   /* max-width: 300px; */
@@ -152,6 +147,8 @@ li{
     background: #242526;
     color: #fff;
     text-align: center;
+
+
 }
 .copy-right-sec a{
   color: #fcd462;
@@ -162,3 +159,8 @@ a{
 }
 
 /* footer section end */
+
+.copy-right {
+
+  width:100ww;
+}
