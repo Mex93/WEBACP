@@ -34,7 +34,7 @@ class CUserAccess(CUserSessions):
         return False
 
     def is_avalible_any_access_field(self, session_type: USER_SECTION_ACCESS_TYPE):
-
+        li = list()
         match session_type:
             case USER_SECTION_ACCESS_TYPE.ACCOUNT:
                 return self.is_sessions_start()
@@ -53,8 +53,7 @@ class CUserAccess(CUserSessions):
 
         if len(li) > 0:
             for value in li:
-                if value in (False, 0, None):
-                    return False
-            return True
+                if value in (True, 1):
+                    return True
 
         return False
