@@ -13,160 +13,164 @@
     <title>{% block title %}{% endblock %}</title>
 </head>
 
+<div class = "site_all_bodye">
+    <div class = "site_header">
+        <header>
+        <nav>
+          <div class="wrapper">
+            <div class="logo"><a href="#"><img src="{{ url_for('static', filename = 'img/logo.ico') }}" alt="" class="img-fluid"></a></div>
+            <input type="radio" name="slider" id="menu-btn">
+            <input type="radio" name="slider" id="close-btn">
+            <ul class="nav-links">
+              <label for="close-btn" class="btn close-btn"><i class="fas fa-times"></i></label>
+              <li><a href="/index">Главная</a></li>
+              <li><a href="/about">О сайте</a></li>
+              <li>
+                <a href="#" class="desktop-item">Аккаунт</a>
+                <input type="checkbox" id="showDrop">
+                <label for="showDrop" class="mobile-item">Аккаунт</label>
+                <ul class="drop-menu">
+                    {% if access_unit.is_sessions_start() == 1 %}
+                      <li><a href="/account/">Главная</a></li>
+                      <li><a href="/account/config">Настройки</a></li>
+                      <li><a href="/account/logout">Выход</a></li>
+                    {% else %}
+                    <li><a href="/account/login">Войти</a></li>
+                    {% endif %}
+                </ul>
+              </li>
+              <li>
+                {% if access_unit.is_sessions_start() == 0 %}  {# не забыть #}
+                {% if True in (access_unit.is_avalible_any_access_field(access_section.ASR), access_unit.is_avalible_any_access_field(access_section.SN), access_unit.is_avalible_any_access_field(access_section.SCAN_TEMPLATES)) %}
+                <a href="#" class="desktop-item">Управление БД</a>
+                <input type="checkbox" id="showMega">
+                <label for="showMega" class="mobile-item">Управление БД</label>
 
-<div class ="header">
-    <nav>
-      <div class="wrapper">
-        <div class="logo"><a href="#"><img src="{{ url_for('static', filename = 'img/logo.ico') }}" alt="" class="img-fluid"></a></div>
-        <input type="radio" name="slider" id="menu-btn">
-        <input type="radio" name="slider" id="close-btn">
-        <ul class="nav-links">
-          <label for="close-btn" class="btn close-btn"><i class="fas fa-times"></i></label>
-          <li><a href="/index">Главная</a></li>
-          <li><a href="/about">О сайте</a></li>
-          <li>
-            <a href="#" class="desktop-item">Аккаунт</a>
-            <input type="checkbox" id="showDrop">
-            <label for="showDrop" class="mobile-item">Аккаунт</label>
-            <ul class="drop-menu">
-                {% if access_unit.is_sessions_start() == 1 %}
-                  <li><a href="/account/">Главная</a></li>
-                  <li><a href="/account/config">Настройки</a></li>
-                  <li><a href="/account/logout">Выход</a></li>
-                {% else %}
-                <li><a href="/account/login">Войти</a></li>
-                {% endif %}
+                <div class="mega-box">
+                  <div class="content">
+                    <div class="row">
+                      <img src="{{ url_for('static', filename = 'img/config_db.png') }}" alt="">
+                    </div>
+                      {% if access_unit.is_access_for_panel(access_section.ASR) == True %}
+                        <div class="row">
+                          <header>ASR</header>
+                          <ul class="mega-links">
+                              {% if access_unit.is_avalible_any_access_field(access_section.ASR) == True %}
+                            <li><a href="/asr/find">Найти</a></li>
+                              {% endif %}
+                              {% if access_unit.is_access_for_panel(access_type.ACCESS_ASR_DELETE) == True %}
+                            <li><a href="/asr/delete">Удалить</a></li>
+                              {% endif %}
+                              {% if access_unit.is_access_for_panel(access_type.ACCESS_ASR_EDIT) == True %}
+                            <li><a href="/asr/edit">Редактировать</a></li>
+                              {% endif %}
+                          </ul>
+                        </div>
+                      {% endif %}
+                      {% if access_unit.is_access_for_panel(access_section.SN) == True %}
+                        <div class="row">
+                          <header>SN собранных единиц</header>
+                          <ul class="mega-links">
+                              {% if access_unit.is_avalible_any_access_field(access_section.SN) == True %}
+                            <li><a href="/sn/find">Найти</a></li>
+                              {% endif %}
+                               {% if access_unit.is_access_for_panel(access_type.ACCESS_SN_EDIT) == True %}
+                              <li><a href="/sn/edit">Редактировать</a></li>
+                              {% endif %}
+                              {% if access_unit.is_access_for_panel(access_type.ACCESS_SN_DELETE) == True %}
+                            <li><a href="/sn/delete">Удалить</a></li>
+                              {% endif %}
+                          </ul>
+                        </div>
+                      {% endif %}
+                      {% if access_unit.is_access_for_panel(access_section.SCAN_TEMPLATES) == True %}
+                        <div class="row">
+                          <header>Шаблоны сканировки</header>
+                          <ul class="mega-links">
+                              {% if access_unit.is_avalible_any_access_field(access_section.SCAN_TEMPLATES) == True %}
+                            <li><a href="/scan/find">Найти</a></li>
+                              {% endif %}
+                              {% if access_unit.is_access_for_panel(access_type.ACCESS_SCAN_ADD) == True %}
+                            <li><a href="/scan/create">Создать</a></li>
+                              {% endif %}
+                              {% if access_unit.is_access_for_panel(access_type.ACCESS_SCAN_DELETE) == True %}
+                            <li><a href="/scan/delete">Удалить</a></li>
+                               {% endif %}
+                              {% if access_unit.is_access_for_panel(access_type.ACCESS_SCAN_EDIT) == True %}
+                            <li><a href="/scan/edit">Редактировать</a></li>
+                              {% endif %}
+                          </ul>
+                        </div>
+                      {% endif %}
+                  </div>
+                </div>
+              </li>
+              {% endif %}
+              {% endif %}
+              <li><a href="/support">Поддержка</a></li>
             </ul>
-          </li>
-          <li>
-            {% if access_unit.is_sessions_start() == 0 %}  {# не забыть #}
-            {% if True in (access_unit.is_avalible_any_access_field(access_section.ASR), access_unit.is_avalible_any_access_field(access_section.SN), access_unit.is_avalible_any_access_field(access_section.SCAN_TEMPLATES)) %}
-            <a href="#" class="desktop-item">Управление БД</a>
-            <input type="checkbox" id="showMega">
-            <label for="showMega" class="mobile-item">Управление БД</label>
-
-            <div class="mega-box">
-              <div class="content">
-                <div class="row">
-                  <img src="{{ url_for('static', filename = 'img/config_db.png') }}" alt="">
-                </div>
-                  {% if access_unit.is_access_for_panel(access_section.ASR) == True %}
-                    <div class="row">
-                      <header>ASR</header>
-                      <ul class="mega-links">
-                          {% if access_unit.is_avalible_any_access_field(access_section.ASR) == True %}
-                        <li><a href="/asr/find">Найти</a></li>
-                          {% endif %}
-                          {% if access_unit.is_access_for_panel(access_type.ACCESS_ASR_DELETE) == True %}
-                        <li><a href="/asr/delete">Удалить</a></li>
-                          {% endif %}
-                          {% if access_unit.is_access_for_panel(access_type.ACCESS_ASR_EDIT) == True %}
-                        <li><a href="/asr/edit">Редактировать</a></li>
-                          {% endif %}
-                      </ul>
-                    </div>
-                  {% endif %}
-                  {% if access_unit.is_access_for_panel(access_section.SN) == True %}
-                    <div class="row">
-                      <header>SN собранных единиц</header>
-                      <ul class="mega-links">
-                          {% if access_unit.is_avalible_any_access_field(access_section.SN) == True %}
-                        <li><a href="/sn/find">Найти</a></li>
-                          {% endif %}
-                           {% if access_unit.is_access_for_panel(access_type.ACCESS_SN_EDIT) == True %}
-                          <li><a href="/sn/edit">Редактировать</a></li>
-                          {% endif %}
-                          {% if access_unit.is_access_for_panel(access_type.ACCESS_SN_DELETE) == True %}
-                        <li><a href="/sn/delete">Удалить</a></li>
-                          {% endif %}
-                      </ul>
-                    </div>
-                  {% endif %}
-                  {% if access_unit.is_access_for_panel(access_section.SCAN_TEMPLATES) == True %}
-                    <div class="row">
-                      <header>Шаблоны сканировки</header>
-                      <ul class="mega-links">
-                          {% if access_unit.is_avalible_any_access_field(access_section.SCAN_TEMPLATES) == True %}
-                        <li><a href="/scan/find">Найти</a></li>
-                          {% endif %}
-                          {% if access_unit.is_access_for_panel(access_type.ACCESS_SCAN_ADD) == True %}
-                        <li><a href="/scan/create">Создать</a></li>
-                          {% endif %}
-                          {% if access_unit.is_access_for_panel(access_type.ACCESS_SCAN_DELETE) == True %}
-                        <li><a href="/scan/delete">Удалить</a></li>
-                           {% endif %}
-                          {% if access_unit.is_access_for_panel(access_type.ACCESS_SCAN_EDIT) == True %}
-                        <li><a href="/scan/edit">Редактировать</a></li>
-                          {% endif %}
-                      </ul>
-                    </div>
-                  {% endif %}
-              </div>
-            </div>
-          </li>
-          {% endif %}
-          {% endif %}
-          <li><a href="/support">Поддержка</a></li>
-        </ul>
-        <label for="menu-btn" class="btn menu-btn"><i class="fas fa-bars"></i></label>
-      </div>
-    </nav>
-</div>
-
-<div class ="body">
-  {% block body %}{% endblock %}
-</div>
-
-
-<div class ="footer">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-3">
-              <div class="footer-about">
-                  <p>Панель управления сборочным производством</p>
-              </div>
-
-            </div>
-            <div class="col-md-3">
-                <div class="useful-link">
-                    <h2>Полезные ссылки</h2>
-<!--							<img src="{{ url_for('static', filename = 'img/logo.ico') }}" alt="" class="img-fluid">-->
-                    <div class="use-links">
-                        <li><a href="http://kvantvrn.ru/"><i class="fa-solid fa-angles-right"></i> Общий мониторинг</a></li>
-                    </div>
-                </div>
-
-            </div>
-            <div class="col-md-3">
-                <div class="social-links">
-                    <h2>Следите за новостями</h2>
-<!--							<img src="./assets/images/about/home_line.png" alt="">-->
-                    <div class="social-icons">
-                        <li><a href=""><i class="fa-brands fa-facebook-f"></i> -</a></li>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="address">
-                    <h2>Поддержка</h2>
-<!--							<img src="./assets/images/about/home_line.png" alt="" class="img-fluid">-->
-                    <div class="address-links">
-                        <li class="address1"><i class="fa-solid fa-location-dot"></i> Оставляйте свои предложения и пожелания</li>
-                           <li><a href=""><i class="fa-solid fa-phone"></i>Николай Рязанов</a></li>
-                           <li><a href=""><i class="fa-solid fa-envelope"></i> ryazanov.n@tvkvant.ru</a></li>
-                    </div>
-                </div>
-            </div>
-        </div>
+            <label for="menu-btn" class="btn menu-btn"><i class="fas fa-bars"></i></label>
+          </div>
+        </nav>
+      </header>
     </div>
-    <!-- footer section end -->
-    <!-- footer copy right section start -->
-    <section id="copy-right">
-        <div class="copy-right-sec"><i class="fa-solid fa-copyright"></i>
-            Панель управления By <a href="https://tvkvant.ru/">ООО 'Квант'</a> 2024
+
+    <div class = "site_body">
+        {% block body %}{% endblock %}
+    </div>
+
+
+    <div class = "site_footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3">
+                  <div class="footer-about">
+                      <p>Панель управления сборочным производством</p>
+                  </div>
+
+                </div>
+                <div class="col-md-3">
+                    <div class="useful-link">
+                        <h2>Полезные ссылки</h2>
+    <!--							<img src="{{ url_for('static', filename = 'img/logo.ico') }}" alt="" class="img-fluid">-->
+                        <div class="use-links">
+                            <li><a href="http://kvantvrn.ru/"><i class="fa-solid fa-angles-right"></i> Общий мониторинг</a></li>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-md-3">
+                    <div class="social-links">
+                        <h2>Следите за новостями</h2>
+    <!--							<img src="./assets/images/about/home_line.png" alt="">-->
+                        <div class="social-icons">
+                            <li><a href=""><i class="fa-brands fa-facebook-f"></i> -</a></li>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="address">
+                        <h2>Поддержка</h2>
+    <!--							<img src="./assets/images/about/home_line.png" alt="" class="img-fluid">-->
+                        <div class="address-links">
+                            <li class="address1"><i class="fa-solid fa-location-dot"></i> Оставляйте свои предложения и пожелания</li>
+                               <li><a href=""><i class="fa-solid fa-phone"></i>Николай Рязанов</a></li>
+                               <li><a href=""><i class="fa-solid fa-envelope"></i> ryazanov.n@tvkvant.ru</a></li>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </section>
-    <!-- footer copy right section end -->
+        <!-- footer section end -->
+        <!-- footer copy right section start -->
+        <section id="copy-right">
+            <div class="copy-right-sec"><i class="fa-solid fa-copyright"></i>
+                Панель управления By <a href="https://tvkvant.ru/">ООО 'Квант'</a> 2024
+            </div>
+        </section>
+        <!-- footer copy right section end -->
+    </div>
+
 </div>
 
     <script
