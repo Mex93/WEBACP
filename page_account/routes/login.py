@@ -11,7 +11,7 @@ from engine.users.enums import USER_ALEVEL
 from engine.sql.QuerysLibs.CSQLUserQuerys import CSQLUserQuerys
 
 from engine.pages.CPages import CPages
-from engine.users.CUserSessions import CUserSessions
+from engine.users.CUserAccess import CUserAccess
 from engine.debug.CDebug import CDebug
 from engine.users.CUser import CUser
 
@@ -19,12 +19,12 @@ cdebug = CDebug()
 cdebug.debug_system_on(True)
 
 cpages = CPages(cdebug)
-cuser_sessions = CUserSessions()
+cuser_access = CUserAccess()
 cuser = CUser()
 
 
 def ulogin():
-    if cuser_sessions.is_sessions_start() is True:
+    if cuser_access.is_sessions_start() is True:
         return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
 
     if request.method == 'POST':

@@ -1,5 +1,6 @@
 from flask import session
-from engine.users.enums import USER_SESSION_TYPE
+from engine.users.enums import USER_SECTIONS_TYPE, USER_SECTION_ACCESS_TYPE
+
 
 class CUserSessions:
 
@@ -31,48 +32,48 @@ class CUserSessions:
 
         self.__session_start_text = "session_start"
 
-    def __get_session_var_name_from_type(self, session_type: USER_SESSION_TYPE) -> bool | str:
+    def __get_session_var_name_from_type(self, session_type: USER_SECTIONS_TYPE) -> bool | str:
         match session_type:
-            case USER_SESSION_TYPE.ACC_INDEX:
+            case USER_SECTIONS_TYPE.ACC_INDEX:
                 return self.__sname_acc_index
-            case USER_SESSION_TYPE.NICKNAME:
+            case USER_SECTIONS_TYPE.NICKNAME:
                 return self.__sname_nickname
-            case USER_SESSION_TYPE.FIRSTNAME:
+            case USER_SECTIONS_TYPE.FIRSTNAME:
                 return self.__sname_firstname
-            case USER_SESSION_TYPE.LASTNAME:
+            case USER_SECTIONS_TYPE.LASTNAME:
                 return self.__sname_lastname
-            case USER_SESSION_TYPE.LAST_LOGIN_DATE:
+            case USER_SECTIONS_TYPE.LAST_LOGIN_DATE:
                 return self.__sname_last_login_date
-            case USER_SESSION_TYPE.ALEVEL:
+            case USER_SECTIONS_TYPE.ALEVEL:
                 return self.__sname_alevel
-            case USER_SESSION_TYPE.ACCOUNT_TIMEOUT_EXIT:
+            case USER_SECTIONS_TYPE.ACCOUNT_TIMEOUT_EXIT:
                 return self.__sname_account_timeout_exit
-            case USER_SESSION_TYPE.ACCOUNT_DISABLED:
+            case USER_SECTIONS_TYPE.ACCOUNT_DISABLED:
                 return self.__sname_account_disabled
-            case USER_SESSION_TYPE.ACCOUNT_DIS_AINDEX:
+            case USER_SECTIONS_TYPE.ACCOUNT_DIS_AINDEX:
                 return self.__sname_account_dis_aindex
-            case USER_SESSION_TYPE.ACCOUNT_DIS_DATE:
+            case USER_SECTIONS_TYPE.ACCOUNT_DIS_DATE:
                 return self.__sname_account_dis_date
 
-            case USER_SESSION_TYPE.ACCESS_SCAN_EDIT:
+            case USER_SECTIONS_TYPE.ACCESS_SCAN_EDIT:
                 return self.__sname_access_scan_edit
-            case USER_SESSION_TYPE.ACCESS_SCAN_DELETE:
+            case USER_SECTIONS_TYPE.ACCESS_SCAN_DELETE:
                 return self.__sname_access_scan_delete
-            case USER_SESSION_TYPE.ACCESS_SCAN_ADD:
+            case USER_SECTIONS_TYPE.ACCESS_SCAN_ADD:
                 return self.__sname_access_scan_add
 
-            case USER_SESSION_TYPE.ACCESS_SN_EDIT:
+            case USER_SECTIONS_TYPE.ACCESS_SN_EDIT:
                 return self.__sname_access_sn_edit
-            case USER_SESSION_TYPE.ACCESS_SN_DELETE:
+            case USER_SECTIONS_TYPE.ACCESS_SN_DELETE:
                 return self.__sname_access_sn_delete
-            case USER_SESSION_TYPE.ACCESS_SN_ADD:
+            case USER_SECTIONS_TYPE.ACCESS_SN_ADD:
                 return self.__sname_access_sn_add
 
-            case USER_SESSION_TYPE.ACCESS_ASR_EDIT:
+            case USER_SECTIONS_TYPE.ACCESS_ASR_EDIT:
                 return self.__sname_access_asr_edit
-            case USER_SESSION_TYPE.ACCESS_ASR_DELETE:
+            case USER_SECTIONS_TYPE.ACCESS_ASR_DELETE:
                 return self.__sname_access_asr_delete
-            case USER_SESSION_TYPE.ACCESS_ASR_ADD:
+            case USER_SECTIONS_TYPE.ACCESS_ASR_ADD:
                 return self.__sname_access_asr_add
 
         return False
@@ -95,12 +96,13 @@ class CUserSessions:
                 return True
         return False
 
-    def get_session_var(self, session_type: USER_SESSION_TYPE):
+    def get_session_var(self, session_type: USER_SECTIONS_TYPE):
         sess_name = self.__get_session_var_name_from_type(session_type)
         if sess_name is not False:
             return session.get(sess_name)
+        return False
 
-    def set_session_var(self, session_type: USER_SESSION_TYPE, var) -> bool:
+    def set_session_var(self, session_type: USER_SECTIONS_TYPE, var) -> bool:
         sess_name = self.__get_session_var_name_from_type(session_type)
         if sess_name is not False:
             session[sess_name] = var
@@ -108,7 +110,7 @@ class CUserSessions:
             return True
         return False
 
-    def pop_session_var(self, session_type: USER_SESSION_TYPE):
+    def pop_session_var(self, session_type: USER_SECTIONS_TYPE):
         sess_name = self.__get_session_var_name_from_type(session_type)
         if sess_name in session:
             session.pop(sess_name, None)
@@ -118,8 +120,12 @@ class CUserSessions:
 
     def delete_all_user_sessions(self):
         self.sessions_end()
-        for enum_id in USER_SESSION_TYPE:
+        for enum_id in USER_SECTIONS_TYPE:
             sess_name = self.__get_session_var_name_from_type(enum_id)
             if sess_name is not False:
                 session.pop(sess_name, None)
                 session.modified = True
+
+
+
+

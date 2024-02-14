@@ -1,7 +1,7 @@
 from enum import IntEnum, auto
 
 
-class USER_SESSION_TYPE(IntEnum):
+class USER_SECTIONS_TYPE(IntEnum):
     ACC_INDEX = auto(),
     NICKNAME = auto(),
     FIRSTNAME = auto(),
@@ -25,6 +25,14 @@ class USER_SESSION_TYPE(IntEnum):
     ACCESS_ASR_EDIT = auto(),
     ACCESS_ASR_DELETE = auto(),
     ACCESS_ASR_ADD = auto(),
+
+
+class USER_SECTION_ACCESS_TYPE(IntEnum):
+    NONE = auto(),
+    ACCOUNT = auto(),
+    ASR = auto(),
+    SCAN_TEMPLATES = auto(),
+    SN = auto(),
 
 
 class USER_ALEVEL(IntEnum):

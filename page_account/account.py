@@ -40,7 +40,6 @@ def ulogin():
 
 # page_name = cpages.get_page_template_name_from_page_id(PAGE_ID.ACCOUNT_MAIN)
 
-
 @bp_page_account.route('/')
 def account_main():
     from page_account.routes.main import account_main

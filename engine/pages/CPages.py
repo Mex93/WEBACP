@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 
 from engine.pages.enums import PAGE_ID
+from engine.users.CUserAccess import CUserAccess
+from engine.users.enums import USER_SECTIONS_TYPE, USER_SECTION_ACCESS_TYPE
 
 class CPages:
     def __init__(self, cdebug):
@@ -115,7 +117,11 @@ class CPages:
             if len(name) > 0:
                 self.__debug_unit.debug_print(f"Найден шаблон {name}. Прогружаю!")
                 print(variables)
-                return render_template(f"{name}.html", errors=variables)
+                access_unit = CUserAccess()
+                return render_template(f"{name}.html", access_unit=access_unit,
+                                       access_section=USER_SECTION_ACCESS_TYPE,
+                                       access_type=USER_SECTIONS_TYPE,
+                                       errors=variables)
         self.__debug_unit.debug_print(f"Не найден шаблон {name}. Прогружаю 404!")
         return render_template(f"{self.__template_name_404}.html")
 
