@@ -1,16 +1,59 @@
 
-.container_login {
-    display: inline-block;
+.container_form {
+    display: block;
     text-align: center;
-    width: 40vw;
-    height: 35vh;
-    padding: 20px 20px 20px 20px;
-    margin: 30px;
+    width: 25vw;
+    padding: 10px 10px 10px 10px;
     position: relative;
-    top: 30%;
-    right: -10%;
+    align-items: center;
+    left: 30%;
     border-radius: 30px;
-    
-    background: #f7f7f7;
+    background-color: #87CEFA;
+
+
 }
+
+.container_form input.form-control {
+    background-color: white;
+    background-position: 10px 10px;
+    background-repeat: no-repeat;
+    padding-left: 40px;
+    border-radius: 30px;
+    padding: 10px;
+    margin: 10px;
+    width: 80%;
+      height: 10%;
+      font-size: 30px;
+
+}
+.container_form input.btm_submit {
+    background-color: #04AA6D;
+      border: none;
+      color: white;
+      padding: 16px 32px;
+      text-decoration: none;
+      margin: 4px 2px;
+      cursor: pointer;
+      border-radius: 20px;
+      width: 60%;
+      height: 10%;
+      font-size: 30px;
+
+}
+
+.container_form .header {
+    font-size: 40px;
+    padding-bottom: 30px;
+}
+
+.container_form .checkbox .checkbox__body {
+    font-size: 30px;
+    border-radius: 10px;
+    font-weight: bold;
+
+}
+
+
+
+
 

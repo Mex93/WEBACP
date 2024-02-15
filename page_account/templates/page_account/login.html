@@ -4,9 +4,7 @@
 {% endblock %}
 {% block body %}
 <link rel="stylesheet" href="{{ url_for('.static', filename = 'css/login.css') }}">
-
-<div class = 'container'>
-    <div class = 'container_login'>
+    <div class = 'container_form'>
         {% if errors %}
             {% for error in errors.values() %}
                 {% for item in error %}
@@ -15,14 +13,16 @@
             {% endfor %}
         {% endif %}
 
-        <h1>Авторизация</h1>
-        <form method="post" class = "form-control">
+        <div class = "header">
+            <h1>Авторизация</h1>
+        </div>
+        <form method="post">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 
-            <input type="text" required="yes" name = "user_name" class = "form-control" placeholder="Введите Ваш login:"><br>
-            <input type="password" required="yes" name = "user_pass" class = "form-control" placeholder="Введите Ваш пароль"><br>
+            <input type="text" required name = "user_name" class = "form-control" placeholder="Введите Ваш login:"><br>
+            <input type="password" required name = "user_pass" class = "form-control" placeholder="Введите Ваш пароль"><br>
             <div>
-                <div>
+                <div class = "checkbox">
                   <label class="checkbox style-g">
                     <input type="checkbox" name = "user_save_me"  id = "user_save_me"/>
                     <div class="checkbox__checkmark"></div>
@@ -30,10 +30,9 @@
                   </label>
                 </div>
             </div><br>
-            <input type = "submit" class = "btn btn-success" value  = "Войти">
+            <input type = "submit" class = "btm_submit" value  = "Войти">
         </form>
     </div>
-</div>
 
 {% endblock %}
 

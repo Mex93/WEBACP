@@ -1,20 +1,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
-*{
+.bheader *{
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
 }
-nav{
+.bheader nav{
   position: fixed;
-  z-index: 99;
   width: 100%;
   
   background: #242526;
 }
-nav .wrapper{
+.bheader nav .wrapper{
   position: relative;
-  max-width: 1300px;
+  max-width: 60%;
   padding: 0px 30px;
   height: 70px;
   line-height: 70px;
@@ -23,13 +22,13 @@ nav .wrapper{
   align-items: center;
   justify-content: space-between;
 }
-.wrapper .logo a{
+.bheader .wrapper .logo a{
   color: #f2f2f2;
   font-size: 30px;
   font-weight: 600;
   text-decoration: none;
 }
-.wrapper .nav-links{
+.bheader .wrapper .nav-links{
   display: inline-flex;
 }
 .nav-links li{
@@ -122,23 +121,23 @@ nav .wrapper{
 .row .mega-links li a:hover{
   color: #f2f2f2;
 }
-.wrapper .btn{
+.bheader .wrapper .btn{
   color: #fff;
   font-size: 20px;
   cursor: pointer;
   display: none;
 }
-.wrapper .btn.close-btn{
+.bheader .wrapper .btn.close-btn{
   position: absolute;
   right: 30px;
   top: 10px;
 }
 
 @media screen and (max-width: 970px) {
-  .wrapper .btn{
+  .bheader .wrapper .btn{
     display: block;
   }
-  .wrapper .nav-links{
+  .bheader .wrapper .nav-links{
     position: fixed;
     height: 100vh;
     width: 100%;
@@ -270,4 +269,10 @@ nav input{
 .body-text div{
   font-size: 45px;
   font-weight: 600;
+}
+
+.bheader .logo img{
+  padding-top: 40px;
+  width: 80%;
+  height: 80%;
 }
