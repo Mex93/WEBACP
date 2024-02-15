@@ -26,7 +26,7 @@
       font-size: 30px;
 
 }
-.container_form input.btm_submit {
+.container_form button.btm_submit {
     background-color: #04AA6D;
       border: none;
       color: white;
