@@ -16,7 +16,13 @@ class CUser:
 
     @staticmethod
     def is_nickname_valid(text: str) -> bool:
-        if re.search(r'[^a-zA-Z0-9@]', text):
+        if re.search(r'[^a-zA-Z0-9]', text):
+            return False
+        return True
+
+    @staticmethod
+    def is_email_valid(text: str) -> bool:
+        if re.search(r'([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)', text):
             return False
         return True
 
@@ -46,11 +52,22 @@ class CUser:
 
         return False
 
+
+    @staticmethod
+    def check_user_email(user_email: str) -> bool:
+        if isinstance(user_email, str):
+            lenpass = len(user_email)
+            if ccommon.MIN_USER_EMAIL_LEN <= lenpass <= ccommon.MAX_USER_EMAIL_LEN:
+                if CUser.is_email_valid(user_email):
+                    return True
+
+        return False
+
     @staticmethod
     def check_user_firstname(user_nickname: str) -> bool:
         if isinstance(user_nickname, str):
             lenpass = len(user_nickname)
-            if ccommon.MIN_USER_FIRSTNAME_LEN <= lenpass <= ccommon.MAX_USER_FIRSTNAME_LEN:
+            if ccommon.MIN_USER_FIRSTNAME_LASTNAME_LEN <= lenpass <= ccommon.MAX_USER_FIRSTNAME_LASTNAME_LEN:
                 if CUser.is_nickname_valid(user_nickname):
                     return True
 
@@ -66,18 +83,14 @@ class CUser:
         return False
 
     @staticmethod
-    def check_login_params(nickname: str, password: str) -> tuple[bool, list]:
-        error_messages = list()
-        if nickname == "" or password == "":
-            error_messages.append("Одно из полей не заполнено!")
+    def check_login_params(email: str, password: str) -> str | bool:
+        if email == "" or password == "":
+            return f"errorcode: check_login_params -> [1]"
 
-        if CUser.check_user_nickname(nickname) is False:
-            error_messages.append("Login указан не верно!")
+        if CUser.check_user_email(email) is False:
+            return f"errorcode: check_login_params -> [2]"
 
         if CUser.check_user_password(password) is False:
-            error_messages.append("Пароль указан не верно!")
+            return f"errorcode: check_login_params -> [3]"
 
-        if len(error_messages) > 0:
-            return False, error_messages
-
-        return True, []
+        return True

@@ -4,6 +4,7 @@ from engine.pages.CPages import CPages
 from engine.debug.CDebug import CDebug
 from engine.users.CUser import CUser
 from engine.pages.enums import PAGE_ID
+from engine.users.CUserAccess import CUserAccess
 import json
 from engine.common import get_checkbox_state, convert_date_from_sql_format
 
@@ -14,6 +15,7 @@ cdebug.debug_system_on(True)
 
 cpages = CPages(cdebug)
 cuser = CUser()
+cuser_access = CUserAccess()
 
 page_name = cpages.get_page_template_name_from_page_id(PAGE_ID.LOGOUT)
 
@@ -30,26 +32,20 @@ def logout():
 page_name = cpages.get_page_template_name_from_page_id(PAGE_ID.LOGIN)
 
 
-@bp_page_account.route(f'/{page_name}', methods=['POST', 'GET'])
+@bp_page_account.route(f'/{page_name}')
 def ulogin():
-    from page_account.routes.login import ulogin
+    if cuser_access.is_sessions_start() is True:
+        return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
 
-    return ulogin()
-
+    return cpages.set_render_page(PAGE_ID.LOGIN)
 
 @bp_page_account.route('/account.py', methods=['GET', 'POST'])
 def login_ajax():
-    # надо как то запретить переход по прямой ссылке к файлу
+    if cuser_access.is_sessions_start() is True:
+        return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
 
-    password = request.args['cpassword']
-    nickname = request.args['cnickname']
-    savemy = request.args['csavemy']
-
-    print(password, nickname, savemy)
-
-    result = json.dumps({"new_pass": 12345})
-    return result
-
+    from page_account.routes.login import ulogin
+    return ulogin()
 
 ##########
 

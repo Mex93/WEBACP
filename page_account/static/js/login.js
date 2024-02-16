@@ -1,9 +1,9 @@
+import {CForms} from "./CForms.js";
+import {CFieldsCheck} from "./CFieldsCheck.js";
+import {CMessBox} from "./CMessBox.js";
 import {
-    CForms,
-
-} from "./CForms";
-
-
+    getTimestampInSeconds,
+    } from "./common.js";
 
 
 
@@ -22,37 +22,91 @@ import {
 //
 // } from './libs/dashboard/Classes.js';
 
-let inputFieldNameID = null
+let inputFieldPassID = null
 let inputFieldEmailID = null
 let inputFieldSaveMeID = null
+let antiFlood = 0
+let responseProcess = false
 
-function get_login(nickname, password, safemy) {
-    console.log("Я тут")
-    let json_text = '{"cpassword": "'+ password +'", "cnickname": "'+ nickname +'", "csavemy": "'+ safemy +'"}';
-    let completed_json = jQuery.parseJSON(json_text);
+let cmessBox = new CMessBox()
+
+function get_login({ email, password, savemy }) {
+
+    if(!email || !password || !savemy)
+    {
+        return false;
+    }
+    if(antiFlood > getTimestampInSeconds())
+    {
+        cmessBox.sendErrorMessage("Не флудите!");
+        return false;  //(false - не отправляем форму на сервер)
+    }
+    if(responseProcess === true)
+    {
+        cmessBox.sendErrorMessage("Ответ от сервера ещё не пришёл!");
+        return false;  //(false - не отправляем форму на сервер)
+    }
+
+    antiFlood = getTimestampInSeconds() + 2;
+
+    let cfield = new CFieldsCheck();
+    let resultObj = {}
+    // pass
+    resultObj = cfield.set_check_password(password);
+    let ccfPass = new CForms(inputFieldPassID)
+
+    if(!resultObj) return false
+    if(resultObj.result === false)
+    {
+        ccfPass.clearField()
+        cmessBox.sendErrorMessage(resultObj.errorText);
+        return false;
+    }
+    // email
+    resultObj = cfield.set_check_email(email);
+    if(!resultObj) return false
+    if(resultObj.result === false)
+    {
+        cmessBox.sendErrorMessage(resultObj.errorText);
+        return false;
+    }
+    responseProcess = true;
+
+    cmessBox.sendSuccessMessage(resultObj.errorText);
+
+    let json_text = '{"cpassword": "'+ password +'", "cnickname": "'+ email +'", "csavemy": "'+ savemy +'"}';
+    let completed_json = $.parseJSON(json_text);
 
     $.getJSON('./account.py',
         completed_json, function (data)
         {
+            responseProcess = false
+            ccfPass.clearField()
             console.log(data)
-            let c_name = new CForms(inputFieldNameID)
-            c_name.clearField()
-
+            if(data === true)
+            {
+                cmessBox.sendSuccessMessage("Выполняется авторизация...");
+            }
+            else
+            {
+                cmessBox.sendErrorMessage("Ошибка авторизации на стороне сервера!");
+                return false
+            }
         }
     );
-    return false
+    return true
 }
 
 
 
 $(document).ready(function() {
 
-    inputFieldNameID = document.getElementById("user_name")
-    inputFieldEmailID = document.getElementById("user_pass")
+    inputFieldPassID = document.getElementById("user_pass")
+    inputFieldEmailID = document.getElementById("user_name")
     inputFieldSaveMeID = document.getElementById("user_save_me")
 
-    let c_name = new CForms(inputFieldNameID)
-    let c_pass = new CForms(inputFieldEmailID)
+    let c_name = new CForms(inputFieldEmailID)
+    let c_pass = new CForms(inputFieldPassID)
     let c_savemy = new CForms(inputFieldSaveMeID)
 
     $("#login_form").on("submit", function (event) {
@@ -60,14 +114,10 @@ $(document).ready(function() {
 
         // Получаем данные из полей формы
         const data = {
-            name: c_name.getInputValue(),
-            email: c_pass.getInputValue(),
+            email: c_name.getInputValue(),
+            password: c_pass.getInputValue(),
             savemy: c_savemy.getInputValue(),
         }
-        get_login(data.name, data.email, data.savemy)
+        get_login(data)
     });
-
-
-
-
 }); // document ready

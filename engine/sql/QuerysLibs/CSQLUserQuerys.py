@@ -30,7 +30,6 @@ class CSQLUserQuerys(CSqlAgent):
 
         sql_pass = result[0].get(SQL_USERS_FIELDS.ufd_md5pass, None)
         if sql_pass is not None:
-            # print(security.generate_password_hash(password))
             hash_pass = security.check_password_hash(sql_pass, password)
             # print(hash_pass)
             if hash_pass is True:

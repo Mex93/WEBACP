@@ -12,7 +12,6 @@ class CForms
 
     getInputValue()
     {
-        console.log(this.#FieldID.value)
         return this.#FieldID.value
     }
 
