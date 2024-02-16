@@ -82,8 +82,8 @@ function get_login({ email, password, savemy }) {
         {
             responseProcess = false
             ccfPass.clearField()
-            console.log(data)
-            if(data === true)
+            // console.log(data)
+            if(data.result === true)
             {
                 cmessBox.sendSuccessMessage("Выполняется авторизация...");
             }

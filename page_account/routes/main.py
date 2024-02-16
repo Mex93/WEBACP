@@ -6,6 +6,8 @@ from engine.users.CUserAccess import CUserAccess
 from engine.debug.CDebug import CDebug
 from engine.users.CUser import CUser
 
+from engine.debug.CDebug import CDebug
+
 cdebug = CDebug()
 cdebug.debug_system_on(True)
 

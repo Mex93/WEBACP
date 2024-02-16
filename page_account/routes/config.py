@@ -3,13 +3,13 @@ from page_account.account import bp_page_account
 
 from engine.pages.CPages import CPages
 from engine.users.CUserAccess import CUserAccess
-from engine.debug.CDebug import CDebug
 from engine.users.CUser import CUser
+from engine.debug.CDebug import CDebug
 
 cdebug = CDebug()
 cdebug.debug_system_on(True)
-
 cpages = CPages(cdebug)
+
 cuser_access = CUserAccess()
 cuser = CUser()
 

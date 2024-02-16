@@ -5,6 +5,7 @@ from engine.debug.CDebug import CDebug
 from engine.users.CUser import CUser
 from engine.pages.enums import PAGE_ID
 from engine.users.CUserAccess import CUserAccess
+
 import json
 from engine.common import get_checkbox_state, convert_date_from_sql_format
 
@@ -13,9 +14,9 @@ bp_page_account = Blueprint('account', __name__, template_folder='templates', st
 cdebug = CDebug()
 cdebug.debug_system_on(True)
 
-cpages = CPages(cdebug)
 cuser = CUser()
 cuser_access = CUserAccess()
+cpages = CPages(cdebug)
 
 page_name = cpages.get_page_template_name_from_page_id(PAGE_ID.LOGOUT)
 
@@ -39,7 +40,7 @@ def ulogin():
 
     return cpages.set_render_page(PAGE_ID.LOGIN)
 
-@bp_page_account.route('/account.py', methods=['GET', 'POST'])
+@bp_page_account.route('/account.py', methods=['GET'])
 def login_ajax():
     if cuser_access.is_sessions_start() is True:
         return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)

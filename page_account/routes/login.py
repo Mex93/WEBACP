@@ -1,6 +1,5 @@
 from flask import request, flash, render_template
 import json
-from __init__ import csrf
 
 from engine.pages.enums import PAGE_ID
 from engine.common import get_checkbox_state, convert_date_from_sql_format
@@ -9,13 +8,14 @@ from engine.sql.CSQL import NotConnectToDB, ErrorSQLQuery, ErrorSQLData
 from engine.sql.sql_data import SQL_USERS_FIELDS
 from engine.users.enums import USER_ALEVEL
 
+
 from engine.sql.QuerysLibs.CSQLUserQuerys import CSQLUserQuerys
 
 from engine.pages.CPages import CPages
 from engine.users.CUserAccess import CUserAccess
-from engine.debug.CDebug import CDebug
 from engine.users.CUser import CUser
 
+from engine.debug.CDebug import CDebug
 cdebug = CDebug()
 cdebug.debug_system_on(True)
 
@@ -25,6 +25,7 @@ cuser = CUser()
 
 
 def ulogin():
+
     if cuser_access.is_sessions_start() is True:
         return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
 
@@ -32,7 +33,7 @@ def ulogin():
     email = request.args['cnickname']
     savemy = request.args['csavemy']
 
-    print(password, email, savemy)
+    cdebug.debug_print(f"ulogin AJAX -> [{password},{email},{savemy}]")
 
     response_for_client = {
         "error_text": "",
@@ -42,15 +43,20 @@ def ulogin():
     result_login_check_fields = cuser.check_login_params(email, password)
     if result_login_check_fields is True:  # success
         savemy = get_checkbox_state(request.form.get('csavemy'))
-
+        cdebug.debug_print(f"ulogin AJAX -> [{email}] -> "
+                           f"[Проверка введённых данных пройдена успешно. Начинаю подгрузку из БД]")
         csql = CSQLUserQuerys()
         try:
             result = csql.connect_to_db(CONNECT_DB_TYPE.LOCAL)
             if result is True:
                 login_result = csql.get_login(email, password)
                 if login_result is not False:
-                    query_data = login_result[1]
-                    print(query_data)
+                    query_data = login_result[1][0]
+                    cdebug.debug_print(
+                        f"ulogin AJAX -> [{email}] -> [Найдено совпадение логина и пароля аккаунта. Начинаю загрузку]")
+                    cdebug.debug_print(
+                        f"ulogin AJAX -> [{email}] -> [{query_data}]")
+
                     account_disabled = query_data.get(SQL_USERS_FIELDS.ufd_account_disabled, None)
 
                     if account_disabled is True:
@@ -63,8 +69,12 @@ def ulogin():
                                                             "Ваш аккаунт отключен администратором!",
                                                          f"Администратор: '{admin_name}'",
                                                          f"Дата отключения: {account_disable_date}")})
+                        cdebug.debug_print(
+                            f"ulogin AJAX -> [{email}] -> [Аккаунт заблокирован [{admin_name} {account_disable_date}]")
                     else:
 
+                        cdebug.debug_print(
+                            f"ulogin AJAX -> [{email}] -> [Получение данных аккаунта]")
                         # alevel
                         sql_user_index = query_data.get(SQL_USERS_FIELDS.ufd_index, None)
 
@@ -115,7 +125,6 @@ def ulogin():
 
                         #################################
                         text = f"Пользователь ID: [{sql_user_index}] авторизировался в свой аккаунт"
-
                         # self.__cuser_log_sql.add_log(
                         #     WindowLogin,
                         #     LOG_OBJECT_TYPE.LGOT_USER,
@@ -124,28 +133,36 @@ def ulogin():
                         #     text)
                         #################################
                         response_for_client.update({"result": True})
+                        cdebug.debug_print(
+                            f"ulogin AJAX -> [{email}] -> [Аккаунт успешно загружен] -> [Ответ в JS]")
                 else:
                     response_for_client.update({"error_text": "Указанное совпадение логина и пароля не обнаружено"})
             else:
                 raise NotConnectToDB("Not SQL Connect!")
         except NotConnectToDB as err:
-            print(err)
             response_for_client.update({"error_text": "errorcode: check_login_params -> [NotConnectToDB]"})
+            cdebug.debug_print(
+                f"ulogin AJAX -> [{email}] -> [Исключение] [NotConnectToDB: '{err}']")
 
         except ErrorSQLQuery as err:
-            print(err)
             response_for_client.update({"error_text": "errorcode: check_login_params -> [ErrorSQLQuery]"})
+            cdebug.debug_print(
+                f"ulogin AJAX -> [{email}] -> [Исключение] [ErrorSQLQuery: '{err}']")
 
         except ErrorSQLData as err:
-            print(err)
             response_for_client.update({"error_text": "errorcode: check_login_params -> [ErrorSQLData]"})
-
+            cdebug.debug_print(
+                f"ulogin AJAX -> [{email}] -> [Исключение] [ErrorSQLData: '{err}']")
         finally:
             csql.disconnect_from_db()
     else:
         if len(result_login_check_fields) > 0:
             response_for_client.update({"error_text": result_login_check_fields})
             response_for_client.update({"result": False})
+            cdebug.debug_print(f"ulogin AJAX -> [{email}] -> "
+                               f"[Проверка введённых данных не пройдена] ->[{result_login_check_fields}]")
 
     result = json.dumps(response_for_client)
+    cdebug.debug_print(f"ulogin AJAX -> [{email}] -> "
+                       f"[Ответ в JS] ->[{result}]")
     return result
