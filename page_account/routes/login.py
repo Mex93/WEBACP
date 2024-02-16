@@ -1,4 +1,5 @@
 from flask import request, flash, render_template
+from __init__ import csrf
 import json
 
 from engine.pages.enums import PAGE_ID
@@ -8,7 +9,6 @@ from engine.sql.CSQL import NotConnectToDB, ErrorSQLQuery, ErrorSQLData
 from engine.sql.sql_data import SQL_USERS_FIELDS
 from engine.users.enums import USER_ALEVEL
 
-
 from engine.sql.QuerysLibs.CSQLUserQuerys import CSQLUserQuerys
 
 from engine.pages.CPages import CPages
@@ -16,6 +16,7 @@ from engine.users.CUserAccess import CUserAccess
 from engine.users.CUser import CUser
 
 from engine.debug.CDebug import CDebug
+
 cdebug = CDebug()
 cdebug.debug_system_on(True)
 
@@ -24,14 +25,14 @@ cuser_access = CUserAccess()
 cuser = CUser()
 
 
-def ulogin():
 
+def ulogin():
     if cuser_access.is_sessions_start() is True:
         return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
 
-    password = request.args['cpassword']
-    email = request.args['cnickname']
-    savemy = request.args['csavemy']
+    password = request.form['cpassword']
+    email = request.form['cnickname']
+    savemy = request.form['csavemy']
 
     cdebug.debug_print(f"ulogin AJAX -> [{password},{email},{savemy}]")
 
@@ -66,9 +67,9 @@ def ulogin():
                         admin_name = csql.get_nickname_from_user_id(account_disable_aindex)
 
                         response_for_client.update({"error_text": (
-                                                            "Ваш аккаунт отключен администратором!",
-                                                         f"Администратор: '{admin_name}'",
-                                                         f"Дата отключения: {account_disable_date}")})
+                            "Ваш аккаунт отключен администратором!",
+                            f"Администратор: '{admin_name}'",
+                            f"Дата отключения: {account_disable_date}")})
                         cdebug.debug_print(
                             f"ulogin AJAX -> [{email}] -> [Аккаунт заблокирован [{admin_name} {account_disable_date}]")
                     else:

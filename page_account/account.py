@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request
 
+
 from engine.pages.CPages import CPages
 from engine.debug.CDebug import CDebug
 from engine.users.CUser import CUser
@@ -33,20 +34,24 @@ def logout():
 page_name = cpages.get_page_template_name_from_page_id(PAGE_ID.LOGIN)
 
 
-@bp_page_account.route(f'/{page_name}')
+@bp_page_account.route(f'/{page_name}', methods=['POST', 'GET'])
 def ulogin():
     if cuser_access.is_sessions_start() is True:
         return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
 
     return cpages.set_render_page(PAGE_ID.LOGIN)
 
-@bp_page_account.route('/account.py', methods=['GET'])
+
+@bp_page_account.route('/account.py', methods=['POST', 'GET'])
 def login_ajax():
     if cuser_access.is_sessions_start() is True:
         return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
+    if request.method == "POST":
+        from page_account.routes.login import ulogin
+        return ulogin()
 
-    from page_account.routes.login import ulogin
-    return ulogin()
+    return cpages.redirect_on_page(PAGE_ID.LOGIN)
+
 
 ##########
 

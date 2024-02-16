@@ -97,13 +97,12 @@ class CFieldsCheck
             if (typeof field === 'string')
             {
                 let len = field.length
-                console.log(field, len)
                 if(len >= minLen && len <= maxLen)
                 {
                     if(!rePattern.test(field))
                     {
                         errorObj.result = true
-                        errorObj.errorText = `Заебись`
+                        errorObj.errorText = `Validator Success !`
                     }
                     else errorObj.errorText = `${text} должен состоять из символов ${textPattern}`
                 }

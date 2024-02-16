@@ -8,6 +8,7 @@ import engine.sql.config as sql_config
 # Импорт эскизов
 from page_account.account import bp_page_account
 
+
 app = Flask(__name__)
 app.permanent_session_lifetime = timedelta(days=1)
 
@@ -23,5 +24,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = (
 app.config['WTF_CSRF_SECRET_KEY'] = 'er09gjurewaiugyhw4e0p9tg24hrgrw0we8twgegdrsghhf'
 # Соединение эскизов
 app.register_blueprint(bp_page_account, url_prefix='/account')
-
 csrf = CSRFProtect(app)
+
+

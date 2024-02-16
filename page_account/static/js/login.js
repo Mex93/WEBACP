@@ -75,31 +75,58 @@ function get_login({ email, password, savemy }) {
     cmessBox.sendSuccessMessage(resultObj.errorText);
 
     let json_text = '{"cpassword": "'+ password +'", "cnickname": "'+ email +'", "csavemy": "'+ savemy +'"}';
-    let completed_json = $.parseJSON(json_text);
+    let completed_json = JSON.stringify(json_text); //$.parseJSON(json_text);
 
-    $.getJSON('./account.py',
-        completed_json, function (data)
-        {
-            responseProcess = false
-            ccfPass.clearField()
-            // console.log(data)
-            if(data.result === true)
-            {
-                cmessBox.sendSuccessMessage("Выполняется авторизация...");
-            }
-            else
-            {
-                cmessBox.sendErrorMessage("Ошибка авторизации на стороне сервера!");
-                return false
-            }
+    var request = $.ajax({
+        url: "./account.py",
+        type: "POST",
+        contentType: "application/json; charset=utf-8",
+        data: completed_json,
+        dataType: 'json',
+        success: function(response) {
+            var json = jQuery.parseJSON(response)
+            console.log("Suc", json);
+        },
+        error: function(error) {
+            console.log("error", error);
         }
-    );
+    })
+
+
+
+    // $.post('./account.py', completed_json, function(data)
+    //     {
+    //         responseProcess = false
+    //         ccfPass.clearField()
+    //         console.log(data)
+    //         if(data.result === true)
+    //         {
+    //             cmessBox.sendSuccessMessage("Выполняется авторизация...");
+    //         }
+    //         else
+    //         {
+    //             cmessBox.sendErrorMessage("Ошибка авторизации на стороне сервера!");
+    //             return false
+    //         }
+    //     }, "json"
+    // );
     return true
 }
 
 
 
 $(document).ready(function() {
+
+
+    let csrftoken = $('meta[name=csrf-token]').attr('content')
+
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        }
+    })
 
     inputFieldPassID = document.getElementById("user_pass")
     inputFieldEmailID = document.getElementById("user_name")
