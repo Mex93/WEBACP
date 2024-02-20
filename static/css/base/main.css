@@ -197,3 +197,56 @@ html, body {
   border: 1px solid purple;
   margin-bottom: 1%;
 }
+
+
+
+
+.container_form-common {
+    display: block;
+    text-align: center;
+    width: 25vw;
+    padding: 10px 10px 10px 10px;
+    position: relative;
+    align-items: center;
+    left: 30%;
+    border-radius: 30px;
+    background-color: #87CEFA;
+}
+
+.container_form-common input.form-control-common {
+    background-color: white;
+    background-position: 10px 10px;
+    background-repeat: no-repeat;
+    padding-left: 40px;
+    border-radius: 30px;
+    padding: 10px;
+    margin: 10px;
+    width: 80%;
+      height: 10%;
+      font-size: 30px;
+}
+.container_form-common button.btm_submit-common {
+    background-color: #04AA6D;
+      border: none;
+      color: white;
+      padding: 16px 32px;
+      text-decoration: none;
+      margin: 4px 2px;
+      cursor: pointer;
+      border-radius: 20px;
+      width: 60%;
+      height: 10%;
+      font-size: 30px;
+}
+
+.container_form-common .header-common {
+    font-size: 40px;
+    padding-bottom: 30px;
+}
+
+.container_form-common .checkbox .checkbox__body {
+    font-size: 30px;
+    border-radius: 10px;
+    font-weight: bold;
+
+}

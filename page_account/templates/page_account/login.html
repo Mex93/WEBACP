@@ -9,7 +9,7 @@
 
 {% block body %}
 
-    <div class = 'container_form'>
+    <div class = 'container_form-common login_container'>
         {% if errors %}
             {% for error in errors.values() %}
                 {% for item in error %}
@@ -18,14 +18,14 @@
             {% endfor %}
         {% endif %}
 
-        <div class = "header">
+        <div class = "header-common">
             <h1>Авторизация</h1>
         </div>
         <form id = "login_form" action = "#" method="post">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 
-            <input name = "user_name" id = "user_name" type="text" required class = "form-control" placeholder="Введите Ваш Email:"><br>
-            <input name = "user_pass" id = "user_pass" type="password" required class = "form-control" placeholder="Введите Ваш пароль"><br>
+            <input name = "user_name" id = "user_name" type="text" required class = "form-control-common" placeholder="Введите Ваш Email:"><br>
+            <input name = "user_pass" id = "user_pass" type="password" required class = "form-control-common" placeholder="Введите Ваш пароль"><br>
             <div>
                 <div class = "checkbox">
                   <label class="checkbox style-g">
@@ -35,13 +35,13 @@
                   </label>
                 </div>
             </div><br>
-            <button type="submit" class = "btm_submit">Войти</button>
+            <button type="submit" class = "btm_submit-common">Войти</button>
         </form>
     </div>
 
 {% endblock %}
 {% block js %}
-<script type = "module" src="{{ url_for('.static', filename = '/js/login.js') }}"></script>
+<script type = "module" src="{{ url_for('static', filename = '/js/engine/modules/login.js') }}"></script>
 {% endblock %}
 
 

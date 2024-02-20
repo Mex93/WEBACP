@@ -1,9 +1,9 @@
-import {CForms} from "./CForms.js";
-import {CFieldsCheck} from "./CFieldsCheck.js";
-import {CMessBox} from "./CMessBox.js";
+import {CForms} from "../CForms.js";
+import {CFieldsCheck} from "../CFieldsCheck.js";
+import {CMessBox} from "../CMessBox.js";
 import {
     getTimestampInSeconds,
-    } from "./common.js";
+    } from "../common.js";
 
 
 
@@ -74,42 +74,38 @@ function get_login({ email, password, savemy }) {
 
     cmessBox.sendSuccessMessage(resultObj.errorText);
 
-    let json_text = '{"cpassword": "'+ password +'", "cnickname": "'+ email +'", "csavemy": "'+ savemy +'"}';
-    let completed_json = JSON.stringify(json_text); //$.parseJSON(json_text);
+    let completed_json = JSON.stringify({
+        cpassword: password,
+        cnickname: email,
+        csavemy: savemy
+    }); //$.parseJSON(json_text);
 
-    var request = $.ajax({
-        url: "./account.py",
-        type: "POST",
-        contentType: "application/json; charset=utf-8",
-        data: completed_json,
+    $.ajax({
+        data : completed_json,
         dataType: 'json',
-        success: function(response) {
-            var json = jQuery.parseJSON(response)
-            console.log("Suc", json);
+        type : 'POST',
+        url : './login_ajax',
+        contentType: "application/json",
+        success: function(data) {
+            responseProcess = false
+            ccfPass.clearField()
+            console.log(data)
+            if(data.result === true)
+            {
+                cmessBox.sendSuccessMessage("Выполняется авторизация...");
+            }
+            else
+            {
+                cmessBox.sendErrorMessage("Ошибка авторизации на стороне сервера!");
+                return false
+            }
         },
         error: function(error) {
-            console.log("error", error);
+            // responseProcess = false
+            cmessBox.sendErrorMessage("Ошибка AJAX на стороне сервера!");
+            return false
         }
     })
-
-
-
-    // $.post('./account.py', completed_json, function(data)
-    //     {
-    //         responseProcess = false
-    //         ccfPass.clearField()
-    //         console.log(data)
-    //         if(data.result === true)
-    //         {
-    //             cmessBox.sendSuccessMessage("Выполняется авторизация...");
-    //         }
-    //         else
-    //         {
-    //             cmessBox.sendErrorMessage("Ошибка авторизации на стороне сервера!");
-    //             return false
-    //         }
-    //     }, "json"
-    // );
     return true
 }
 
@@ -117,9 +113,9 @@ function get_login({ email, password, savemy }) {
 
 $(document).ready(function() {
 
-
-    let csrftoken = $('meta[name=csrf-token]').attr('content')
-
+    //let csrftoken = $('meta[name=csrf-token]').attr('content')
+    let csrftoken = $('#login_form input[name=csrf_token]').attr('value')
+    
     $.ajaxSetup({
         beforeSend: function(xhr, settings) {
             if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {

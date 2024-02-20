@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, jsonify
 
 
 from engine.pages.CPages import CPages
@@ -42,16 +42,25 @@ def ulogin():
     return cpages.set_render_page(PAGE_ID.LOGIN)
 
 
-@bp_page_account.route('/account.py', methods=['POST', 'GET'])
+@bp_page_account.route('/login_ajax', methods=['POST', 'GET'])
 def login_ajax():
     if cuser_access.is_sessions_start() is True:
         return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
+
     if request.method == "POST":
-        from page_account.routes.login import ulogin
-        return ulogin()
+        json_ajax = request.get_json()
+        password = json_ajax['cpassword']
+        email = json_ajax['cnickname']
+        savemy = json_ajax['csavemy']
+        if savemy and email:
+            from page_account.routes.login import ulogin
+            return ulogin(password, email, savemy)
 
-    return cpages.redirect_on_page(PAGE_ID.LOGIN)
-
+    response_for_client = {
+        "error_text": "Error query Type",
+        "result": False
+    }
+    return jsonify({'msg': 'success'})
 
 ##########
 

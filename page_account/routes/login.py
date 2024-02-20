@@ -1,5 +1,4 @@
 from flask import request, flash, render_template
-from __init__ import csrf
 import json
 
 from engine.pages.enums import PAGE_ID
@@ -26,13 +25,9 @@ cuser = CUser()
 
 
 
-def ulogin():
+def ulogin(password, email, savemy):
     if cuser_access.is_sessions_start() is True:
         return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
-
-    password = request.form['cpassword']
-    email = request.form['cnickname']
-    savemy = request.form['csavemy']
 
     cdebug.debug_print(f"ulogin AJAX -> [{password},{email},{savemy}]")
 
@@ -162,6 +157,7 @@ def ulogin():
             response_for_client.update({"result": False})
             cdebug.debug_print(f"ulogin AJAX -> [{email}] -> "
                                f"[Проверка введённых данных не пройдена] ->[{result_login_check_fields}]")
+
 
     result = json.dumps(response_for_client)
     cdebug.debug_print(f"ulogin AJAX -> [{email}] -> "
