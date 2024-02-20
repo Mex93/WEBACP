@@ -250,3 +250,43 @@ html, body {
     font-weight: bold;
 
 }
+
+
+/* error box */
+.error_form_box {
+
+}
+
+
+.error_form_box .alert {
+  padding: 20px;
+  color: white;
+  opacity: 1;
+  transition: opacity 0.6s;
+  margin-bottom: 15px;
+  border-radius: 20px;
+}
+.error_form_box .alert.error {background-color: #f44336;}
+.error_form_box .alert.success {background-color: #04AA6D;}
+.error_form_box .alert.info {background-color: #2196F3;}
+.error_form_box .alert.warning {background-color: #ff9800;}
+
+
+.error_form_box .closebtn {
+  margin-left: 15px;
+  color: white;
+  font-weight: bold;
+  float: right;
+  font-size: 32px;
+  line-height: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.error_form_box .closebtn:hover {
+  color: black;
+}
+
+.error_form_box .header_text, .main_text {
+  font-size: 20px;
+}

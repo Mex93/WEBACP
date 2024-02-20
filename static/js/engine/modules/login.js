@@ -28,7 +28,7 @@ let inputFieldSaveMeID = null
 let antiFlood = 0
 let responseProcess = false
 
-let cmessBox = new CMessBox()
+let cmessBox = new CMessBox("error_box")
 
 function get_login({ email, password, savemy }) {
 
@@ -72,7 +72,6 @@ function get_login({ email, password, savemy }) {
     }
     responseProcess = true;
 
-    cmessBox.sendSuccessMessage(resultObj.errorText);
 
     let completed_json = JSON.stringify({
         cpassword: password,
@@ -89,14 +88,13 @@ function get_login({ email, password, savemy }) {
         success: function(data) {
             responseProcess = false
             ccfPass.clearField()
-            console.log(data)
             if(data.result === true)
             {
-                cmessBox.sendSuccessMessage("Выполняется авторизация...");
+                cmessBox.sendSuccessMessage("Выполняется авторизация", "Пожалуйста, подождите...");
             }
             else
             {
-                cmessBox.sendErrorMessage("Ошибка авторизации на стороне сервера!");
+                cmessBox.sendErrorMessage(data.error_text);
                 return false
             }
         },

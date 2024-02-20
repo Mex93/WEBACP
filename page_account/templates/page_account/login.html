@@ -21,6 +21,9 @@
         <div class = "header-common">
             <h1>Авторизация</h1>
         </div>
+        <div id = "error_box">
+        </div>
+
         <form id = "login_form" action = "#" method="post">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 
