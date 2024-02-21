@@ -1,6 +1,8 @@
 import {CForms} from "../CForms.js";
 import {CFieldsCheck} from "../CFieldsCheck.js";
 import {CMessBox} from "../CMessBox.js";
+import {CWindowBox} from "../CWindowBox.js";
+
 import {
     getTimestampInSeconds,
     } from "../common.js";
@@ -22,17 +24,19 @@ import {
 //
 // } from './libs/dashboard/Classes.js';
 
-let inputFieldPassID = null
-let inputFieldEmailID = null
-let inputFieldSaveMeID = null
-let antiFlood = 0
-let responseProcess = false
+let inputFieldPassID = null;
+let inputFieldEmailID = null;
+let inputFieldSaveMeID = null;
+let antiFlood = 0;
+let responseProcess = false;
+let blockedForm = false;
 
 let cmessBox = new CMessBox("error_box")
+let cwindowBox = new CWindowBox("block_id_content")
 
 function get_login({ email, password, savemy }) {
 
-    if(!email || !password || !savemy)
+    if(!email || !password || !savemy || blockedForm)
     {
         return false;
     }
@@ -90,7 +94,16 @@ function get_login({ email, password, savemy }) {
             ccfPass.clearField()
             if(data.result === true)
             {
-                cmessBox.sendSuccessMessage("Выполняется авторизация", "Пожалуйста, подождите...");
+                blockedForm = true;
+                let formID = document.getElementById("main_container")
+                if(formID !== null)
+                {
+                    formID.style.display='none';
+                }
+                cmessBox.hide();
+                cwindowBox.show("Выполняется авторизация...\n\n" +
+                    "Если ваш браузер не поддерживает автоматическую переадресацию, " +
+                    "то просто обновите страницу", "rgb(4, 170, 109)", 0);
             }
             else
             {

@@ -68,6 +68,14 @@ class CMessBox
         this.#timerHideMessageBox = undefined;
         this.#blockID.style.display='none';
     }
+    hide()
+    {
+        if(this.#isMessageShow())
+        {
+            clearTimeout(this.#timerHideMessageBox);
+            this.#hideMessage();
+        }
+    }
 
     #startTimer()
     {

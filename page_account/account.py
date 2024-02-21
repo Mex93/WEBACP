@@ -60,7 +60,7 @@ def login_ajax():
         "error_text": "Error query Type",
         "result": False
     }
-    return jsonify({'msg': 'success'})
+    return jsonify(response_for_client)
 
 ##########
 

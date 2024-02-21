@@ -9,22 +9,15 @@
 
 {% block body %}
 
-    <div class = 'container_form-common login_container'>
-        {% if errors %}
-            {% for error in errors.values() %}
-                {% for item in error %}
-                <div class = "error_message">{{ item }}</div><br>
-                 {% endfor %}
-            {% endfor %}
-        {% endif %}
-
-        <div class = "header-common">
-            <h1>Авторизация</h1>
-        </div>
-        <div id = "error_box">
-        </div>
-
+    <div id = "main_container" class = 'container_form-common login_container'>
         <form id = "login_form" action = "#" method="post">
+            <div class = "header-common">
+                <h1>Авторизация</h1>
+            </div>
+
+            <div id = "error_box">
+            </div>
+
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 
             <input name = "user_name" id = "user_name" type="text" required class = "form-control-common" placeholder="Введите Ваш Email:"><br>
