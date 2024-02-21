@@ -33,13 +33,13 @@ class CSQLUserLogQuerys:
                             f"('{log_object_type}', "
                             f"'{log_type}', "
                             f"'{log_sub_type}', "
-                            f"{user_id}, "
+                            f"'%s', "
                             f"'{text}', "
-                            f"'{ip}', "
+                            f"'{ip}' "
                             f") RETURNING  {SQL_LOG_FIELDS.lfd_log_index};")
 
             result = (self.__db_handle.sql_query_and_get_result
-                      (self.__db_handle.get_sql_handle(), query_string, "_i"))
+                      (self.__db_handle.get_sql_handle(), query_string, (user_id, ), "_i"))
 
             self.__cdebug.debug_print(
                 f"CSQLUserLogQuerys -> [add_log]: [{text}]")

@@ -1,3 +1,5 @@
+from flask import request
+
 from datetime import datetime
 import time
 
@@ -48,6 +50,6 @@ def get_current_data_stamp():
     return get_data_stamp_from_unix_time(unix)
 
 def get_inet_ipaddress():
-    pass
+    return request.remote_addr
 
 
