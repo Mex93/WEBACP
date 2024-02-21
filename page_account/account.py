@@ -22,11 +22,19 @@ cpages = CPages(cdebug)
 page_name = cpages.get_page_template_name_from_page_id(PAGE_ID.LOGOUT)
 
 
-@bp_page_account.route(f'/{page_name}')
+@bp_page_account.route(f'/{page_name}', methods=['POST', 'GET'])
 def logout():
-    from page_account.routes.logout import logout
+    if cuser_access.is_sessions_start() is False:
+        return cpages.redirect_on_page(PAGE_ID.LOGIN)
 
-    return logout()
+    from page_account.routes.logout import logout
+    if request.method == "POST":
+        if 'yes' in request.form:
+            return logout()
+        elif 'no' in request.form:
+            return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
+
+    return cpages.set_render_page(PAGE_ID.LOGOUT)
 
 
 ####

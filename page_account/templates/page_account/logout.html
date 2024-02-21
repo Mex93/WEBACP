@@ -3,24 +3,32 @@
 {% block title %}
 Выход из аккаунта пользователя
 {% endblock %}
-
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('.static', filename = 'css/logout.css') }}">
+{% endblock %}
 {% block body %}
 
-<div class = 'container'>
-   <div class = 'container'>
-    <h1>Авторизация</h1>
-    <form method="POST">
-        <input type="text" name = "title" id = "user_name" class = "form-control" placeholder="Введите Ваш login:"><br>
-        <input type="password" name = "intro" id = "user_pass" class = "form-control" placeholder="Введите Ваш пароль"><br>
+<div id = "main_container" class = 'container_form-common container-form-logout'>
 
-        <div>
-            <input type = "checkbox" id = "user_save_me" class = "btn btn-success">
-            <label for="user_save_me">Запомнить меня</label><br><br>
-        </div>
-        <input type = "submit" class = "btn btn-success" value  = "Войти">
-    </form>
-    </div>
+        <form id = "logout_form" action = "#" method="post">
+            <div class = "header-common">
+                <h1>Выход из аккаунта</h1>
+            </div>
+            <div class = "text">
+                Вы уверены, что хотите выйти ?
+            </div>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+            <div class = "inline_buttom">
+                <button type="submit" name = "yes" value = "yes" class = "btm_submit-common yes">Да</button>
+                <button type="submit" name = "no" value = "no" class = "btm_submit-common">Нет</button>
+            </div>
+        </form>
 </div>
 
 {% endblock %}
+{% block js %}
+<script type = "module" src="{{ url_for('static', filename = '/js/engine/modules/logout.js') }}"></script>
+{% endblock %}
+
 

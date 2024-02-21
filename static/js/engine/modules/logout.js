@@ -32,7 +32,7 @@ let responseProcess = false;
 let blockedForm = false;
 
 let cmessBox = new CMessBox("error_box")
-let cwindowBox = new CWindowBox("main_container")
+let cwindowBox = new CWindowBox("block_id_content")
 
 function get_login({ email, password, savemy }) {
 
@@ -95,7 +95,7 @@ function get_login({ email, password, savemy }) {
             if(data.result === true)
             {
                 blockedForm = true;
-                let formID = document.getElementById("login_form")
+                let formID = document.getElementById("main_container")
                 if(formID !== null)
                 {
                     formID.style.display='none';
@@ -104,9 +104,6 @@ function get_login({ email, password, savemy }) {
                 cwindowBox.show("Выполняется авторизация...\n\n" +
                     "Если ваш браузер не поддерживает автоматическую переадресацию, " +
                     "то просто обновите страницу", "rgb(4, 170, 109)", 0);
-                setTimeout(function () {
-                    window.location.href = './';
-                }, 1500);
             }
             else
             {

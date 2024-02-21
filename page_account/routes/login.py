@@ -106,6 +106,9 @@ def ulogin(password, email, savemy):
                                                              firstname)
                                 cuser_access.set_session_var(USER_SECTIONS_TYPE.LASTNAME,
                                                              lastname)
+                                cdebug.debug_print(
+                                    f"ulogin AJAX -> [{email}] -> [Получение основной информации аккаунта] -> "
+                                    f"[ID:{sql_user_index} {nickname}, {firstname}, {lastname}]")
 
                             last_login_date = str(query_data.get(SQL_USERS_FIELDS.ufd_last_login_date, None))
                             last_login_date = convert_date_from_sql_format(last_login_date)
@@ -136,6 +139,11 @@ def ulogin(password, email, savemy):
                                                              access_config_serial_del)
                                 cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_SN_ADD,
                                                              access_config_serial_add)
+                                cdebug.debug_print(
+                                    f"ulogin AJAX -> [{email}] -> [Получение прав доступа аккаунта] -> [SN]"
+                                    f"[{access_config_serial_edit}, "
+                                    f"{access_config_serial_del}, "
+                                    f"{access_config_serial_add}]")
 
                             #  ----------------------------------------------------------------------------------------
                             access_config_scan_add = query_data.get(SQL_USERS_FIELDS.ufd_user_access_scan_add, None)
@@ -156,6 +164,12 @@ def ulogin(password, email, savemy):
                                 cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_SCAN_EDIT,
                                                              access_config_scan_edit)
 
+                                cdebug.debug_print(
+                                    f"ulogin AJAX -> [{email}] -> [Получение прав доступа аккаунта] -> [STEMPLATE]"
+                                    f"[{access_config_scan_add}, "
+                                    f"{access_config_scan_delete}, "
+                                    f"{access_config_scan_edit}]")
+
                             #  ----------------------------------------------------------------------------------------
                             access_config_asr_delete = query_data.get(SQL_USERS_FIELDS.ufd_user_access_asr_delete, None)
                             #
@@ -173,6 +187,11 @@ def ulogin(password, email, savemy):
                                                              access_config_asr_edit)
                                 cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_ASR_ADD,
                                                              access_config_asr_add)
+                                cdebug.debug_print(
+                                    f"ulogin AJAX -> [{email}] -> [Получение прав доступа аккаунта] -> [ASR]"
+                                    f"[{access_config_asr_delete}, "
+                                    f"{access_config_asr_edit}, "
+                                    f"{access_config_asr_add}]")
 
                             #  ----------------------------------------------------------------------------------------
                             # last login
