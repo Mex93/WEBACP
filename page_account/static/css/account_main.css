@@ -1,0 +1,66 @@
+.header-welcome {
+	font-size: 30px;
+}
+
+.user-name {
+	font-size: 40px;
+	text-decoration: underline;
+}
+
+.welcome {
+	display: block;
+	color: black;
+	font-size: 40px;
+	background-color: #faa198;
+    border: none;
+    border-radius: 20px;
+	padding: 10px;
+	margin: 20px;
+}
+
+.last-enter {
+	display: inline-block;
+	margin-top: 1%;
+}
+
+.header-table {
+	display: inline-block;
+	background-color: #04AA6D;
+      border: none;
+      color: white;
+	font-size: 30px;
+	margin-bottom: 5%;
+	border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+	padding: 10px;
+}
+.table-access {
+	display: inline-block;
+	margin: 2%;
+	align-items: center;
+}
+.table-access .custom-table {
+	width: 100%;
+}
+.table-access .success{
+	color: green;
+	font-size: 20px;
+}
+.table-access .noaccess {
+	color: red;
+	font-size: 20px;
+}
+
+.table-logs {
+	display: inline-block;
+	margin: 2%;
+	align-items: center;
+}
+.table-logs .custom-table {
+	width: 100%;
+}
+
+.loaded-anim .container {
+	width: 80%;
+	height: 80%;
+}

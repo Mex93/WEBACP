@@ -74,12 +74,27 @@ def login_ajax():
 
 
 # page_name = cpages.get_page_template_name_from_page_id(PAGE_ID.ACCOUNT_MAIN)
+@bp_page_account.route('/account_logs_ajax', methods=['POST', 'GET'])
+def account_logs():
+    if cuser_access.is_sessions_start() is False:
+        return cpages.redirect_on_page(PAGE_ID.LOGIN)
+
+    if request.method == "POST":
+        from page_account.routes.main import account_logs_ajax
+        return account_logs_ajax()
+
+    response_for_client = {
+        "error_text": "Error query Type",
+        "result": False
+    }
+    return jsonify(response_for_client)
 
 @bp_page_account.route('/')
 def account_main():
-    from page_account.routes.main import account_main
+    if cuser_access.is_sessions_start() is False:
+        return cpages.redirect_on_page(PAGE_ID.LOGIN)
 
-    return account_main()
+    return cpages.set_render_page(PAGE_ID.ACCOUNT_MAIN)
 
 
 ##########

@@ -3,11 +3,136 @@
 {% block title %}
 Аккаунт пользователя
 {% endblock %}
-
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('.static', filename = 'css/account_main.css') }}">
+{% endblock %}
 
 {% block body %}
-<div id = "main_container" class = 'container_form-common'>
-
+<div id = "header_container" class = 'container-common container'>
+    <div class = "header-welcome">
+        <span class = "welcome">
+            Добро пожаловать
+        </span>
+        <span class = "user-name">
+        {{ access_unit.get_session_var(access_type.FIRSTNAME) }} {{ access_unit.get_session_var(access_type.LASTNAME) }}
+        </span><br>
+         <span class = "last-enter">
+        Ваш последний визит был {{ access_unit.get_session_var(access_type.LAST_LOGIN_DATE) }}
+        </span><br>
     </div>
+</div>
+
+<div id = "your_access_container" class = 'container-common container'>
+    <div class = "table-access">
+
+         <div class = "header-table">
+            <h1>Ваши возможности</h1>
+        </div>
+        <table class = "custom-table">
+               <tr>
+                <th>Параметр</th>
+                <th>Управление ASR</th>
+                <th>Серийные номера TV</th>
+                <th>Шаблоны сканировки компонентов TV</th>
+               </tr>
+
+               <tr><td><b>Удаление</b></td><td>
+                   {% if access_unit.get_session_var(access_type.ACCESS_ASR_DELETE) %}
+                   <span class = "success"> доступно</span>
+                   {% else %}
+                   <span class = "noaccess"> недоступно</span>
+                   {% endif %}
+               </td><td>
+                   {% if access_unit.get_session_var(access_type.ACCESS_SN_DELETE) %}
+                   <span class = "success"> доступно</span>
+                   {% else %}
+                   <span class = "noaccess"> недоступно</span>
+                   {% endif %}
+               </td><td>
+                   {% if access_unit.get_session_var(access_type.ACCESS_SCAN_DELETE) %}
+                   <span class = "success"> доступно</span>
+                   {% else %}
+                   <span class = "noaccess"> недоступно</span>
+                   {% endif %}
+               </td></tr>
+                 <tr><td><b>Редактирование</b></td><td>
+                   {% if access_unit.get_session_var(access_type.ACCESS_ASR_EDIT) %}
+                   <span class = "success"> доступно</span>
+                   {% else %}
+                   <span class = "noaccess"> недоступно</span>
+                   {% endif %}
+               </td><td>
+                   {% if access_unit.get_session_var(access_type.ACCESS_SN_EDIT) %}
+                   <span class = "success"> доступно</span>
+                   {% else %}
+                   <span class = "noaccess"> недоступно</span>
+                   {% endif %}
+               </td><td>
+                   {% if access_unit.get_session_var(access_type.ACCESS_SCAN_EDIT) %}
+                   <span class = "success"> доступно</span>
+                   {% else %}
+                   <span class = "noaccess"> недоступно</span>
+                   {% endif %}
+               </td></tr>
+                <tr><td><b>Добавление</b></td><td>
+                   {% if access_unit.get_session_var(access_type.ACCESS_ASR_ADD) %}
+                   <span class = "success"> доступно</span>
+                   {% else %}
+                   <span class = "noaccess"> недоступно</span>
+                   {% endif %}
+               </td><td>
+                   {% if access_unit.get_session_var(access_type.ACCESS_SN_ADD) %}
+                   <span class = "success"> доступно</span>
+                   {% else %}
+                   <span class = "noaccess"> недоступно</span>
+                   {% endif %}
+               </td><td>
+                   {% if access_unit.get_session_var(access_type.ACCESS_SCAN_ADD) %}
+                   <span class = "success"> доступно</span>
+                   {% else %}
+                   <span class = "noaccess"> недоступно</span>
+                   {% endif %}
+               </td></tr>
+        </table>
+    </div>
+    <div class = "table-logs">
+         <div class = "header-table">
+        <h1>Последние авторизации в аккаунт</h1>
+        </div>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <div id = "error_box_logs">
+        </div>
+        <div id = "load_logs_anim_block">
+             <div class="loaded-anim container">
+                <div class="box">
+                  <div class="skeleton">
+                    <div class="skeleton-left">
+                        <div class="line h17 w40 m10"></div>
+                        <div class="line"></div>
+                        <div class="line h8 w50"></div>
+                        <div class="line  w75"></div>
+                    </div>
+                    <div class="skeleton-right">
+                      <div class="square"></div>
+                    </div>
+                </div>
+              </div>
+            </div>
+        </div>
+        <div id = "load_logs_table">
+
+            <table id = "table_logs_id" class = "custom-table">
+               <tr>
+                    <th>Дата</th>
+                    <th>IP-адрес</th>
+               </tr>
+            </table>
+        </div>
+    </div>
+<!--    <tr><td>data</td><td>ip</td></tr>-->
+</div>
+{% endblock %}
+{% block js %}
+<script type = "module" src="{{ url_for('static', filename = '/js/engine/modules/account_main.js') }}"></script>
 {% endblock %}
 

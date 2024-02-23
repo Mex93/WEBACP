@@ -1,33 +1,34 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
-.bheader *{
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
-}
+
 .bheader nav{
-  position: fixed;
-  width: 100%;
-  
+
   background: #242526;
+   border-bottom-left-radius: 20px;
+   border-bottom-right-radius: 20px;
 }
 .bheader nav .wrapper{
   position: relative;
-  max-width: 60%;
   padding: 0px 30px;
   height: 70px;
   line-height: 70px;
   margin: auto;
   display: flex;
-  align-items: center;
   justify-content: space-between;
 }
-.bheader .wrapper .logo a{
-  color: #f2f2f2;
-  font-size: 30px;
-  font-weight: 600;
-  text-decoration: none;
-}
+
+ .bheader .wrapper .nav-links{
+    display: block;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    align-items: center;
+    align-content: center;
+    top: -10%;
+    left: 30%;
+    padding: 50px 10px;
+    line-height: 50px;
+  }
+
 .bheader .wrapper .nav-links{
   display: inline-flex;
 }
@@ -55,9 +56,10 @@
   width: 180px;
   line-height: 45px;
   top: 85px;
-  opacity: 0;
+  opacity: 1;
   visibility: hidden;
   box-shadow: 0 6px 10px rgba(0,0,0,0.15);
+  z-index: 3;
 }
 .nav-links li:hover .drop-menu,
 .nav-links li:hover .mega-box{
@@ -75,12 +77,13 @@
 }
 .mega-box{
   position: absolute;
-  left: 30%;
+  left: -10%;
   width: 70%;
   padding: 0 30px;
-  top: 85px;
+  top: 200px;
   opacity: 0;
   visibility: hidden;
+  z-index: 3;
 }
 .mega-box .content{
   background: #242526;
@@ -141,14 +144,14 @@
     display: block;
   }
   .bheader .wrapper .nav-links{
-    position: fixed;
-    height: 100vh;
-    width: 100%;
+    display: block;
+    position: absolute;
+    height: 100%;
+    width: 80%;
     max-width: 350px;
-    top: 0;
+    top: 50 %;
     left: -100%;
     background: #242526;
-    display: block;
     padding: 50px 10px;
     line-height: 50px;
     overflow-y: auto;
@@ -176,6 +179,7 @@
   }
   .nav-links li{
     margin: 15px 10px;
+
   }
   .nav-links li a{
     padding: 0 20px;
@@ -221,16 +225,7 @@
     border-radius: 5px;
     font-size: 18px;
   }
-  .mega-box{
-    position: static;
-    top: 65px;
-    opacity: 1;
-    visibility: visible;
-    padding: 0 20px;
-    max-height: 0px;
-    overflow: hidden;
-    transition: all 0.3s ease;
-  }
+
   .mega-box .content{
     box-shadow: none;
     flex-direction: column;
@@ -258,24 +253,4 @@
 }
 nav input{
   display: none;
-}
-
-.body-text{
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100%;
-  text-align: center;
-  padding: 0 30px;
-}
-.body-text div{
-  font-size: 45px;
-  font-weight: 600;
-}
-
-.bheader .logo img{
-  padding-top: 40px;
-  width: 80%;
-  height: 80%;
 }

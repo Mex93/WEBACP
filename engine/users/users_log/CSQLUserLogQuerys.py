@@ -34,12 +34,12 @@ class CSQLUserLogQuerys:
                             f"'{log_type}', "
                             f"'{log_sub_type}', "
                             f"'%s', "
-                            f"'{text}', "
+                            f"%s, "
                             f"'{ip}' "
                             f") RETURNING  {SQL_LOG_FIELDS.lfd_log_index};")
 
             result = (self.__db_handle.sql_query_and_get_result
-                      (self.__db_handle.get_sql_handle(), query_string, (user_id, ), "_i"))
+                      (self.__db_handle.get_sql_handle(), query_string, (user_id, text), "_i"))
 
             self.__cdebug.debug_print(
                 f"CSQLUserLogQuerys -> [add_log]: [{text}]")
@@ -49,7 +49,7 @@ class CSQLUserLogQuerys:
 
     def get_last_login_log(self, count: int) -> bool | tuple:
         query = (f"SELECT {SQL_LOG_FIELDS.lfd_log_ip},"
-                 f"{SQL_LOG_FIELDS.lfd_log_mac},"
+                 f"{SQL_LOG_FIELDS.lfd_log_index},"
                  f"{SQL_LOG_FIELDS.lfd_log_date} "
                  f"FROM "
                  f"{SQL_TABLE_NAME.user_logs} "
