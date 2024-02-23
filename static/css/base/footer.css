@@ -1,9 +1,9 @@
 
 
 .bfooter body{
-  font-size:14px;
+  font-size:7px;
   background: #fff;
-    max-width:1920px;
+    max-width: 100%;
     margin:0 auto;
   overflow-x:hidden;
   font-family: poppins;
@@ -32,7 +32,7 @@
   width: 100%;
   align-items: center;
   margin: auto;
-  border-top: 20px solid #242526;
+  border-top: 10px solid #242526;
   background: #ccc8c8;
   user-select: none;
 
@@ -42,8 +42,8 @@
   font-weight: bold;
   text-align: left;
   border: none;
-  padding: 10px 15px;
-  font-size: 30px;
+  padding: 5px 7px;
+  font-size: 20px;
 
 }
 .bfooter .iksweb thead tr th:first-child {
@@ -55,7 +55,7 @@
 .bfooter .iksweb tbody td {
   text-align: left;
   border: none;
-  padding: 10px 15px;
+  padding: 5px 7px;
   font-size: 20px;
   vertical-align: top;
 }
