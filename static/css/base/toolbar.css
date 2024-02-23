@@ -14,6 +14,7 @@
   margin: auto;
   display: flex;
   justify-content: space-between;
+  user-select: none;
 }
 
  .bheader .wrapper .nav-links{

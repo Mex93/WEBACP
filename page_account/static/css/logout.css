@@ -1,24 +1,27 @@
-.login_container {
-    box-shadow: 10px 5px 5px #77c9fc;
-}
 
 
 #logout_form .text {
     font-size: 50px;
     font-weight: bolder;
     padding: 2% 2% 2% 2%;
+    user-select: none;
 }
 #logout_form .inline_buttom {
     display: flex;
     align-content: center;
     margin: 10px 10px 10px 10px;
+    user-select: none;
 }
 #logout_form .container_form-common.container-form-logout  {
     width: 30vw;
+    user-select: none;
 }
 #logout_form .inline_buttom .btm_submit-common {
     margin: 2%;
 }
 #logout_form .inline_buttom .btm_submit-common.yes {
     background: red;
+}
+.header-common {
+    user-select: none;
 }

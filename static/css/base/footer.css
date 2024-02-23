@@ -17,6 +17,7 @@
     text-align: center;
     border-bottom-left-radius: 20px;
    border-bottom-right-radius: 20px;
+   user-select: none;
 }
 .copy-right-sec a{
   color: #fcd462;
@@ -33,6 +34,7 @@
   margin: auto;
   border-top: 20px solid #242526;
   background: #ccc8c8;
+  user-select: none;
 
 
 }

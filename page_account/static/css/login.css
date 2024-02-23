@@ -1,5 +1,6 @@
 .login_container {
     box-shadow: 10px 5px 5px #77c9fc;
+     user-select: none;
 }
 
 

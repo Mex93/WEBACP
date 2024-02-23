@@ -58,7 +58,6 @@ function get_logs_ajax()
                     }
                     if(count > 0)
                     {
-
                         table_block.style.display = "block";
                         anim_table_block.style.display = "none";
                     }
@@ -77,6 +76,7 @@ function get_logs_ajax()
             return false
         }
     })
+    return true;
 }
 
 
