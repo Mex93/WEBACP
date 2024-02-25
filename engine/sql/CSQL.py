@@ -326,11 +326,13 @@ class csql_eng:
                 cursor = sql_handle.cursor()
                 cursor.execute(query_str, args)
                 sql_handle.commit()
+                s = True
             except Exception as err:
                 if self.__sql_error_log is True:
                     self.set_sql_console_log(str(err))
                     self.sql_disconnect()
                     raise ErrorSQLQuery("Error SQL: Error in query!")
+
         elif mode == '_i':  # Запрос на обновление или INSERT
 
             # fetch ALL rows. Return first value of a first row

@@ -54,9 +54,8 @@ function get_login({ email, password, savemy }) {
     antiFlood = getTimestampInSeconds() + 2;
 
     let cfield = new CFieldsCheck();
-    let resultObj = {}
     // pass
-    resultObj = cfield.set_check_password(password);
+    let resultObj = cfield.set_check_password(password);
     let ccfPass = new CForms(inputFieldPassID)
 
     if(!resultObj) return false

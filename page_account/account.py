@@ -1,6 +1,5 @@
 from flask import Blueprint, render_template, request, jsonify
 
-
 from engine.pages.CPages import CPages
 from engine.debug.CDebug import CDebug
 from engine.users.CUser import CUser
@@ -70,6 +69,7 @@ def login_ajax():
     }
     return jsonify(response_for_client)
 
+
 ##########
 
 
@@ -89,6 +89,7 @@ def account_logs():
     }
     return jsonify(response_for_client)
 
+
 @bp_page_account.route('/')
 def account_main():
     if cuser_access.is_sessions_start() is False:
@@ -107,3 +108,44 @@ def account_config():
     from page_account.routes.config import account_config
 
     return account_config()
+
+
+@bp_page_account.route('/repass_ajax', methods=['POST', 'GET'])
+def repass_ajax():
+    if cuser_access.is_sessions_start() is False:
+        return cpages.redirect_on_page(PAGE_ID.LOGIN)
+
+    if request.method == "POST":
+        json_ajax = request.get_json()
+        old_pass = json_ajax['cold_pass']
+        new_pass = json_ajax['cnew_pass']
+        re_pass = json_ajax['cre_pass']
+        if old_pass and new_pass and re_pass:
+            from page_account.routes.config import urepass
+            return urepass(old_pass, new_pass, re_pass)
+
+    response_for_client = {
+        "error_text": "Error query Type",
+        "result": False
+    }
+    return jsonify(response_for_client)
+
+
+@bp_page_account.route('/cb_settings_ajax', methods=['POST', 'GET'])
+def ucb_settings():
+    if cuser_access.is_sessions_start() is False:
+        return cpages.redirect_on_page(PAGE_ID.LOGIN)
+
+    if request.method == "POST":
+        json_ajax = request.get_json()
+        cb_timeout = json_ajax['cb_timeout']
+
+        if cb_timeout is not None:
+            from page_account.routes.config import ucb_settings
+            return ucb_settings(cb_timeout)
+
+    response_for_client = {
+        "error_text": "Error query Type",
+        "result": False
+    }
+    return jsonify(response_for_client)

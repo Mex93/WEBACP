@@ -221,6 +221,8 @@ def ulogin(password, email, savemy):
                             response_for_client.update(
                                 {"error_text": "Не найден ID пользователя"})
                 else:
+                    cdebug.debug_print(
+                        f"ulogin AJAX -> [{email}] -> [Ошибка] [Указанное совпадение логина и пароля не обнаружено]")
                     response_for_client.update({"error_text": "Указанное совпадение логина и пароля не обнаружено"})
             else:
                 raise NotConnectToDB("Not SQL Connect!")

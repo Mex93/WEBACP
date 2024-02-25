@@ -106,7 +106,7 @@ class CFieldsCheck
                     }
                     else errorObj.errorText = `${text} должен состоять из символов ${textPattern}`
                 }
-                else errorObj.errorText = `Максимальная длинна ${text} от ${minLen} до ${maxLen}`
+                else errorObj.errorText = `Размер ${text} от ${minLen} до ${maxLen}`
             }
             else errorObj.errorText = `Филда не строка!`
             return errorObj

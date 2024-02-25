@@ -94,3 +94,22 @@ class CUser:
             return f"errorcode: check_login_params -> [3]"
 
         return True
+
+    @staticmethod
+    def check_repass_params(email: str, old_pass: str, new_pass: str, re_pass: str) -> str | bool:
+        if email == "" or old_pass == "" or new_pass == "" or re_pass == "":
+            return f"errorcode: check_repass_params -> [1]"
+
+        if CUser.check_user_email(email) is False:
+            return f"errorcode: check_repass_params -> [2]"
+
+        if CUser.check_user_password(old_pass) is False:
+            return f"errorcode: check_repass_params -> [3]"
+
+        if CUser.check_user_password(new_pass) is False:
+            return f"errorcode: check_repass_params -> [4]"
+
+        if CUser.check_user_password(re_pass) is False:
+            return f"errorcode: check_repass_params -> [5]"
+
+        return True
