@@ -170,9 +170,8 @@ html, body {
 
 .bcontent {
   position: relative;
-  width: 80%;
   padding: 1% 1% 1% 1%;
-  
+  width: 90%; 
   margin: auto;
   /*background: #f7f7f7;*/
   border-radius: 20px;
@@ -180,24 +179,27 @@ html, body {
   
   border: 4px solid #737373;
   
-  margin-top: 4%;
-  margin-bottom: 4%;
+  margin-top: 1%;
+  margin-bottom: 1%;
   background-color: #f7f7f7;
   box-shadow: 5px 5px 5px grey;
 }
 
 .container {
   box-sizing: border-box;
-  margin-bottom: 3%;
+  margin-bottom: 1.5%;
 }
 
 .container_form-common {
     display: block;
     text-align: center;
     position: relative;
+    width: 60%;
+    padding: 5px 5px 5px 5px;
+    /*центрирование*/
+    margin-left: auto;
+    margin-right: auto;
 
-    padding: 10px 10px 10px 10px;
-    
     align-items: center;
     border-radius: 30px;
     background-color: #cacbcc;
@@ -290,8 +292,12 @@ html, body {
     display: block;
     text-align: center;
 
-    width: 100%;
-    padding: 10px 10px 10px 10px;
+    width: 80%;
+    padding: 5px 5px 5px 5px;
+    
+    margin-left: auto;
+    margin-right: auto;
+
     position: relative;
     align-items: center;
     border-radius: 30px;
@@ -476,10 +482,10 @@ html, body {
   background-color: #9da7b0;
   color: black;
   font-size: 30px;
-  margin-bottom: 5%;
+  margin-bottom: 1.5%;
   border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
-  padding: 10px;
+  padding: 5px;
   user-select: none;
 }
 
