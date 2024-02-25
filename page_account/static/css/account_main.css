@@ -56,3 +56,8 @@
 	width: 80%;
 	height: 80%;
 }
+
+#load_logs_table {
+	height: 245px;
+	overflow: auto;
+}

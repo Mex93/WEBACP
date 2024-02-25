@@ -7,15 +7,14 @@
     user-select: none;
 }
 #logout_form .inline_buttom {
-    display: flex;
-    align-content: center;
+    display: block;
+    text-align: center;
+    position: relative;
+
     margin: 10px 10px 10px 10px;
     user-select: none;
 }
-#logout_form .container_form-common.container-form-logout  {
-    width: 30vw;
-    user-select: none;
-}
+
 #logout_form .inline_buttom .btm_submit-common {
     margin: 2%;
 }
@@ -23,5 +22,6 @@
     background: red;
 }
 .header-common {
-    user-select: none;
+   user-select: none;
 }
+

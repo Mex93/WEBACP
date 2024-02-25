@@ -95,13 +95,13 @@ function get_login({ email, password, savemy }) {
             if(data.result === true)
             {
                 blockedForm = true;
-                let formID = document.getElementById("login_form")
-                if(formID !== null)
-                {
-                    formID.style.display='none';
-                }
+                // let formID = document.getElementById("login_form")
+                // if(formID !== null)
+                // {
+                //     formID.style.display='none';
+                // }
                 cmessBox.hide();
-                cwindowBox.show("Выполняется авторизация...\n\n" +
+                cwindowBox.show("Выполняется авторизация",
                     "Если ваш браузер не поддерживает автоматическую переадресацию, " +
                     "то просто обновите страницу", "rgb(4, 170, 109)", 0);
                 setTimeout(function () {
