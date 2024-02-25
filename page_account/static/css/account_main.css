@@ -12,7 +12,7 @@
 	display: block;
 	color: black;
 	font-size: 40px;
-	background-color: #faa198;
+	background-color: #e1effc;
     border: none;
     border-radius: 20px;
 	padding: 10px;
@@ -25,18 +25,7 @@
 	margin-top: 1%;
 }
 
-.header-table {
-	display: inline-block;
-	background-color: #04AA6D;
-      border: none;
-      color: white;
-	font-size: 30px;
-	margin-bottom: 5%;
-	border-bottom-left-radius: 20px;
-    border-bottom-right-radius: 20px;
-	padding: 10px;
-	user-select: none;
-}
+
 .table-access {
 	display: inline-block;
 	margin: 2%;

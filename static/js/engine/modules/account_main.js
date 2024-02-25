@@ -80,7 +80,7 @@ function get_logs_ajax()
 }
 
 
-
+let cwindowBox = new CWindowBox()
 $(document).ready(function() {
     anim_table_block = document.getElementById("load_logs_anim_block");
     table_block = document.getElementById("load_logs_table");
@@ -100,5 +100,8 @@ $(document).ready(function() {
             }
         }
     })
+    cwindowBox.show("Выполняется авторизация",
+        "Если ваш браузер не поддерживает автоматическую переадресацию, " +
+        "то просто обновите страницу", "rgb(4, 170, 109)", 0);
 
 }); // document ready

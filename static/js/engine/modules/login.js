@@ -32,7 +32,7 @@ let responseProcess = false;
 let blockedForm = false;
 
 let cmessBox = new CMessBox("error_box")
-let cwindowBox = new CWindowBox("main_container")
+let cwindowBox = new CWindowBox()
 
 function get_login({ email, password, savemy }) {
 
@@ -157,4 +157,5 @@ $(document).ready(function() {
         }
         get_login(data)
     });
+
 }); // document ready
