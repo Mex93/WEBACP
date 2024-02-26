@@ -79,9 +79,9 @@
 .mega-box{
   position: absolute;
   left: -10%;
-  width: 70%;
+  width: 90%;
   padding: 0 30px;
-  top: 200px;
+  top: 100px;
   opacity: 0;
   visibility: hidden;
   z-index: 3;

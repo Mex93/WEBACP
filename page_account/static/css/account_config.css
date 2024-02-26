@@ -6,14 +6,14 @@
     background-color: #ecf7fc;
     border: none;
     color: white;
-    padding: 16px 32px;
+    padding: 8px 16px;
     text-decoration: none;
     margin: 4px 2px;
     cursor: pointer;
     color: black;
     width: 50%;
     height: 50%;
-    font-size: 30px;
+    font-size: 15px;
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
 }
@@ -25,13 +25,13 @@
 #field_setting_container .setting_repass .btn_change_pass_boockmark {
 
 	float: right;
-	font-size: 50px;
+	font-size: 20px;
 }
 
 #field_setting_container .setting_repass .btn_change_pass_boockmark_btn {
 
 	float: center;
-	font-size: 50px;
+	font-size: 20px;
 	user-select: none;
 }
 #field_setting_container #btn_change_pass_boockmark::before {

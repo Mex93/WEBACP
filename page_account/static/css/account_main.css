@@ -1,9 +1,9 @@
 .header-welcome {
-	font-size: 30px;
+	font-size: 15px;
 }
 
 .user-name {
-	font-size: 40px;
+	font-size: 25px;
 	text-decoration: underline;
 	user-select: none;
 }
@@ -11,12 +11,12 @@
 .welcome {
 	display: block;
 	color: black;
-	font-size: 40px;
+	font-size: 25px;
 	background-color: #e1effc;
     border: none;
-    border-radius: 20px;
-	padding: 10px;
-	margin: 20px;
+    border-radius: 10px;
+	padding: 5px;
+	margin: 10px;
 	user-select: none;
 }
 
@@ -58,6 +58,6 @@
 }
 
 #load_logs_table {
-	height: 245px;
+	height: 300px;
 	overflow: auto;
 }
