@@ -1,13 +1,10 @@
-from flask import Blueprint, render_template, request, jsonify
+from flask import Blueprint, request, jsonify
 
-from engine.pages.CPages import CPages
 from engine.debug.CDebug import CDebug
-from engine.users.CUser import CUser
+from engine.pages.CPages import CPages
 from engine.pages.enums import PAGE_ID
+from engine.users.CUser import CUser
 from engine.users.CUserAccess import CUserAccess
-
-import json
-from engine.common import get_checkbox_state, convert_date_from_sql_format
 
 bp_page_account = Blueprint('account', __name__, template_folder='templates', static_folder='static')
 
@@ -149,3 +146,4 @@ def ucb_settings():
         "result": False
     }
     return jsonify(response_for_client)
+

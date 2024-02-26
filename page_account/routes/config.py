@@ -15,6 +15,9 @@ from engine.users.users_log.enums import LOG_TYPE, LOG_OBJECT_TYPE, LOG_SUBTYPE
 from engine.sql.enums import CONNECT_DB_TYPE
 from engine.sql.CSQL import NotConnectToDB, ErrorSQLQuery, ErrorSQLData
 
+from engine.common import get_current_unix_time
+from engine.users.common import MAX_ACTIVITY_TIME_LEFT
+
 cdebug = CDebug()
 cdebug.debug_system_on(True)
 cpages = CPages(cdebug)
@@ -133,6 +136,10 @@ def ucb_settings(cb_timeout):
                 }
                 update_settings_result = csql.update_SQL_account_checkboxes(user_idx, cb_dict)
                 if update_settings_result is not False:
+
+                    cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCOUNT_TIMEOUT_EXIT_TIME, get_current_unix_time() +
+                                                 MAX_ACTIVITY_TIME_LEFT)
+
                     #################################
                     log_unit = CSQLUserLogQuerys(csql, user_idx)
                     text = f"Пользователь ID: [{user_idx}] обновил настройки аккаунта (чекбоксы)"

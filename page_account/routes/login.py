@@ -18,6 +18,9 @@ from engine.users.CUser import CUser
 
 from engine.debug.CDebug import CDebug
 
+from engine.common import get_current_unix_time
+from engine.users.common import MAX_ACTIVITY_TIME_LEFT
+
 cdebug = CDebug()
 cdebug.debug_system_on(True)
 
@@ -214,6 +217,9 @@ def ulogin(password, email, savemy):
 
                             cuser_access.sessions_start()
 
+                            cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCOUNT_TIMEOUT_EXIT_TIME,
+                                                         get_current_unix_time() +
+                                                         MAX_ACTIVITY_TIME_LEFT)
                         else:
                             cdebug.debug_print(
                                 f"ulogin AJAX -> [{email}] -> [Получение данных аккаунта] -> Не найден ID пользователя")

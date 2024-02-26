@@ -13,6 +13,7 @@ class CUserSessions:
         self.__sname_last_login_date = "last_login_date"
         self.__sname_alevel = "alevel"
         self.__sname_account_timeout_exit = "account_timeout_exit"
+        self.__sname_account_timeout_exit_time = "account_timeout_exit_time"
 
         self.__sname_account_disabled = "account_disabled"
         self.__sname_account_dis_aindex = "account_dis_aindex"
@@ -48,6 +49,8 @@ class CUserSessions:
                 return self.__sname_alevel
             case USER_SECTIONS_TYPE.ACCOUNT_TIMEOUT_EXIT:
                 return self.__sname_account_timeout_exit
+            case USER_SECTIONS_TYPE.ACCOUNT_TIMEOUT_EXIT_TIME:
+                return self.__sname_account_timeout_exit_time
             case USER_SECTIONS_TYPE.ACCOUNT_DISABLED:
                 return self.__sname_account_disabled
             case USER_SECTIONS_TYPE.ACCOUNT_DIS_AINDEX:

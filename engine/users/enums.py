@@ -10,6 +10,8 @@ class USER_SECTIONS_TYPE(IntEnum):
     ALEVEL = auto(),
 
     ACCOUNT_TIMEOUT_EXIT = auto(),
+    ACCOUNT_TIMEOUT_EXIT_TIME = auto(),
+
     ACCOUNT_DISABLED = auto(),
     ACCOUNT_DIS_AINDEX = auto(),
     ACCOUNT_DIS_DATE = auto(),
