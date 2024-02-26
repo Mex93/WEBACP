@@ -19,7 +19,7 @@ from engine.users.CUser import CUser
 from engine.debug.CDebug import CDebug
 
 from engine.common import get_current_unix_time
-from engine.users.common import MAX_ACTIVITY_TIME_LEFT
+from engine.users.common import MAX_ACTIVITY_TIME_LEFT, MAX_CHECK_PERMISSIONS_TIME_LEFT
 
 cdebug = CDebug()
 cdebug.debug_system_on(True)
@@ -62,13 +62,14 @@ def ulogin(password, email, savemy):
                     if account_disabled is True:
 
                         account_disable_aindex = query_data.get(SQL_USERS_FIELDS.ufd_account_dis_aindex, None)
-                        account_disable_date = query_data.get(SQL_USERS_FIELDS.ufd_account_dis_date, None)
+                        account_disable_date = str(query_data.get(SQL_USERS_FIELDS.ufd_account_dis_date, None))
+                        account_disable_date = convert_date_from_sql_format(account_disable_date)
                         admin_name = csql.get_nickname_from_user_id(account_disable_aindex)
 
                         response_for_client.update({"error_text": (
-                            "Ваш аккаунт отключен администратором!",
-                            f"Администратор: '{admin_name}'",
-                            f"Дата отключения: {account_disable_date}")})
+                            f"Ваш аккаунт отключен администратором!\n"
+                            f"Администратор: '{admin_name}'\n"
+                            f"Дата отключения: {account_disable_date}\n")})
                         cdebug.debug_print(
                             f"ulogin AJAX -> [{email}] -> [Аккаунт заблокирован [{admin_name} {account_disable_date}]")
                     else:
@@ -217,9 +218,14 @@ def ulogin(password, email, savemy):
 
                             cuser_access.sessions_start()
 
+                            # Чекер таймаута в настройках
                             cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCOUNT_TIMEOUT_EXIT_TIME,
                                                          get_current_unix_time() +
                                                          MAX_ACTIVITY_TIME_LEFT)
+                            # Чекер валидности аккаунта
+                            cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCOUNT_CHECKER_TIME,
+                                                         get_current_unix_time() +
+                                                         MAX_CHECK_PERMISSIONS_TIME_LEFT)
                         else:
                             cdebug.debug_print(
                                 f"ulogin AJAX -> [{email}] -> [Получение данных аккаунта] -> Не найден ID пользователя")

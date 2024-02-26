@@ -126,3 +126,24 @@ class CSQLUserQuerys(CSqlAgent):
             self.get_sql_handle(), query, (u_cb_timeout_exit, user_id, ), "_u")
 
         return result
+
+    def check_account_from_user_id(self, uid: int) -> dict | bool:
+
+        query_string = (f"SELECT "
+                        f"{SQL_USERS_FIELDS.ufd_nickname},"
+                        f"{SQL_USERS_FIELDS.ufd_account_disabled} "
+                        f"FROM {SQL_TABLE_NAME.user_accounts} "
+                        f"WHERE {SQL_USERS_FIELDS.ufd_index} = %s "
+                        f"LIMIT 1")
+
+        result = self.sql_query_and_get_result(
+            self.get_sql_handle(), query_string, (uid,), "_1", )  # Запрос типа аасоциативного массива
+        if result is False:  # Errorrrrrrrrrrrrr based data
+            return False
+        # print(result)
+
+        sql_result = result[0].get(SQL_USERS_FIELDS.ufd_nickname, None)
+        if sql_result is not None:
+            if result[0].get(SQL_USERS_FIELDS.ufd_account_disabled, None) is not None:
+                return result[0]
+        return False

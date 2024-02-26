@@ -14,7 +14,7 @@ MIN_USER_PASSWORD_LEN = 6
 
 
 MAX_ACTIVITY_TIME_LEFT = 10 * 600  # sec 10 min
-MAX_CHECK_PERMISSIONS_TIME_LEFT = 10 * 600  # sec 10 min
+MAX_CHECK_PERMISSIONS_TIME_LEFT = 10 * 600  # Чекер валидности аккаунта * 600
 
 
 def get_inet_ipaddress():
