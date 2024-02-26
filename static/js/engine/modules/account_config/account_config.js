@@ -1,10 +1,11 @@
-import {CForms} from "../CForms.js";
-import {CFieldsCheck} from "../CFieldsCheck.js";
-import {CMessBox} from "../CMessBox.js";
+import {CForms} from "/static/js/engine/CForms.js";
+import {CFieldsCheck} from "/static/js/engine/CFieldsCheck.js";
+import {CMessBox} from "/static/js/engine/CMessBox.js";
+import {CBSettings} from "./CCBSettings.js"
 
 import {
     getTimestampInSeconds,
-    } from "../common.js";
+    } from "/static/js/engine/common.js";
 
 
 let repassVisible = false;
@@ -122,6 +123,9 @@ function onChangeRepass({oldPass, newPass, rePass})
 }
 let checkboxErrorUnit = new CMessBox("error_box_checkbox")
 
+
+let ccbSettings = new CBSettings();
+
 function onChangeCheckbox()
 {
 
@@ -136,15 +140,26 @@ function onChangeCheckbox()
         checkboxErrorUnit.sendErrorMessage("Ответ от сервера ещё не пришёл!");
         return false;  //(false - не отправляем форму на сервер)
     }
-    checkboxErrorUnit.hide();
+
     // checkbox Автоматический выход при неактивности
-    let cbTimeOutID = document.getElementById("cb_timeout");
+
+    let cbTimeOutID = ccbSettings.getCBFieldID(ccbSettings.cb_FieldType.CB_TIMEOUT);
+    let cbTimeoutCheckedStatus = cbTimeOutID.checked;
     antiFlood = getTimestampInSeconds() + 2;
+    if(cbTimeoutCheckedStatus === ccbSettings.getCBValue(ccbSettings.cb_FieldType.CB_TIMEOUT))
+    {
+        checkboxErrorUnit.sendErrorMessage("Вы ничего не изменяли");
+        return false;
+    }
+    checkboxErrorUnit.hide();
+
+    ccbSettings.updateCBValue(ccbSettings.cb_FieldType.CB_TIMEOUT, cbTimeoutCheckedStatus);
+
 
     responseProcess = true;
 
     let completed_json = JSON.stringify({
-        cb_timeout: cbTimeOutID.checked,
+        cb_timeout: cbTimeoutCheckedStatus,
     }); //$.parseJSON(json_text);
 
     $.ajax({
@@ -234,5 +249,12 @@ $(document).ready(function() {
 
         onChangeCheckbox();
     });
+
+    let element = document.getElementById("cb_timeout");
+    if(element !== null)
+    {
+        ccbSettings.updateCBFieldID(ccbSettings.cb_FieldType.CB_TIMEOUT, element);
+        ccbSettings.updateCBValue(ccbSettings.cb_FieldType.CB_TIMEOUT, element.checked);
+    }
 
 }); // document ready

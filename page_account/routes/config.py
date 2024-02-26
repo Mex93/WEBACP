@@ -146,6 +146,7 @@ def ucb_settings(cb_timeout):
                     cdebug.debug_print(
                         f"ucb_settings AJAX -> [{email}] -> [Аккаунт успешно обновил настройки аккаунта (чекбоксы)] -> "
                         f"[Ответ в JS]")
+                    cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCOUNT_TIMEOUT_EXIT, cb_timeout)
                 else:
                     response_for_client.update({"error_text": "Не найдено одно из полей настроек в объекте 'cb_dict'"})
                     cdebug.debug_print(

@@ -140,7 +140,7 @@ def ucb_settings():
         json_ajax = request.get_json()
         cb_timeout = json_ajax['cb_timeout']
 
-        if cb_timeout is not None:
+        if cb_timeout is not None and isinstance(cb_timeout, bool):
             from page_account.routes.config import ucb_settings
             return ucb_settings(cb_timeout)
 
