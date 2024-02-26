@@ -143,9 +143,14 @@ function onChangeCheckbox()
 
     // checkbox Автоматический выход при неактивности
 
-    let cbTimeOutID = ccbSettings.getCBFieldID(ccbSettings.cb_FieldType.CB_TIMEOUT);
-    let cbTimeoutCheckedStatus = cbTimeOutID.checked;
     antiFlood = getTimestampInSeconds() + 2;
+    let cbTimeOutID = ccbSettings.getCBFieldID(ccbSettings.cb_FieldType.CB_TIMEOUT);
+    if(cbTimeOutID === null)
+    {
+        checkboxErrorUnit.sendErrorMessage("Ошибка определения ID чекбокса");
+        return false;
+    }
+    let cbTimeoutCheckedStatus = cbTimeOutID.checked;
     if(cbTimeoutCheckedStatus === ccbSettings.getCBValue(ccbSettings.cb_FieldType.CB_TIMEOUT))
     {
         checkboxErrorUnit.sendErrorMessage("Вы ничего не изменяли");
