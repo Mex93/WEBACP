@@ -4,7 +4,7 @@
 Настройки аккаунта
 {% endblock %}
 {% block css %}
-<link rel="stylesheet" href="{{ url_for('.static', filename = 'css/account_config.css') }}">
+<link rel="stylesheet" href="{{ url_for('.static', filename = 'css/account/config.css') }}">
 {% endblock %}
 
 {% block body %}
@@ -68,6 +68,6 @@
 <!--    <tr><td>data</td><td>ip</td></tr>-->
 {% endblock %}
 {% block js %}
-<script type = "module" src="{{ url_for('static', filename = '/js/engine/modules/account_config/account_config.js') }}"></script>
+<script type = "module" src="{{ url_for('static', filename = '/js/engine/modules/account/settings.js') }}"></script>
 {% endblock %}
 

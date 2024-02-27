@@ -1,11 +1,14 @@
+
 import {CForms} from "/static/js/engine/CForms.js";
 import {CFieldsCheck} from "/static/js/engine/CFieldsCheck.js";
 import {CMessBox} from "/static/js/engine/CMessBox.js";
-import {CBSettings} from "./CCBSettings.js"
+import {CBSettings} from "/static/js/engine/modules/account/settings/CCBSettings.js"
 
 import {
     getTimestampInSeconds,
-    } from "/static/js/engine/common.js";
+} from "/static/js/engine/common.js";
+
+
 
 
 let repassVisible = false;

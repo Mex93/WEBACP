@@ -1,9 +1,10 @@
 
-import {CMessBox} from "../CMessBox.js";
+import {CMessBox} from "/static/js/engine/CMessBox.js"
+
 
 import {
     getTimestampInSeconds,
-    } from "../common.js";
+} from "/static/js/engine/common.js";
 
 
 let anim_table_block = null;

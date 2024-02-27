@@ -4,7 +4,7 @@
 Аккаунт пользователя
 {% endblock %}
 {% block css %}
-<link rel="stylesheet" href="{{ url_for('.static', filename = 'css/account_main.css') }}">
+<link rel="stylesheet" href="{{ url_for('.static', filename = 'css/account/main.css') }}">
 {% endblock %}
 
 {% block body %}
@@ -136,6 +136,6 @@
 </div>
 {% endblock %}
 {% block js %}
-<script type = "module" src="{{ url_for('static', filename = '/js/engine/modules/account_main.js') }}"></script>
+<script type = "module" src="{{ url_for('static', filename = '/js/engine/modules/account/main.js') }}"></script>
 {% endblock %}
 

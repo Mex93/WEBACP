@@ -8,7 +8,7 @@ from engine.users.enums import USER_ALEVEL
 class CPages:
     def __init__(self, cdebug):
         # templates
-        path_to_accounts_module = "page_account"
+        path_to_accounts_module = "account"
         path_to_based_module = ""
         # templates name
         self.__template_name_login = 'login'

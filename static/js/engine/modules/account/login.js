@@ -1,11 +1,12 @@
-import {CForms} from "../CForms.js";
-import {CFieldsCheck} from "../CFieldsCheck.js";
-import {CMessBox} from "../CMessBox.js";
-import {CWindowBox} from "../CWindowBox.js";
+import {CForms} from "/static/js/engine/CForms.js";
+import {CFieldsCheck} from "/static/js/engine/CFieldsCheck.js";
+import {CMessBox} from "/static/js/engine/CMessBox.js"
+import {CWindowBox} from "/static/js/engine/CWindowBox.js";
+import {CBSettings} from "/static/js/engine/modules/account/settings/CCBSettings.js"
 
 import {
     getTimestampInSeconds,
-    } from "../common.js";
+} from "/static/js/engine/common.js";
 
 
 
