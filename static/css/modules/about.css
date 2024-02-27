@@ -1,0 +1,57 @@
+
+.container-common .logo-images img {
+	margin-top: 4%;
+	height: 150px;
+	width: 500px;
+	user-select: none;
+	transition: height 1s, width 1s;
+}
+.container-common .logo-images img:hover {
+	height: 200px;
+	width: 700px;
+}
+.container-common .text-box .main-text {
+	margin-top:10%;
+	float: center;
+	font-size: 20px;
+	user-select: none;
+}
+.container-common .main-text .header {
+	display: block;
+	font-size: 30px;
+	font-weight: bold;
+}
+.container-common .main-text .text {
+	display: block;
+	font-size: 20px;
+}
+.container-common .main-text .email {
+	display: block;
+	font-weight: bold;
+	font-size: 25px;
+	user-select: none;
+	transition: font-size 1s, user-select 0s;
+}
+
+.container-common .text-box .year {
+	display: block;
+	font-size: 50px;
+	transition: font-size 1s;
+}
+
+.container-common .text-box .year:hover {
+	font-size: 60px;
+}
+.container-common .text-box .email:hover {
+	font-size: 50px;
+	user-select: text;
+}
+
+
+
+
+
+
+
+
+

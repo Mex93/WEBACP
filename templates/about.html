@@ -1,13 +1,32 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Главная страница о нас
+О сайте
+{% endblock %}
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename = 'css/modules/about.css') }}">
 {% endblock %}
 
 {% block body %}
-<div class = 'container'>
-    <h1>Тело сайта о нас</h1>
+<div class = 'container-common container'>
+    <div class = "logo-images">
+        <img src="{{ url_for('static', filename = 'img/logo.png') }}">
+    </div>
+    <div class = "text-box">
+        <div class = "main-text">
+             {% autoescape false %}
+              {{ var_values.text_main }}
+            {% endautoescape %}
+        </div>
+        <div class = "year">
+
+            {% autoescape false %}
+              {{ var_values.year }}
+            {% endautoescape %}
+        </div>
+    </div>
 </div>
 
+<!--    <tr><td>data</td><td>ip</td></tr>-->
 {% endblock %}
 

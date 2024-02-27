@@ -123,7 +123,7 @@ class CPages:
                                        access_section=USER_SECTION_ACCESS_TYPE,
                                        alevel=USER_ALEVEL,
                                        access_type=USER_SECTIONS_TYPE,
-                                       errors=variables)
+                                       var_values=variables)
         self.__debug_unit.debug_print(f"Не найден шаблон {name}. Прогружаю 404!")
         return render_template(f"{self.__template_name_404}.html")
 

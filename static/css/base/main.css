@@ -172,7 +172,7 @@ html, body {
 .bcontent {
   position: relative;
   padding: 1% 1% 1% 1%;
-  width: 90%; 
+  width: 100%; 
   margin: auto;
   /*background: #f7f7f7;*/
   border-radius: 20px;
@@ -321,7 +321,7 @@ html, body {
     display: block;
     text-align: center;
 
-    width: 80%;
+    width: 95%;
     padding: 5px 5px 5px 5px;
 
     margin-left: auto;
