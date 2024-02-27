@@ -58,4 +58,4 @@ def logout():
     finally:
         csql.disconnect_from_db()
         cuser_access.delete_all_user_sessions()
-        return cpages.redirect_on_page(PAGE_ID.LOGIN)
+        return cpages.redirect_on_page(PAGE_ID.ACCOUNT_LOGIN)

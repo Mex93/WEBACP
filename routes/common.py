@@ -67,7 +67,7 @@ def check_user():
                             f"Время жизни сессии {MAX_USER_SESSION_LIFE_TIME/60} минут]")
 
                         cuser_access.delete_all_user_sessions()
-                        return cpages.redirect_on_page(PAGE_ID.LOGIN)
+                        return cpages.redirect_on_page(PAGE_ID.ACCOUNT_LOGIN)
                     else:
                         cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCOUNT_SAVE_ME_START_TIME,
                                                      current_unix_time +
@@ -108,7 +108,7 @@ def check_user():
                                             f"[Аккаунт заблокирован]")
 
                                         cuser_access.delete_all_user_sessions()
-                                        return cpages.redirect_on_page(PAGE_ID.LOGIN)
+                                        return cpages.redirect_on_page(PAGE_ID.ACCOUNT_LOGIN)
 
                                 else:
                                     cdebug.debug_print(
@@ -126,7 +126,7 @@ def check_user():
                                     #################################
 
                                     cuser_access.delete_all_user_sessions()
-                                    return cpages.redirect_on_page(PAGE_ID.LOGIN)
+                                    return cpages.redirect_on_page(PAGE_ID.ACCOUNT_LOGIN)
 
                         except NotConnectToDB as err:
                             cdebug.debug_print(
@@ -186,7 +186,7 @@ def check_user():
                                     f"check_user -> [{email}:{user_idx}] -> [Исключение] [ErrorSQLData: '{err}']")
                             finally:
                                 csql.disconnect_from_db()
-                                return cpages.redirect_on_page(PAGE_ID.LOGIN)
+                                return cpages.redirect_on_page(PAGE_ID.ACCOUNT_LOGIN)
                         else:
                             cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCOUNT_TIMEOUT_EXIT_TIME, current_unix_time +
                                                          MAX_ACTIVITY_TIME_LEFT)

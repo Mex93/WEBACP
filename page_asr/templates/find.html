@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}
+ASR - Поиск
+{% endblock %}
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('.static', filename = 'css/find.css') }}">
+{% endblock %}
+
+{% block body %}
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+<div id = "checkbox_container" class = 'container-common container'>
+
+    <div class = "header-common">
+        <h1>Поиск ASR</h1>
+    </div>
+</div>
+
+<!--    <tr><td>data</td><td>ip</td></tr>-->
+{% endblock %}
+{% block js %}
+<script type = "module" src="{{ url_for('static', filename = '/js/engine/modules/asr/find.js') }}"></script>
+{% endblock %}
+

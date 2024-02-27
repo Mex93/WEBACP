@@ -16,13 +16,13 @@ cuser = CUser()
 cuser_access = CUserAccess()
 cpages = CPages(cdebug)
 
-page_name = cpages.get_page_template_name_from_page_id(PAGE_ID.LOGOUT)
+page_name = cpages.get_page_template_name_from_page_id(PAGE_ID.ACCOUNT_LOGOUT)
 
 
 @bp_page_account.route(f'/{page_name}', methods=['POST', 'GET'])
 def logout():
     if cuser_access.is_sessions_start() is False:
-        return cpages.redirect_on_page(PAGE_ID.LOGIN)
+        return cpages.redirect_on_page(PAGE_ID.ACCOUNT_LOGIN)
 
     from page_account.routes.logout import logout
     if request.method == "POST":
@@ -31,12 +31,12 @@ def logout():
         elif 'no' in request.form:
             return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
 
-    return cpages.set_render_page(PAGE_ID.LOGOUT)
+    return cpages.set_render_page(PAGE_ID.ACCOUNT_LOGOUT)
 
 
 ####
 
-page_name = cpages.get_page_template_name_from_page_id(PAGE_ID.LOGIN)
+page_name = cpages.get_page_template_name_from_page_id(PAGE_ID.ACCOUNT_LOGIN)
 
 
 @bp_page_account.route(f'/{page_name}', methods=['POST', 'GET'])
@@ -44,7 +44,7 @@ def ulogin():
     if cuser_access.is_sessions_start() is True:
         return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
 
-    return cpages.set_render_page(PAGE_ID.LOGIN)
+    return cpages.set_render_page(PAGE_ID.ACCOUNT_LOGIN)
 
 
 @bp_page_account.route('/login_ajax', methods=['POST', 'GET'])
@@ -76,7 +76,7 @@ def login_ajax():
 @bp_page_account.route('/account_logs_ajax', methods=['POST', 'GET'])
 def account_logs():
     if cuser_access.is_sessions_start() is False:
-        return cpages.redirect_on_page(PAGE_ID.LOGIN)
+        return cpages.redirect_on_page(PAGE_ID.ACCOUNT_LOGIN)
 
     if request.method == "POST":
         from page_account.routes.main import account_logs_ajax
@@ -92,7 +92,7 @@ def account_logs():
 @bp_page_account.route('/')
 def account_main():
     if cuser_access.is_sessions_start() is False:
-        return cpages.redirect_on_page(PAGE_ID.LOGIN)
+        return cpages.redirect_on_page(PAGE_ID.ACCOUNT_LOGIN)
 
     return cpages.set_render_page(PAGE_ID.ACCOUNT_MAIN)
 
@@ -112,7 +112,7 @@ def account_config():
 @bp_page_account.route('/repass_ajax', methods=['POST', 'GET'])
 def repass_ajax():
     if cuser_access.is_sessions_start() is False:
-        return cpages.redirect_on_page(PAGE_ID.LOGIN)
+        return cpages.redirect_on_page(PAGE_ID.ACCOUNT_LOGIN)
 
     if request.method == "POST":
         json_ajax = request.get_json()
@@ -133,7 +133,7 @@ def repass_ajax():
 @bp_page_account.route('/cb_settings_ajax', methods=['POST', 'GET'])
 def ucb_settings():
     if cuser_access.is_sessions_start() is False:
-        return cpages.redirect_on_page(PAGE_ID.LOGIN)
+        return cpages.redirect_on_page(PAGE_ID.ACCOUNT_LOGIN)
 
     if request.method == "POST":
         json_ajax = request.get_json()

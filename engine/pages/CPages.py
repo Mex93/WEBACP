@@ -8,28 +8,45 @@ from engine.users.enums import USER_ALEVEL
 class CPages:
     def __init__(self, cdebug):
         # templates
-        path_to_accounts_module = "account"
+        path_to_accounts_module = ""
         path_to_based_module = ""
         # templates name
+        # acc
         self.__template_name_login = 'login'
         self.__template_name_logout = 'logout'
         self.__template_name_account_main = 'main'
         self.__template_name_account_config = 'config'
+
         self.__template_name_index = 'index'
         self.__template_name_about = 'about'
         self.__template_name_404 = '404'
 
+        # asr
+        self.__template_name_asr_find = 'find'
+        self.__template_name_asr_edit = 'edit'
+        self.__template_name_asr_del = 'del'
+
         # templates path
+        # asr
+        self.__template_path_asr_find = 'find'
+        self.__template_path_asr_del = 'del'
+        self.__template_path_asr_edit = 'edit'
+        # account
         self.__template_path_account_login = f'{path_to_accounts_module}/login'
         self.__template_path_account_logout = f'{path_to_accounts_module}/logout'
         self.__template_path_account_main = f'{path_to_accounts_module}/main'
         self.__template_path_account_config = f'{path_to_accounts_module}/config'
+        # common
         self.__template_path_404 = '404'
         self.__template_path_about = 'about'
         self.__template_path_index = 'index'
 
-
         # url routs
+        # asr
+        self.__route_name_asr_find = 'asr/find'
+        self.__route_name_asr_edit = 'asr/edit'
+        self.__route_name_asr_del = 'asr/del'
+        # acc
         self.__route_name_login = 'account/login'
         self.__route_name_logout = 'account/logout'
         self.__route_name_account_main = 'account/'
@@ -52,9 +69,9 @@ class CPages:
 
     def get_template_path_from_page_id(self, page_id: PAGE_ID):
         match page_id:
-            case PAGE_ID.LOGIN:
+            case PAGE_ID.ACCOUNT_LOGIN:
                 name = self.__template_path_account_login
-            case PAGE_ID.LOGOUT:
+            case PAGE_ID.ACCOUNT_LOGOUT:
                 name = self.__template_path_account_logout
             case PAGE_ID.ACCOUNT_MAIN:
                 name = self.__template_path_account_main
@@ -64,6 +81,14 @@ class CPages:
                 name = self.__template_path_index
             case PAGE_ID.ABOUT:
                 name = self.__template_path_about
+
+            case PAGE_ID.ASR_FIND:
+                name = self.__template_path_asr_find
+            case PAGE_ID.ASR_DEL:
+                name = self.__template_path_asr_del
+            case PAGE_ID.ASR_EDIT:
+                name = self.__template_path_asr_edit
+
             # case PAGE_ID.PAGE_NOT_FOUND:
             #     name = self.__template_path_404
             case _:
@@ -72,9 +97,9 @@ class CPages:
 
     def get_page_template_name_from_page_id(self, page_id: PAGE_ID) -> bool | str:
         match page_id:
-            case PAGE_ID.LOGIN:
+            case PAGE_ID.ACCOUNT_LOGIN:
                 name = self.__template_name_login
-            case PAGE_ID.LOGOUT:
+            case PAGE_ID.ACCOUNT_LOGOUT:
                 name = self.__template_name_logout
             case PAGE_ID.ACCOUNT_MAIN:
                 name = self.__template_name_account_main
@@ -84,6 +109,14 @@ class CPages:
                 name = self.__template_name_index
             case PAGE_ID.ABOUT:
                 name = self.__template_name_about
+
+            case PAGE_ID.ASR_FIND:
+                name = self.__template_name_asr_find
+            case PAGE_ID.ASR_DEL:
+                name = self.__template_name_asr_del
+            case PAGE_ID.ASR_EDIT:
+                name = self.__template_name_asr_edit
+
             # case PAGE_ID.PAGE_NOT_FOUND:
             #     name = self.__template_name_404
             case _:
@@ -92,9 +125,9 @@ class CPages:
 
     def get_page_route_name_from_page_id(self, page_id: PAGE_ID) -> bool | str:
         match page_id:
-            case PAGE_ID.LOGIN:
+            case PAGE_ID.ACCOUNT_LOGIN:
                 name = self.__route_name_login
-            case PAGE_ID.LOGOUT:
+            case PAGE_ID.ACCOUNT_LOGOUT:
                 name = self.__route_name_logout
             case PAGE_ID.ACCOUNT_MAIN:
                 name = self.__route_name_account_main
@@ -104,6 +137,14 @@ class CPages:
                 name = self.__route_name_index
             case PAGE_ID.ABOUT:
                 name = self.__route_name_about
+
+            case PAGE_ID.ASR_FIND:
+                name = self.__route_name_asr_find
+            case PAGE_ID.ASR_DEL:
+                name = self.__route_name_asr_del
+            case PAGE_ID.ASR_EDIT:
+                name = self.__route_name_asr_edit
+
             # case PAGE_ID.PAGE_NOT_FOUND:
             #     name = self.__route_name_404
             case _:

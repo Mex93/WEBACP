@@ -28,7 +28,7 @@ cuser = CUser()
 
 def account_config():
     if cuser_access.is_sessions_start() is False:
-        return cpages.redirect_on_page(PAGE_ID.LOGIN)
+        return cpages.redirect_on_page(PAGE_ID.ACCOUNT_LOGIN)
 
     return cpages.set_render_page(PAGE_ID.ACCOUNT_CONFIG)
 
