@@ -36,7 +36,7 @@ let cwindowBox = new CWindowBox()
 
 function get_login({ email, password, savemy }) {
 
-    if(!email || !password || !savemy || blockedForm)
+    if(!email || !password || blockedForm)
     {
         return false;
     }
@@ -152,7 +152,7 @@ $(document).ready(function() {
         const data = {
             email: c_name.getInputValue(),
             password: c_pass.getInputValue(),
-            savemy: c_savemy.getInputValue(),
+            savemy: inputFieldSaveMeID.checked,
         }
         get_login(data)
     });

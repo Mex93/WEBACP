@@ -5,6 +5,7 @@ from engine.pages.CPages import CPages
 from engine.pages.enums import PAGE_ID
 from engine.users.CUser import CUser
 from engine.users.CUserAccess import CUserAccess
+from engine.common import get_checkbox_state
 
 bp_page_account = Blueprint('account', __name__, template_folder='templates', static_folder='static')
 
@@ -56,7 +57,8 @@ def login_ajax():
         password = json_ajax['cpassword']
         email = json_ajax['cnickname']
         savemy = json_ajax['csavemy']
-        if savemy and email:
+
+        if password and email:
             from page_account.routes.login import ulogin
             return ulogin(password, email, savemy)
 

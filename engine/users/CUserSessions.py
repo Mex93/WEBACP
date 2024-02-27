@@ -15,6 +15,9 @@ class CUserSessions:
         self.__sname_account_timeout_exit = "account_timeout_exit"
         self.__sname_account_timeout_exit_time = "account_timeout_exit_time"
 
+        self.__sname_account_save_me_time = "account_sme_time"
+        self.__sname_account_check_sessions = "account_check_sess"
+
         self.__sname_account_disabled = "account_disabled"
         self.__sname_account_dis_aindex = "account_dis_aindex"
         self.__sname_account_dis_date = "account_dis_date"
@@ -53,8 +56,12 @@ class CUserSessions:
                 return self.__sname_account_timeout_exit
             case USER_SECTIONS_TYPE.ACCOUNT_TIMEOUT_EXIT_TIME:
                 return self.__sname_account_timeout_exit_time
-            case USER_SECTIONS_TYPE.ACCOUNT_CHECKER_TIME:
+            case USER_SECTIONS_TYPE.ACCOUNT_SAVE_ME_START_TIME:
+                return self.__sname_account_save_me_time
+            case USER_SECTIONS_TYPE.ACCOUNT_CHECKER_ACC_FIND_TIME:
                 return self.__sname_account_checker_time
+            case USER_SECTIONS_TYPE.ACCOUNT_CHECK_SESSIONS:
+                return self.__sname_account_check_sessions
             case USER_SECTIONS_TYPE.ACCOUNT_DISABLED:
                 return self.__sname_account_disabled
             case USER_SECTIONS_TYPE.ACCOUNT_DIS_AINDEX:

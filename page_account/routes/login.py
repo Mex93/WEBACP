@@ -19,7 +19,7 @@ from engine.users.CUser import CUser
 from engine.debug.CDebug import CDebug
 
 from engine.common import get_current_unix_time
-from engine.users.common import MAX_ACTIVITY_TIME_LEFT, MAX_CHECK_PERMISSIONS_TIME_LEFT
+from engine.users.common import MAX_ACTIVITY_TIME_LEFT, MAX_CHECK_PERMISSIONS_TIME_LEFT, MAX_USER_SESSION_LIFE_TIME
 
 cdebug = CDebug()
 cdebug.debug_system_on(True)
@@ -42,7 +42,6 @@ def ulogin(password, email, savemy):
 
     result_login_check_fields = cuser.check_login_params(email, password)
     if result_login_check_fields is True:  # success
-        savemy = get_checkbox_state(request.form.get('csavemy'))
         cdebug.debug_print(f"ulogin AJAX -> [{email}] -> "
                            f"[Проверка введённых данных пройдена успешно. Начинаю подгрузку из БД]")
         csql = CSQLUserQuerys()
@@ -217,15 +216,30 @@ def ulogin(password, email, savemy):
                                 f"ulogin AJAX -> [{email}] -> [Аккаунт успешно загружен] -> [Ответ в JS]")
 
                             cuser_access.sessions_start()
-
+                            unix_time = get_current_unix_time()
                             # Чекер таймаута в настройках
                             cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCOUNT_TIMEOUT_EXIT_TIME,
-                                                         get_current_unix_time() +
+                                                         unix_time +
                                                          MAX_ACTIVITY_TIME_LEFT)
                             # Чекер валидности аккаунта
-                            cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCOUNT_CHECKER_TIME,
-                                                         get_current_unix_time() +
+                            cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCOUNT_CHECKER_ACC_FIND_TIME,
+                                                         unix_time +
                                                          MAX_CHECK_PERMISSIONS_TIME_LEFT)
+                            # saveme start time session
+                            if savemy is False:  # save me не выбрано, установка времени жизни сессии в 1 час
+                                cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCOUNT_SAVE_ME_START_TIME,
+                                                             unix_time +
+                                                             MAX_USER_SESSION_LIFE_TIME)
+                            else:  # установлено - запоминаем
+                                cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCOUNT_SAVE_ME_START_TIME,
+                                                             0)
+
+                            # чекер уходящих запросов юзеру, что бы по 10 запровос за п=раз не делать в before request
+                            # потому что декоратор вызывает функцию для КАЖДОГО запроса, даже на нахождение favicon
+                            cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCOUNT_CHECK_SESSIONS,
+                                                         unix_time +
+                                                         2)
+
                         else:
                             cdebug.debug_print(
                                 f"ulogin AJAX -> [{email}] -> [Получение данных аккаунта] -> Не найден ID пользователя")

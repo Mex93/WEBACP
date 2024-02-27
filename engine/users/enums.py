@@ -11,7 +11,9 @@ class USER_SECTIONS_TYPE(IntEnum):
 
     ACCOUNT_TIMEOUT_EXIT = auto(),
     ACCOUNT_TIMEOUT_EXIT_TIME = auto(),
-    ACCOUNT_CHECKER_TIME = auto(),
+    ACCOUNT_CHECKER_ACC_FIND_TIME = auto(),
+    ACCOUNT_SAVE_ME_START_TIME = auto(),
+    ACCOUNT_CHECK_SESSIONS = auto(),
 
     ACCOUNT_DISABLED = auto(),
     ACCOUNT_DIS_AINDEX = auto(),
