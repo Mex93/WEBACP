@@ -8,7 +8,9 @@ import {
     getTimestampInSeconds,
 } from "/static/js/engine/common.js";
 
-
+import {
+    CCaptha,
+} from "/static/js/engine/CCaptha.js";
 
 
 let repassVisible = false;
@@ -88,10 +90,27 @@ function onChangeRepass({oldPass, newPass, rePass})
         return false;
     }
 
+    // класс должен быть объявлен тут для капчи, иначе значение блока не будед перезаписываться
+    let cCaptha = new CCaptha('div input[name=captcha-hash]', "captcha-text");
+    if(!cCaptha.getCorrentData())
+    {
+        repassErrorUnit.sendErrorMessage("Ошибка в обработке данных капчи");
+        return false;
+    }
+    let captcha_hash = cCaptha.getHash();
+    let captcha_text = cCaptha.getText();
+    if(!captcha_text || !captcha_hash)
+    {
+        repassErrorUnit.sendErrorMessage("Вы не ввели капчу");
+        return false;
+    }
+    //
     responseProcess = true;
 
 
     let completed_json = JSON.stringify({
+        captcha_hash: captcha_hash,
+        captcha_text: captcha_text,
         cold_pass: oldPass,
         cnew_pass: newPass,
         cre_pass: rePass,
@@ -106,6 +125,18 @@ function onChangeRepass({oldPass, newPass, rePass})
         success: function(data) {
             responseProcess = false
             clearAllRepassForm({ccOldPass, ccNewPass, ccRePass});
+
+            if(data.new_captha)
+            {
+                // update captha
+                let capthaID = document.getElementById("captha_block_id");
+
+                if(capthaID !== null)
+                {
+                    capthaID.innerHTML = data.new_captha
+                }
+            }
+
             if(data.result === true)
             {
                 repassErrorUnit.hide();

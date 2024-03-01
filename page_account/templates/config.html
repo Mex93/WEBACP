@@ -58,7 +58,10 @@
                   <input name = "old_pass" id = "old_pass" type="password" required class = "form-control-common" placeholder="Введите Ваш старый пароль:"><br><br>
                   <input name = "new_pass" id = "new_pass" type="password" required class = "form-control-common" placeholder="Введите Ваш новый пароль:"><br>
                  <input name = "renew_pass" id = "renew_pass" type="password" required class = "form-control-common" placeholder="Повторите Ваш новый пароль:"><br>
-                <button id = "submit_repass" type="submit" class = "btm_submit-common">Сменить</button>
+                <div class = "captha_box" id = "captha_block_id">
+                {{ captcha_html(var_values.captcha)|safe }}
+                </div><br>
+                 <button id = "submit_repass" type="submit" class = "btm_submit-common">Сменить</button>
             </form>
           </div>
      </div>

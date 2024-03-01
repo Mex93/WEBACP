@@ -2,6 +2,8 @@ from flask import json
 from engine.pages.enums import PAGE_ID
 from page_account.account import bp_page_account
 
+from captha_main import SIMPLE_CAPTCHA
+
 from engine.pages.CPages import CPages
 from engine.users.CUserAccess import CUserAccess
 from engine.users.CUser import CUser
@@ -25,12 +27,6 @@ cpages = CPages(cdebug)
 cuser_access = CUserAccess()
 cuser = CUser()
 
-
-def account_config():
-    if cuser_access.is_sessions_start() is False:
-        return cpages.redirect_on_page(PAGE_ID.ACCOUNT_LOGIN)
-
-    return cpages.set_render_page(PAGE_ID.ACCOUNT_CONFIG)
 
 
 def urepass(old_pass, new_pass, re_pass):
@@ -104,6 +100,9 @@ def urepass(old_pass, new_pass, re_pass):
 
         response_for_client.update(
             {"error_text": "Новый пароль и повтор не совпали"})
+
+    new_captcha_dict = SIMPLE_CAPTCHA.create()
+    response_for_client.update({"new_captha": SIMPLE_CAPTCHA.captcha_html(new_captcha_dict)})
 
     result = json.dumps(response_for_client)
     cdebug.debug_print(f"urepass AJAX -> [{email}] -> "

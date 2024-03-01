@@ -124,9 +124,15 @@ page_name = cpages.get_page_template_name_from_page_id(PAGE_ID.ACCOUNT_CONFIG)
 
 @bp_page_account.route(f'/{page_name}')
 def account_config():
-    from page_account.routes.config import account_config
 
-    return account_config()
+    if cuser_access.is_sessions_start() is False:
+        return cpages.redirect_on_page(PAGE_ID.ACCOUNT_LOGIN)
+
+    if request.method == 'GET':
+        new_captcha_dict = SIMPLE_CAPTCHA.create()
+        return cpages.set_render_page(PAGE_ID.ACCOUNT_CONFIG, captcha=new_captcha_dict)
+
+    return cpages.set_render_page(PAGE_ID.ACCOUNT_CONFIG)
 
 
 @bp_page_account.route('/repass_ajax', methods=['POST', 'GET'])
@@ -134,20 +140,34 @@ def repass_ajax():
     if cuser_access.is_sessions_start() is False:
         return cpages.redirect_on_page(PAGE_ID.ACCOUNT_LOGIN)
 
+    response_for_client = {
+        "error_text": "Error query Type",
+        "result": False
+    }
+
     if request.method == "POST":
         json_ajax = request.get_json()
         if json_ajax is not None:
             old_pass = json_ajax.get('cold_pass')
             new_pass = json_ajax.get('cnew_pass')
             re_pass = json_ajax.get('cre_pass')
-            if old_pass and new_pass and re_pass:
-                if isinstance(old_pass, str) and isinstance(new_pass, str) and isinstance(re_pass, str):
-                    from page_account.routes.config import urepass
-                    return urepass(old_pass, new_pass, re_pass)
-    response_for_client = {
-        "error_text": "Error query Type",
-        "result": False
-    }
+
+            c_hash = json_ajax.get('captcha_hash')
+            c_text = json_ajax.get('captcha_text')
+            if c_hash and c_text:
+                if SIMPLE_CAPTCHA.verify(c_text, c_hash):
+                    if old_pass and new_pass and re_pass:
+                        if isinstance(old_pass, str) and isinstance(new_pass, str) and isinstance(re_pass, str):
+                            from page_account.routes.config import urepass
+                            return urepass(old_pass, new_pass, re_pass)
+                else:
+                    response_for_client.update({"error_text": "Вы неверно ввели капчу!"})
+                    new_captcha_dict = SIMPLE_CAPTCHA.create()
+
+                    response_for_client.update({"new_captha": SIMPLE_CAPTCHA.captcha_html(new_captcha_dict)})
+            else:
+                response_for_client.update({"error_text": "Вы не ввели капчу!"})
+
     return jsonify(response_for_client)
 
 
