@@ -2,32 +2,22 @@ import {CForms} from "/static/js/engine/CForms.js";
 import {CFieldsCheck} from "/static/js/engine/CFieldsCheck.js";
 import {CMessBox} from "/static/js/engine/CMessBox.js"
 import {CWindowBox} from "/static/js/engine/CWindowBox.js";
-import {CBSettings} from "/static/js/engine/modules/account/settings/CCBSettings.js"
 
 import {
     getTimestampInSeconds,
 } from "/static/js/engine/common.js";
 
+import {
+    CCaptha,
+} from "/static/js/engine/CCaptha.js";
 
 
-
-// import {
-//     LineParams,
-//     PARAMS_ID,
-//     INCOMMING_ARR_TYPE,
-//     MAX_VRN_LINES,
-//     MAX_ALL_LINES,
-//     CUpdatedLines,
-//     CChartID,
-//     CDebugger,
-//     CLineShowType,
-//     CHTMLBlocks
-//
-// } from './libs/dashboard/Classes.js';
 
 let inputFieldPassID = null;
 let inputFieldEmailID = null;
 let inputFieldSaveMeID = null;
+
+
 let antiFlood = 0;
 let responseProcess = false;
 let blockedForm = false;
@@ -74,10 +64,26 @@ function get_login({ email, password, savemy }) {
         cmessBox.sendErrorMessage(resultObj.errorText);
         return false;
     }
+    // класс должен быть объявлен тут для капчи, иначе значение блока не будед перезаписываться
+    let cCaptha = new CCaptha('div input[name=captcha-hash]', "captcha-text");
+    if(!cCaptha.getCorrentData())
+    {
+        cmessBox.sendErrorMessage("Ошибка в обработке данных капчи");
+        return false;
+    }
+    let captcha_hash = cCaptha.getHash();
+    let captcha_text = cCaptha.getText();
+    if(!captcha_text || !captcha_hash)
+    {
+        cmessBox.sendErrorMessage("Вы не ввели капчу");
+        return false;
+    }
+    //
     responseProcess = true;
 
-
     let completed_json = JSON.stringify({
+        captcha_hash: captcha_hash,
+        captcha_text: captcha_text,
         cpassword: password,
         cnickname: email,
         csavemy: savemy
@@ -92,6 +98,7 @@ function get_login({ email, password, savemy }) {
         success: function(data) {
             responseProcess = false
             ccfPass.clearField()
+
             if(data.result === true)
             {
                 blockedForm = true;
@@ -110,6 +117,17 @@ function get_login({ email, password, savemy }) {
             }
             else
             {
+                if(data.new_captha)
+                {
+                    // update captha
+                    let capthaID = document.getElementById("captha_block_id");
+
+                    if(capthaID !== null)
+                    {
+                        capthaID.innerHTML = data.new_captha
+                    }
+                }
+
                 cmessBox.sendErrorMessage(data.error_text);
                 return false
             }
@@ -144,7 +162,6 @@ $(document).ready(function() {
 
     let c_name = new CForms(inputFieldEmailID)
     let c_pass = new CForms(inputFieldPassID)
-    let c_savemy = new CForms(inputFieldSaveMeID)
 
     $("#login_form").on("submit", function (event) {
         event.preventDefault(); // Отменяем стандартное поведение формы

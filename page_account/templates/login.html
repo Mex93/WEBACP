@@ -22,6 +22,10 @@
 
             <input name = "user_name" id = "user_name" type="text" required class = "form-control-common" placeholder="Введите Ваш Email:"><br>
             <input name = "user_pass" id = "user_pass" type="password" required class = "form-control-common" placeholder="Введите Ваш пароль"><br>
+            <div class = "captha_box" id = "captha_block_id">
+                {{ captcha_html(var_values.captcha)|safe }}
+            </div><br>
+
             <div>
                 <div class = "checkbox">
                   <label class="checkbox style-g">

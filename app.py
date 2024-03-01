@@ -3,8 +3,10 @@ from __init__ import app, csrf
 import routes.index
 import routes.about
 import routes.common
-
+from captha_main import *
 
 if __name__ == "__main__":
-    app.run(debug=True)
     csrf.init_app(app)
+    SIMPLE_CAPTCHA.init_app(app)
+
+    app.run(debug=True)

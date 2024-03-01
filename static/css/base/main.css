@@ -581,3 +581,30 @@ html, body {
   user-select: none;
 
 }
+/*captha */
+.captha_box {
+    display: inline-flex;
+    margin: 10px 5px 10px 5px;
+    align-items: center;
+    box-shadow: 5px 5px 5px 5px grey;
+    padding: 10px;
+    border-radius: 10px;
+}
+.captha_box img.simple-captcha-img {
+    float: left;
+    margin-right: 10px;
+    transition: height 2s, width 2s;
+    width: 180px;
+    height: 60px;
+}
+.captha_box img.simple-captcha-img:hover {
+    width: 250px;
+    height: 80px;
+}
+
+
+.captha_box input.simple-captcha-text {
+    float: right;
+    margin-left: 10px;
+    border-radius: 10px;
+}

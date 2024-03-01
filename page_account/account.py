@@ -1,11 +1,12 @@
 from flask import Blueprint, request, jsonify
 
+from captha_main import SIMPLE_CAPTCHA
+
 from engine.debug.CDebug import CDebug
 from engine.pages.CPages import CPages
 from engine.pages.enums import PAGE_ID
 from engine.users.CUser import CUser
 from engine.users.CUserAccess import CUserAccess
-from engine.common import get_checkbox_state
 
 bp_page_account = Blueprint('account', __name__, template_folder='templates', static_folder='static')
 
@@ -26,9 +27,10 @@ def logout():
 
     from page_account.routes.logout import logout
     if request.method == "POST":
-        if 'yes' in request.form:
+        form_dict = request.form
+        if form_dict.get('yes'):
             return logout()
-        elif 'no' in request.form:
+        else:
             return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
 
     return cpages.set_render_page(PAGE_ID.ACCOUNT_LOGOUT)
@@ -44,6 +46,10 @@ def ulogin():
     if cuser_access.is_sessions_start() is True:
         return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
 
+    if request.method == 'GET':
+        new_captcha_dict = SIMPLE_CAPTCHA.create()
+        return cpages.set_render_page(PAGE_ID.ACCOUNT_LOGIN, captcha=new_captcha_dict)
+
     return cpages.set_render_page(PAGE_ID.ACCOUNT_LOGIN)
 
 
@@ -52,20 +58,34 @@ def login_ajax():
     if cuser_access.is_sessions_start() is True:
         return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
 
-    if request.method == "POST":
-        json_ajax = request.get_json()
-        password = json_ajax['cpassword']
-        email = json_ajax['cnickname']
-        savemy = json_ajax['csavemy']
-
-        if password and email:
-            from page_account.routes.login import ulogin
-            return ulogin(password, email, savemy)
-
     response_for_client = {
         "error_text": "Error query Type",
         "result": False
     }
+
+    if request.method == "POST":
+        json_ajax = request.get_json()
+        password = json_ajax.get('cpassword')
+        email = json_ajax.get('cnickname')
+        savemy = json_ajax.get('csavemy')
+
+        c_hash = json_ajax.get('captcha_hash')
+        c_text = json_ajax.get('captcha_text')
+
+        if c_hash and c_text:
+            if SIMPLE_CAPTCHA.verify(c_text, c_hash):
+                if password and email:
+                    if isinstance(password, str) and isinstance(email, str):
+                        from page_account.routes.login import ulogin
+                        return ulogin(password, email, savemy)
+            else:
+                response_for_client.update({"error_text": "Вы неверно ввели капчу!"})
+                new_captcha_dict = SIMPLE_CAPTCHA.create()
+
+                response_for_client.update({"new_captha": SIMPLE_CAPTCHA.captcha_html(new_captcha_dict)})
+        else:
+            response_for_client.update({"error_text": "Вы не ввели капчу!"})
+
     return jsonify(response_for_client)
 
 
@@ -116,13 +136,14 @@ def repass_ajax():
 
     if request.method == "POST":
         json_ajax = request.get_json()
-        old_pass = json_ajax['cold_pass']
-        new_pass = json_ajax['cnew_pass']
-        re_pass = json_ajax['cre_pass']
-        if old_pass and new_pass and re_pass:
-            from page_account.routes.config import urepass
-            return urepass(old_pass, new_pass, re_pass)
-
+        if json_ajax is not None:
+            old_pass = json_ajax.get('cold_pass')
+            new_pass = json_ajax.get('cnew_pass')
+            re_pass = json_ajax.get('cre_pass')
+            if old_pass and new_pass and re_pass:
+                if isinstance(old_pass, str) and isinstance(new_pass, str) and isinstance(re_pass, str):
+                    from page_account.routes.config import urepass
+                    return urepass(old_pass, new_pass, re_pass)
     response_for_client = {
         "error_text": "Error query Type",
         "result": False
@@ -137,7 +158,7 @@ def ucb_settings():
 
     if request.method == "POST":
         json_ajax = request.get_json()
-        cb_timeout = json_ajax['cb_timeout']
+        cb_timeout = json_ajax.get('cb_timeout')
 
         if cb_timeout is not None and isinstance(cb_timeout, bool):
             from page_account.routes.config import ucb_settings

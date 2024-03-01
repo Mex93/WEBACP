@@ -81,7 +81,7 @@ function get_logs_ajax()
 $(document).ready(function() {
     anim_table_block = document.getElementById("load_logs_anim_block");
     table_block = document.getElementById("load_logs_table");
-
+    
     if(table_block !== null)
         table_block.style.display = "none";
 
