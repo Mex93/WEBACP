@@ -1,5 +1,7 @@
 from flask import Blueprint, request, jsonify
 
+from captha_main import SIMPLE_CAPTCHA
+
 from engine.debug.CDebug import CDebug
 from engine.pages.CPages import CPages
 from engine.pages.enums import PAGE_ID
@@ -22,13 +24,10 @@ page_name = cpages.get_page_template_name_from_page_id(PAGE_ID.ASR_FIND)
 @bp_page_asr.route(f'/{page_name}', methods=['POST', 'GET'])
 def asr_find():
     if cuser_access.is_sessions_start() is False:
-        return cpages.redirect_on_page(PAGE_ID.ACCOUNT_LOGIN)
+        return cpages.redirect_on_page(PAGE_ID.ASR_FIND)
 
-    from page_asr.routes.find import asr_find
-    if request.method == "POST":
-        if 'yes' in request.form:
-            return asr_find()
-        elif 'no' in request.form:
-            return cpages.redirect_on_page(PAGE_ID.INDEX)
+    if request.method == 'GET':
+        new_captcha_dict = SIMPLE_CAPTCHA.create()
+        return cpages.set_render_page(PAGE_ID.ASR_FIND, captcha=new_captcha_dict)
 
     return cpages.set_render_page(PAGE_ID.ASR_FIND)

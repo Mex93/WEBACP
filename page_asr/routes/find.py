@@ -25,9 +25,3 @@ cpages = CPages(cdebug)
 cuser_access = CUserAccess()
 cuser = CUser()
 
-
-def asr_find():
-    if cuser_access.is_sessions_start() is False:
-        return cpages.redirect_on_page(PAGE_ID.ACCOUNT_LOGIN)
-
-    return cpages.set_render_page(PAGE_ID.ACCOUNT_CONFIG)

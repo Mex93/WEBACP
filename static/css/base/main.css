@@ -390,9 +390,8 @@ html, body {
      margin: 0;
     background: #f0f0f0;
 }
-.loaded-anim .container {
+.loaded-anim.container {
      display: flex;
-     flex-flow: wrap row;
      justify-content: center;
      align-items: center;
 }
@@ -411,6 +410,8 @@ html, body {
      justify-content: center;
      align-items: center;
      box-shadow: 0 3px 4px 0 rgba(0, 0, 0, .14), 0 3px 3px -2px rgba(0, 0, 0, .2), 0 1px 8px 0 rgba(0, 0, 0, .12);
+     margin-left: auto;
+     margin-right: auto;
 }
 .loaded-anim .skeleton .square {
      height: 80px;
@@ -609,3 +610,7 @@ html, body {
     border-radius: 10px;
     text-align: center;
 }
+/*.captha_box .captha_box input.simple-captcha-text::placeholder-shown {  
+    content: "Введите текст с картинки";
+}
+*/

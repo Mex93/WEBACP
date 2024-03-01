@@ -9,22 +9,67 @@ ASR - Поиск
 
 {% block body %}
 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-<div id = "checkbox_container" class = 'container-common container'>
+<div class = 'container-common container'>
 
     <div class = "header-common">
         <h1>Поиск ASR</h1>
     </div>
-    <form id = "asr_find" action = "#" method="post">
-        <div  id = "error_box">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <div class = "border-common">
+            <form id = "asr_find" action = "#" method="post">
+                <div  id = "error_box">
+                </div><br>
+                <input name = "asr_name" id = "asr_name" type="text" required class = "form-control-common" placeholder="Введите номер ASR:"><br>
+                <div class = "captha_box" id = "captha_block_id">
+                    {{ captcha_html(var_values.captcha)|safe }}
+                </div><br>
+                <button type="submit" class = "btm_submit-common">Найти</button>
+            </form>
         </div>
         <div class = "border-common">
-           <br>
+            <div id = "load_anim_block">
+                 <div class="loaded-anim container">
+                    <div class="box">
+                      <div class="skeleton">
+                        <div class="skeleton-left">
+                            <div class="line h17 w40 m10"></div>
+                            <div class="line"></div>
+                            <div class="line h8 w50"></div>
+                            <div class="line  w75"></div>
+                        </div>
+                        <div class="skeleton-right">
+                          <div class="square"></div>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+            <div id = "result">
+                <form id = "asr_result" action = "#" method="post">
+                    <div class = "table-asr" id = "table_asr_id">
+                        <table class = "custom-table">
+                           <tr>
+                                <th>Название параметра:</th>
+                                <th>Текущее значение</th>
+                           </tr>
+                            <tr><td><span class = "label">Название:</span></td><td><span class = "value" id = "tv_asr">-</span></td></tr>
+                             <tr><td><span class = "label">ID в БД:</span></td><td><span class = "value" id = "tv_asr_id">-</span></td></tr>
+                             <tr><td><span class = "label">Модель телевизора:</span></td><td><span class = "value" id = "tv_fk">-</span></td></tr>
+                             <tr><td><span class = "label">Номер линии:</span></td><td><span class = "value" id = "line_fk">-</span></td></tr>
+                             <tr><td><span class = "label">WIFI Модуль:</span></td><td><span class = "value" id = "wifi_module_sn">-</span></td></tr>
+                             <tr><td><span class = "label">BT Модуль:</span></td><td><span class = "value" id = "bt_module_sn">-</span></td></tr>
+                             <tr><td><span class = "label">MAC:</span></td><td><span class = "value" id = "ethernet_mac">-</span></td></tr>
+                            <tr><td><span class = "label">Номер панели:</span></td><td><span class = "value" id = "lcm_sn">-</span></td></tr>
+                            <tr><td><span class = "label">Номер стекла:</span></td><td><span class = "value" id = "oc_sn">-</span></td></tr>
+                            <tr><td><span class = "label">Номер материнской платы:</span></td><td><span class = "value" id = "mainboard_sn">-:</span></td></tr>
+                            <tr><td><span class = "label">Номер блока питания:</span></td><td><span class = "value" id = "powerboard_sn">-</span></td></tr>
+                            <tr><td><span class = "label">Номер TCON:</span></td><td><span class = "value" id = "tcon_sn">-</span></td></tr>
+                            <tr><td><span class = "label">Дата сканировки:</span></td><td><span class = "value" id = "timestamp_st10">-</span></td></tr>
+                        </table>
+                    </div>
+                </form>
+            </div>
         </div>
-
-        <button type="submit" class = "btm_submit-common">Сохранить</button>
-    </form>
-
-
 </div>
 
 <!--    <tr><td>data</td><td>ip</td></tr>-->
