@@ -62,7 +62,7 @@ def asr_find_ajax(asr_name):
 
                         #################################
                         try:
-                            log_connect = line_csql.connect_to_db(CONNECT_DB_TYPE.LOCAL)
+                            log_connect = user_csql.connect_to_db(CONNECT_DB_TYPE.LOCAL)
                             if log_connect is True:
 
                                 log_unit = CSQLUserLogQuerys(user_csql, acc_index)
@@ -84,7 +84,7 @@ def asr_find_ajax(asr_name):
                             cdebug.debug_print(
                                 f"asr_find_ajax AJAX -> [{nickname}] -> [Исключение] [Exception: '{err}']")
                         finally:
-                            line_csql.disconnect_from_db()
+                            user_csql.disconnect_from_db()
 
                         response_for_client.update({"result": True})
                         response_for_client.update({"asr_data": asr_dict})

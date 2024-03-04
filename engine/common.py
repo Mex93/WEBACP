@@ -49,7 +49,6 @@ def get_current_data_stamp():
     unix = get_current_unix_time()
     return get_data_stamp_from_unix_time(unix)
 
+
 def get_inet_ipaddress():
     return request.remote_addr
-
-
