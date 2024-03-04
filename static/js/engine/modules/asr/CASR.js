@@ -34,13 +34,13 @@ class CASRFields
         HTML_OBJECT_ID: index++,
     }
 
-    // constructor(objData)
-    // {
-    //     if(objData)
-    //     {
-    //
-    //     }
-    // }
+    constructor(objData)
+    {
+        if(objData)
+        {
+
+        }
+    }
     addField(fieldType, keyName, currentValue, htmlID)
     {
         if(fieldType && keyName && currentValue && htmlID)
