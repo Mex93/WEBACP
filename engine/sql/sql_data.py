@@ -3,6 +3,7 @@ class SQL_TABLE_NAME:
     user_accounts = "acp_users"
     assembled_tv = "assembled_tv"
     asr_tv = "unfinished_tv"
+    tv_model_info_tv = "tv"
     user_logs = "acp_log"
 
 
@@ -59,6 +60,17 @@ class SQL_ASR_FIELDS:
     asr_fd_timestamp_st10 = "timestamp_st10"
     asr_fd_ops_sn = "ops_sn"
 
+
+class SQL_TV_MODEL_INFO_FIELDS:
+    tvmi_fd_tv_id = "tv_id"
+    tvmi_fd_tv_name = "tv_name"
+    tvmi_fd_vendor_code = "vendor_code"
+    tvmi_fd_tv_platform_fk = "tv_platform_fk"
+    tvmi_fd_scan_type_fk = "scan_type_fk"
+    tvmi_fd_software_type_fk = "software_type_fk"
+    tvmi_fd_tv_serial_number_template = "tv_serial_number_template"
+
+    tvmi_fd_tv_model_type_name = "model_type_name"  # фальш филды. в бд таких нет. нужно для расчёта
 
 class SQL_LOG_FIELDS:
     lfd_log_index = "log_pk"

@@ -11,6 +11,9 @@ from engine.common import get_checkbox_state
 from engine.users.enums import USER_SECTIONS_TYPE, USER_SECTION_ACCESS_TYPE
 from engine.users.enums import USER_ALEVEL
 from engine.asr.CASR import CASR
+from engine.sql.sql_data import SQL_ASR_FIELDS, SQL_TV_MODEL_INFO_FIELDS
+
+from engine.asr.HTMLFieldsName import HTMLFieldsName
 
 bp_page_asr = Blueprint('asr', __name__, template_folder='templates', static_folder='static')
 
@@ -34,7 +37,29 @@ def asr_find():
 
     if request.method == 'GET':
         new_captcha_dict = SIMPLE_CAPTCHA.create()
-        return cpages.set_render_page(PAGE_ID.ASR_FIND, captcha=new_captcha_dict)
+
+        vars_dict = {
+            HTMLFieldsName.tv_field_asr_id: SQL_ASR_FIELDS.asr_fd_tv_asr_id,
+            HTMLFieldsName.tv_field_asr_name: SQL_ASR_FIELDS.asr_fd_tv_asr,
+            HTMLFieldsName.tv_field_tv_fk: SQL_ASR_FIELDS.asr_fd_tv_fk,
+            HTMLFieldsName.tv_field_line_id: SQL_ASR_FIELDS.asr_fd_line_fk,
+            HTMLFieldsName.tv_field_wf: SQL_ASR_FIELDS.asr_fd_wifi_module_sn,
+            HTMLFieldsName.tv_field_bt: SQL_ASR_FIELDS.asr_fd_bt_module_sn,
+            HTMLFieldsName.tv_field_mac: SQL_ASR_FIELDS.asr_fd_ethernet_mac,
+            HTMLFieldsName.tv_field_panel: SQL_ASR_FIELDS.asr_fd_lcm_sn,
+            HTMLFieldsName.tv_field_oc: SQL_ASR_FIELDS.asr_fd_oc_sn,
+            HTMLFieldsName.tv_field_mb: SQL_ASR_FIELDS.asr_fd_mainboard_sn,
+            HTMLFieldsName.tv_field_pb: SQL_ASR_FIELDS.asr_fd_powerboard_sn,
+            HTMLFieldsName.tv_field_tcon: SQL_ASR_FIELDS.asr_fd_tcon_sn,
+            HTMLFieldsName.tv_field_scan_date: SQL_ASR_FIELDS.asr_fd_timestamp_st10,
+            HTMLFieldsName.tv_field_ops: SQL_ASR_FIELDS.asr_fd_ops_sn,
+            HTMLFieldsName.tv_fild_model_name: SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_name,
+            HTMLFieldsName.tv_fild_model_type_name: SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_model_type_name,
+            HTMLFieldsName.tv_fild_vendor_code: SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_vendor_code,
+        }
+        print(vars_dict)
+
+        return cpages.set_render_page(PAGE_ID.ASR_FIND, captcha=new_captcha_dict, vars_dict=vars_dict)
 
     return cpages.set_render_page(PAGE_ID.ASR_FIND)
 
@@ -42,7 +67,6 @@ def asr_find():
 ########################################
 @bp_page_asr.route('/asr_find_ajax', methods=['POST', 'GET'])
 def asr_find_ajax():
-
     if cuser_access.is_sessions_start() is False:
         return cpages.redirect_on_page(PAGE_ID.ACCOUNT_LOGIN)
 
@@ -79,4 +103,3 @@ def asr_find_ajax():
             response_for_client.update({"error_text": "Вы не ввели капчу!"})
 
     return jsonify(response_for_client)
-

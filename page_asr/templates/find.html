@@ -52,19 +52,22 @@ ASR - Поиск
                                 <th>Название параметра:</th>
                                 <th>Текущее значение</th>
                            </tr>
-                            <tr><td><span class = "label">Название:</span></td><td><span class = "value" id = "tv_asr">-</span></td></tr>
-                             <tr><td><span class = "label">ID в БД:</span></td><td><span class = "value" id = "tv_asr_id">-</span></td></tr>
-                             <tr><td><span class = "label">Модель телевизора:</span></td><td><span class = "value" id = "tv_fk">-</span></td></tr>
-                             <tr><td><span class = "label">Номер линии:</span></td><td><span class = "value" id = "line_fk">-</span></td></tr>
-                             <tr><td><span class = "label">WIFI Модуль:</span></td><td><span class = "value" id = "wifi_module_sn">-</span></td></tr>
-                             <tr><td><span class = "label">BT Модуль:</span></td><td><span class = "value" id = "bt_module_sn">-</span></td></tr>
-                             <tr><td><span class = "label">MAC:</span></td><td><span class = "value" id = "ethernet_mac">-</span></td></tr>
-                            <tr><td><span class = "label">Номер панели:</span></td><td><span class = "value" id = "lcm_sn">-</span></td></tr>
-                            <tr><td><span class = "label">Номер стекла:</span></td><td><span class = "value" id = "oc_sn">-</span></td></tr>
-                            <tr><td><span class = "label">Номер материнской платы:</span></td><td><span class = "value" id = "mainboard_sn">-:</span></td></tr>
-                            <tr><td><span class = "label">Номер блока питания:</span></td><td><span class = "value" id = "powerboard_sn">-</span></td></tr>
-                            <tr><td><span class = "label">Номер TCON:</span></td><td><span class = "value" id = "tcon_sn">-</span></td></tr>
-                            <tr><td><span class = "label">Дата сканировки:</span></td><td><span class = "value" id = "timestamp_st10">-</span></td></tr>
+                            <tr><td><span class = "label">Название:</span></td><td><span class = "value" id = "{{ var_values.vars_dict.tv_field_asr_name }}">-</span></td></tr>
+                             <tr><td><span class = "label">ID ASR в БД:</span></td><td><span class = "value" id = "{{ var_values.vars_dict.tv_field_asr_id }}">-</span></td></tr>
+                             <tr><td><span class = "label">ID модели телевизора в БД:</span></td><td><span class = "value" id = "{{ var_values.vars_dict.tv_field_tv_fk }}">-</span></td></tr>
+                            <tr><td><span class = "label">Название модели:</span></td><td><span class = "value" id = "{{ var_values.vars_dict.tv_fild_model_name }}">-</span></td></tr>
+                            <tr><td><span class = "label">Тип модели:</span></td><td><span class = "value" id = "{{ var_values.vars_dict.tv_fild_model_type_name }}">-</span></td></tr>
+                             <tr><td><span class = "label">Номер линии:</span></td><td><span class = "value" id = "{{ var_values.vars_dict.tv_field_line_id }}">-</span></td></tr>
+                             <tr><td><span class = "label">WIFI Модуль:</span></td><td><span class = "value" id = "{{ var_values.vars_dict.tv_field_wf }}">-</span></td></tr>
+                             <tr><td><span class = "label">BT Модуль:</span></td><td><span class = "value" id = "{{ var_values.vars_dict.tv_field_bt }}">-</span></td></tr>
+                             <tr><td><span class = "label">MAC:</span></td><td><span class = "value" id = "{{ var_values.vars_dict.tv_field_mac }}">-</span></td></tr>
+                            <tr><td><span class = "label">Номер панели:</span></td><td><span class = "value" id = "{{ var_values.vars_dict.tv_field_panel }}">-</span></td></tr>
+                            <tr><td><span class = "label">Номер стекла:</span></td><td><span class = "value" id = "{{ var_values.vars_dict.tv_field_oc }}">-</span></td></tr>
+                            <tr><td><span class = "label">Номер OPS:</span></td><td><span class = "value" id = "{{ var_values.vars_dict.tv_field_ops }}">-</span></td></tr>
+                            <tr><td><span class = "label">Номер материнской платы:</span></td><td><span class = "value" id = "{{ var_values.vars_dict.tv_field_mb }}">-:</span></td></tr>
+                            <tr><td><span class = "label">Номер блока питания:</span></td><td><span class = "value" id = "{{ var_values.vars_dict.tv_field_pb }}">-</span></td></tr>
+                            <tr><td><span class = "label">Номер TCON:</span></td><td><span class = "value" id = "{{ var_values.vars_dict.tv_field_tcon }}">-</span></td></tr>
+                            <tr><td><span class = "label">Дата сканировки:</span></td><td><span class = "value" id = "{{ var_values.vars_dict.tv_field_scan_date }}">-</span></td></tr>
                         </table>
                     </div>
                 </form>

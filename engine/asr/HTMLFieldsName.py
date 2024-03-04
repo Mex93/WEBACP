@@ -1,0 +1,20 @@
+
+
+class HTMLFieldsName:
+    tv_field_asr_id = "tv_field_asr_id"
+    tv_field_asr_name = "tv_field_asr_name"
+    tv_field_tv_fk = "tv_field_tv_fk"
+    tv_field_line_id = "tv_field_line_id"
+    tv_field_wf = "tv_field_wf"
+    tv_field_bt = "tv_field_bt"
+    tv_field_mac = "tv_field_mac"
+    tv_field_panel = "tv_field_panel"
+    tv_field_oc = "tv_field_oc"
+    tv_field_mb = "tv_field_mb"
+    tv_field_pb = "tv_field_pb"
+    tv_field_tcon = "tv_field_tcon"
+    tv_field_scan_date = "tv_field_scan_date"
+    tv_field_ops = "tv_field_ops"
+    tv_fild_model_name = "tv_fild_model_name"
+    tv_fild_model_type_name = "tv_fild_model_type_name"
+    tv_fild_vendor_code = "tv_fild_vendor_code"

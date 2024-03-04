@@ -1,7 +1,7 @@
 
 
 from engine.sql.CSQLAgent import CSqlAgent
-from engine.sql.sql_data import SQL_TABLE_NAME, SQL_ASR_FIELDS
+from engine.sql.sql_data import SQL_TABLE_NAME, SQL_ASR_FIELDS, SQL_TV_MODEL_INFO_FIELDS
 
 PROGRAM_TIME_TYPE = "0300"  # Russia
 SALT_LEN = 30
@@ -13,10 +13,20 @@ class CSQLASRQuerys(CSqlAgent):
 
     def get_asr_data_from_name(self, asr_name: str) -> str | bool:
 
-        query_string = (f"SELECT * "
+        query_string = (f"SELECT "
+                        f"{SQL_TABLE_NAME.asr_tv}.*, "
+                        f"{SQL_TABLE_NAME.tv_model_info_tv}.{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_name} "
                         f"FROM {SQL_TABLE_NAME.asr_tv} "
-                        f"WHERE {SQL_ASR_FIELDS.asr_fd_tv_asr} = %s "
-                        f"LIMIT 1")
+                        f"JOIN {SQL_TABLE_NAME.tv_model_info_tv} "
+                        f"ON {SQL_TABLE_NAME.asr_tv}.{SQL_ASR_FIELDS.asr_fd_tv_fk}= "
+                        f"{SQL_TABLE_NAME.tv_model_info_tv}.{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_id} "
+                        f"WHERE {SQL_ASR_FIELDS.asr_fd_tv_asr} = %s " 
+                        "LIMIT 1")
+
+        # query_string = (f"SELECT * "
+        #                 f"FROM {SQL_TABLE_NAME.asr_tv} "
+        #                 f"WHERE {SQL_ASR_FIELDS.asr_fd_tv_asr} = %s "
+        #                 f"LIMIT 1")
 
         result = self.sql_query_and_get_result(
             self.get_sql_handle(), query_string, (asr_name,), "_1", )  # Запрос типа аасоциативного массива

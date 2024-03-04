@@ -120,7 +120,7 @@ function getASRData(inputData)
                                 resultCount ++;
                             }
                         }
-                        //console.log(`${key}: ${value}`)
+                        console.log(`${key}: ${value}`)
                     })
                     if(resultCount)
                     {

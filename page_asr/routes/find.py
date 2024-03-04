@@ -15,9 +15,12 @@ from engine.users.users_log.CSQLUserLogQuerys import CSQLUserLogQuerys
 from engine.users.users_log.enums import LOG_TYPE, LOG_OBJECT_TYPE, LOG_SUBTYPE
 from engine.sql.enums import CONNECT_DB_TYPE
 from engine.sql.CSQL import NotConnectToDB, ErrorSQLQuery, ErrorSQLData
-from engine.sql.sql_data import SQL_ASR_FIELDS
+from engine.sql.sql_data import SQL_ASR_FIELDS, SQL_TV_MODEL_INFO_FIELDS
 
 from engine.common import convert_date_from_sql_format
+
+from engine.tv_models.CModels import CModels
+from engine.tv_models.enums import MODELS_TYPE
 
 cdebug = CDebug()
 cdebug.debug_system_on(True)
@@ -50,11 +53,19 @@ def asr_find_ajax(asr_name):
                     result = result[0]
                     asr_dict = dict()
                     index = 0
+
                     for key, value in result.items():
                         if key == SQL_ASR_FIELDS.asr_fd_timestamp_st10:
                             if value:
                                 value = convert_date_from_sql_format(str(value))
+                        elif key == SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_name:
+                            new_name, type_name = CModels.get_parced_name_and_type(value)
+                            asr_dict.update({SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_model_type_name: type_name})
+                            # print(type_name)
+                            value = new_name
+
                         asr_dict.update({key: value})
+                        # print(key, value)
                         index += 1
 
                     if index > 5:
