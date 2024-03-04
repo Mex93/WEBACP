@@ -72,19 +72,24 @@ def urepass(old_pass, new_pass, re_pass):
                     raise NotConnectToDB("Not SQL Connect!")
 
             except NotConnectToDB as err:
-                response_for_client.update({"error_text": "errorcode: check_login_params -> [NotConnectToDB]"})
+                response_for_client.update({"error_text": "errorcode: urepass -> [NotConnectToDB]"})
                 cdebug.debug_print(
                     f"urepass AJAX -> [{email}] -> [Исключение] [NotConnectToDB: '{err}']")
 
             except ErrorSQLQuery as err:
-                response_for_client.update({"error_text": "errorcode: check_login_params -> [ErrorSQLQuery]"})
+                response_for_client.update({"error_text": "errorcode: urepass -> [ErrorSQLQuery]"})
                 cdebug.debug_print(
                     f"urepass AJAX -> [{email}] -> [Исключение] [ErrorSQLQuery: '{err}']")
 
             except ErrorSQLData as err:
-                response_for_client.update({"error_text": "errorcode: check_login_params -> [ErrorSQLData]"})
+                response_for_client.update({"error_text": "errorcode: urepass -> [ErrorSQLData]"})
                 cdebug.debug_print(
                     f"urepass AJAX -> [{email}] -> [Исключение] [ErrorSQLData: '{err}']")
+
+            except Exception as err:
+                response_for_client.update({"error_text": "errorcode: urepass -> [Error Data]"})
+                cdebug.debug_print(
+                    f"urepass AJAX -> [{email}] -> [Исключение] [Alt Errors: '{err}']")
             finally:
                 csql.disconnect_from_db()
 
@@ -166,19 +171,24 @@ def ucb_settings(cb_timeout):
             raise NotConnectToDB("Not SQL Connect!")
 
     except NotConnectToDB as err:
-        response_for_client.update({"error_text": "errorcode: check_login_params -> [NotConnectToDB]"})
+        response_for_client.update({"error_text": "errorcode: ucb_settings -> [NotConnectToDB]"})
         cdebug.debug_print(
             f"ucb_settings AJAX -> [{email}] -> [Исключение] [NotConnectToDB: '{err}']")
 
     except ErrorSQLQuery as err:
-        response_for_client.update({"error_text": "errorcode: check_login_params -> [ErrorSQLQuery]"})
+        response_for_client.update({"error_text": "errorcode: ucb_settings -> [ErrorSQLQuery]"})
         cdebug.debug_print(
             f"ucb_settings AJAX -> [{email}] -> [Исключение] [ErrorSQLQuery: '{err}']")
 
     except ErrorSQLData as err:
-        response_for_client.update({"error_text": "errorcode: check_login_params -> [ErrorSQLData]"})
+        response_for_client.update({"error_text": "errorcode: ucb_settings -> [ErrorSQLData]"})
         cdebug.debug_print(
             f"ucb_settings AJAX -> [{email}] -> [Исключение] [ErrorSQLData: '{err}']")
+
+    except Exception as err:
+        response_for_client.update({"error_text": "errorcode: ucb_settings -> [Error Data]"})
+        cdebug.debug_print(
+            f"ucb_settings AJAX -> [{email}] -> [Исключение] [Alt Errors: '{err}']")
     finally:
         csql.disconnect_from_db()
 

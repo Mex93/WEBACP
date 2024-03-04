@@ -66,24 +66,17 @@ function get_login({ email, password, savemy }) {
     }
     // класс должен быть объявлен тут для капчи, иначе значение блока не будед перезаписываться
     let cCaptha = new CCaptha('div input[name=captcha-hash]', "captcha-text");
-    if(!cCaptha.getCorrentData())
+    let cresult = cCaptha.validate(cmessBox);
+    if(!cresult)
     {
-        cmessBox.sendErrorMessage("Ошибка в обработке данных капчи");
-        return false;
-    }
-    let captcha_hash = cCaptha.getHash();
-    let captcha_text = cCaptha.getText();
-    if(!captcha_text || !captcha_hash)
-    {
-        cmessBox.sendErrorMessage("Вы не ввели капчу");
         return false;
     }
     //
     responseProcess = true;
 
     let completed_json = JSON.stringify({
-        captcha_hash: captcha_hash,
-        captcha_text: captcha_text,
+        captcha_hash: cresult.captcha_hash,
+        captcha_text: cresult.captcha_text,
         cpassword: password,
         cnickname: email,
         csavemy: savemy

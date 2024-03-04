@@ -67,22 +67,30 @@ def account_logs_ajax():
             else:
                 raise NotConnectToDB("Not SQL Connect!")
         except NotConnectToDB as err:
-            response_for_client.update({"error_text": "errorcode: check_login_params -> [NotConnectToDB]"})
+            response_for_client.update({"error_text": "errorcode: account_main -> [NotConnectToDB]"})
             cdebug.debug_print(
                 f"account_main AJAX -> [Получение логов] -> [IDX:{account_idx}, {account_name}] -> "
                 f"[Исключение] [NotConnectToDB: '{err}']")
 
         except ErrorSQLQuery as err:
-            response_for_client.update({"error_text": "errorcode: check_login_params -> [ErrorSQLQuery]"})
+            response_for_client.update({"error_text": "errorcode: account_main -> [ErrorSQLQuery]"})
             cdebug.debug_print(
                 f"account_main AJAX -> [Получение логов] -> [IDX:{account_idx}, {account_name}] -> "
                 f"[Исключение] [ErrorSQLQuery: '{err}']")
 
         except ErrorSQLData as err:
-            response_for_client.update({"error_text": "errorcode: check_login_params -> [ErrorSQLData]"})
+            response_for_client.update({"error_text": "errorcode: account_main -> [ErrorSQLData]"})
             cdebug.debug_print(
                 f"account_main AJAX -> [Получение логов] -> [IDX:{account_idx}, {account_name}] -> "
                 f"[Исключение] [ErrorSQLData: '{err}']")
+
+        except Exception as err:
+
+            response_for_client.update({"error_text": "errorcode: account_main -> [Error Data]"})
+            cdebug.debug_print(
+                f"account_main AJAX -> [Получение логов] -> [IDX:{account_idx}, {account_name}] -> "
+                f"[Исключение] [Error Data: '{err}']")
+
         finally:
             csql.disconnect_from_db()
 

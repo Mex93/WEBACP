@@ -17,6 +17,7 @@ class LOG_SUBTYPE(IntEnum):
     LGST_ADD = 2,
     LGST_EDIT = 3,
     LGST_DELETE = 4,
+    LGST_FIND = 5,
 
 
 class LOG_OBJECT_TYPE(IntEnum):

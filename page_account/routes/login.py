@@ -265,7 +265,7 @@ def ulogin(password, email, savemy):
         except ErrorSQLData as err:
             response_for_client.update({"error_text": "errorcode: check_login_params -> [ErrorSQLData]"})
             cdebug.debug_print(
-                f"ulogin AJAX -> [{email}] -> [Исключение] [ErrorSQLData: '{err}']")
+                f"ulogin AJAX -> [{email}] -> [Исключение] [Error Data: '{err}']")
         finally:
             csql.disconnect_from_db()
     else:

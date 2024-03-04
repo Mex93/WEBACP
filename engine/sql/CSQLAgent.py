@@ -25,7 +25,7 @@ class CSqlAgent(csql_eng):
 
             if connect_db_type == cenum.CONNECT_DB_TYPE.LINE:
                 self.set_connect_data(self.__sql_data_line)
-            if connect_db_type == cenum.CONNECT_DB_TYPE.LOCAL:
+            elif connect_db_type == cenum.CONNECT_DB_TYPE.LOCAL:
                 self.set_connect_data(self.__sql_data_local)
             else:
                 raise ErrorSQLData("Error SQL | db changed connect type!")

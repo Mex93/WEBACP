@@ -42,6 +42,24 @@ class CCaptha {
     {
         this.#textID.value = "";
     }
+
+    validate(cmessBox)
+    {
+        if(!this.getCorrentData())
+        {
+            cmessBox.sendErrorMessage("Ошибка в обработке данных капчи");
+            return false;
+        }
+        let captcha_hash = this.getHash();
+        let captcha_text = this.getText();
+        if(!captcha_text || !captcha_hash)
+        {
+            cmessBox.sendErrorMessage("Вы не ввели капчу");
+            return false;
+        }
+        return {csuccess: true, captcha_hash, captcha_text};
+    }
+
 }
 
 export {

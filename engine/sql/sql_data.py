@@ -1,8 +1,8 @@
-
 # Название всех таблиц скрипта
 class SQL_TABLE_NAME:
     user_accounts = "acp_users"
     assembled_tv = "assembled_tv"
+    asr_tv = "unfinished_tv"
     user_logs = "acp_log"
 
 
@@ -42,6 +42,24 @@ class SQL_USERS_FIELDS:
     ufd_user_access_asr_delete = "user_access_asr_delete"
     ufd_user_access_asr_add = "user_access_asr_add"
 
+
+class SQL_ASR_FIELDS:
+    asr_fd_tv_asr_id = "tv_asr_id"
+    asr_fd_tv_asr = "tv_asr"
+    asr_fd_tv_fk = "tv_fk"
+    asr_fd_line_fk = "line_fk"
+    asr_fd_wifi_module_sn = "wifi_module_sn"
+    asr_fd_bt_module_sn = "bt_module_sn"
+    asr_fd_ethernet_mac = "ethernet_mac"
+    asr_fd_lcm_sn = "lcm_sn"
+    asr_fd_oc_sn = "oc_sn"
+    asr_fd_mainboard_sn = "mainboard_sn"
+    asr_fd_powerboard_sn = "powerboard_sn"
+    asr_fd_tcon_sn = "tcon_sn"
+    asr_fd_timestamp_st10 = "timestamp_st10"
+    asr_fd_ops_sn = "ops_sn"
+
+
 class SQL_LOG_FIELDS:
     lfd_log_index = "log_pk"
     lfd_log_user_id = "user_id"
@@ -52,4 +70,3 @@ class SQL_LOG_FIELDS:
     lfd_log_date = "log_date"
     lfd_log_ip = "log_ip"
     lfd_log_mac = "log_mac"
-

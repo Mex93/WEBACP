@@ -12,13 +12,42 @@ class CFieldsCheck
     #MAX_USER_PASSWORD_LEN = 16;
     #MIN_USER_PASSWORD_LEN = 6;
 
+    #re_ASR = new RegExp(/[^A-Z0-9]/);
     #re_Password = new RegExp(/[^a-zA-Z0-9]/);
     #re_Nickname = new RegExp(/[^a-zA-Z0-9]/);
     #re_Email = new RegExp(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/);
     #re_Lastname = new RegExp(/[^а-яА-Я]/);
 
+    #ASR_TEXT_LEN = 8;
+
     constructor() {
 
+    }
+    set_check_asr(field)
+    {
+        if (typeof field === 'string')
+        {
+            let errorObj = {
+                result: false,
+                errorText: ""
+            }
+
+            if(field.indexOf("ASR") !== -1)
+            {
+                let dataObj = {
+                    field: field,
+                    text: "ASR",
+                    textPattern: "A-Z,0-9",
+                    maxLen: this.#ASR_TEXT_LEN,
+                    minLen: this.#ASR_TEXT_LEN,
+                    rePattern: this.#re_ASR
+                }
+                return this.#set_check_validator(dataObj)
+            }
+            else errorObj.errorText = `Название должно начинаться с 'ASR...'!`
+            return errorObj
+        }
+        return false
     }
     set_check_password(field)
     {
@@ -106,7 +135,7 @@ class CFieldsCheck
                     }
                     else errorObj.errorText = `${text} должен состоять из символов ${textPattern}`
                 }
-                else errorObj.errorText = `Размер ${text} от ${minLen} до ${maxLen}`
+                else errorObj.errorText = `Размер ${text} от ${minLen} до ${maxLen} символов`
             }
             else errorObj.errorText = `Филда не строка!`
             return errorObj
