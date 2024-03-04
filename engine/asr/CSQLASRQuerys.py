@@ -15,18 +15,14 @@ class CSQLASRQuerys(CSqlAgent):
 
         query_string = (f"SELECT "
                         f"{SQL_TABLE_NAME.asr_tv}.*, "
-                        f"{SQL_TABLE_NAME.tv_model_info_tv}.{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_name} "
+                        f"{SQL_TABLE_NAME.tv_model_info_tv}.{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_name},"
+                        f"{SQL_TABLE_NAME.tv_model_info_tv}.{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_vendor_code} "
                         f"FROM {SQL_TABLE_NAME.asr_tv} "
                         f"JOIN {SQL_TABLE_NAME.tv_model_info_tv} "
                         f"ON {SQL_TABLE_NAME.asr_tv}.{SQL_ASR_FIELDS.asr_fd_tv_fk}= "
                         f"{SQL_TABLE_NAME.tv_model_info_tv}.{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_id} "
                         f"WHERE {SQL_ASR_FIELDS.asr_fd_tv_asr} = %s " 
                         "LIMIT 1")
-
-        # query_string = (f"SELECT * "
-        #                 f"FROM {SQL_TABLE_NAME.asr_tv} "
-        #                 f"WHERE {SQL_ASR_FIELDS.asr_fd_tv_asr} = %s "
-        #                 f"LIMIT 1")
 
         result = self.sql_query_and_get_result(
             self.get_sql_handle(), query_string, (asr_name,), "_1", )  # Запрос типа аасоциативного массива

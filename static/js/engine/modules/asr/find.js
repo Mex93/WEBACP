@@ -12,6 +12,11 @@ import {
 
 } from "/static/js/engine/modules/asr/CResultWindow.js";
 
+import {
+    CASRFields
+
+} from "/static/js/engine/modules/asr/CASR.js";
+
 import {CForms} from "/static/js/engine/CForms.js";
 
 import {
@@ -109,15 +114,25 @@ function getASRData(inputData)
                 if(data.asr_data)
                 {
                     let resultCount = 0;
+                    let casr = new CASRFields();
                     const entries = Object.entries(data.asr_data);
                     entries.forEach(([key, value]) => {
                         if(value !== null)
                         {
-                            let element = document.getElementById(key);
-                            if(element !== null)
+                            let elementID = document.getElementById(key);
+                            if(elementID !== null)
                             {
-                                element.innerText = value;
-                                resultCount ++;
+                                let fieldType = casr.getFieldTypeFromKeyName(key);
+                                if(fieldType != null)
+                                {
+                                    let result = casr.addField(fieldType, key, value, elementID);
+                                    if(result)
+                                    {
+                                        elementID.innerText = value;
+                                        resultCount ++;
+                                    }
+                                }
+
                             }
                         }
                         console.log(`${key}: ${value}`)
@@ -127,6 +142,41 @@ function getASRData(inputData)
                         cresultBox.showAnimBox(false);
                         cresultBox.showResultTable(true)
                     }
+                    else
+                    {
+                        cmessBox.sendErrorMessage("Ошибка в построении таблицы результата");
+                    }
+
+
+
+
+
+                    // const entries = Object.entries(data.asr_data);
+                    // entries.forEach(([key, value]) => {
+                    //     if(value !== null)
+                    //     {
+                    //         let element = document.getElementById(key);
+                    //         if(element !== null)
+                    //         {
+                    //             element.innerText = value;
+                    //             resultCount ++;
+                    //         }
+                    //     }
+                    //     console.log(`${key}: ${value}`)
+                    // })
+                    // if(resultCount)
+                    // {
+                    //     cresultBox.showAnimBox(false);
+                    //     cresultBox.showResultTable(true)
+                    // }
+
+
+
+
+
+
+
+
                 }
             }
             else

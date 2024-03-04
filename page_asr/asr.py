@@ -57,8 +57,6 @@ def asr_find():
             HTMLFieldsName.tv_fild_model_type_name: SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_model_type_name,
             HTMLFieldsName.tv_fild_vendor_code: SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_vendor_code,
         }
-        print(vars_dict)
-
         return cpages.set_render_page(PAGE_ID.ASR_FIND, captcha=new_captcha_dict, vars_dict=vars_dict)
 
     return cpages.set_render_page(PAGE_ID.ASR_FIND)
