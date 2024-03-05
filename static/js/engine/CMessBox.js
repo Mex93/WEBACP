@@ -56,11 +56,8 @@ class CMessBox
 
     #isMessageShow()
     {
-        if(this.#timerHideMessageBox !== undefined)
-        {
-            return true;
-        }
-        return false;
+        return this.#timerHideMessageBox !== undefined;
+
     }
 
     #hideMessage()
@@ -77,7 +74,7 @@ class CMessBox
         }
     }
 
-    #startTimer()
+    #startTimer(time)
     {
         if(this.#isMessageShow())
         {
@@ -86,13 +83,13 @@ class CMessBox
         let me = this;  // иначе ссылаться будет на глобальный объект а не класс
         this.#timerHideMessageBox = setTimeout(function () {
             me.#hideMessage()
-        }, 3000);
+        }, time);
     }
 
 
-    #sendMessage(header, text = "")
+    #sendMessage(header, text = "", time = 3000)
     {
-        this.#startTimer();
+        this.#startTimer(time);
         let onlyMessage = false;
         if(text === '' && header !== "")
         {
@@ -112,36 +109,36 @@ class CMessBox
     }
 
 
-    sendErrorMessage(header, text = "")
+    sendErrorMessage(header, text = "", time = 3000)
     {
         if(this.isMessageCreated())
         {
             this.#allertBlock.className = "alert error";
-            this.#sendMessage(header, text);
+            this.#sendMessage(header, text, time);
         }
     }
-    sendSuccessMessage(header, text = "")
+    sendSuccessMessage(header, text = "", time = 3000)
     {
         if(this.isMessageCreated())
         {
             this.#allertBlock.className = "alert success";
-            this.#sendMessage(header, text);
+            this.#sendMessage(header, text, time);
         }
     }
-    sendInfoMessage(header, text = "")
+    sendInfoMessage(header, text = "", time = 3000)
     {
         if(this.isMessageCreated())
         {
             this.#allertBlock.className = "alert info";
-            this.#sendMessage(header, text);
+            this.#sendMessage(header, text, time);
         }
     }
-    sendWarningMessage(header, text = "")
+    sendWarningMessage(header, text = "", time = 3000)
     {
         if(this.isMessageCreated())
         {
             this.#allertBlock.className = "alert warning";
-            this.#sendMessage(header, text);
+            this.#sendMessage(header, text, time);
         }
     }
     isMessageCreated()

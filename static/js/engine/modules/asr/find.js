@@ -1,4 +1,4 @@
-
+// ----------------------------------------------------------------- Imports
 import {CMessBox} from "/static/js/engine/CMessBox.js"
 import {CFieldsCheck} from "/static/js/engine/CFieldsCheck.js";
 
@@ -23,24 +23,118 @@ import {
     CCaptha,
 } from "/static/js/engine/CCaptha.js";
 
+// ----------------------------------------------------------------- Imports END
+
+// ----------------------------------------------------------------- VARS
 
 let cmessBox = new CMessBox("error_box");
 
-let casr = undefined;
+let casr = undefined; // класс asr CASRFields
 
-let cresultBox = undefined;
-let successAsrID = 0;
-let antiFlood = 0;
-let responseProcess = false;
+let cresultBox = undefined; // класс результ бокса
+let successAsrID = null;  // название полученного ASR если успех
+let antiFlood = 0; // антифлуд
+let responseProcess = false;  // отправка ajax
 
-let inputFieldASR = undefined;
-let btnEdit = undefined;
-let btnDel = undefined;
-let btnSave = undefined;
+let inputFieldASR = undefined;  // инпат с ввода аср
+let btnEdit = undefined; // кнопка редактировать в результ боксе
+let btnDel = undefined; // результ бокс удалить
+let btnSave = undefined;  // результ бокс сохранить
 
-let usedSourceType = null;
+let usedSourceType = false;  // если включено редактирование таблицы
+// ----------------------------------------------------------------- VARS END
+// ----------------------------------------------------------------- FUNC
 
-function getASRData(inputData)
+function onUserPressedOnDeleteBtn()  // если нажата кнопка удаления
+{
+    // TODO Заменить на модальное окно с Да и Нет потом
+    if (confirm(`"Вы действительно хотите удалить выбранную ASR '${successAsrID}' ?\\n"` +
+        "Отменить действие будет невозможно!")) // yes
+    {
+        if(successAsrID && !responseProcess)
+        {
+            responseProcess = true;
+
+            inputFieldASR.value = "";
+
+            let asrSqlID = casr.getArrIDFromFieldType(casr.TYPE_ASR_FIELD.ASR_SQL_ID);
+            // console.log("casr.getAssocArr()")
+            // console.log(casr.getAssocArr())
+            // console.log("casr.getFieldsArr()")
+            // console.log(casr.getFieldsArr())
+            if(asrSqlID !== null)
+            {
+                asrSqlID = casr.getValue(asrSqlID);
+            }
+            if(asrSqlID && asrSqlID)
+            {
+                let completed_json = JSON.stringify({
+                    casrname: successAsrID,
+                    cassyid: asrSqlID,
+                }); //$.parseJSON(json_text);
+
+                $.ajax({
+                    data : completed_json,
+                    dataType: 'json',
+                    type : 'POST',
+                    url : './asr_del_ajax',
+                    contentType: "application/json",
+                    success: function(data) {
+                        responseProcess = false
+
+                        if(data.result === true)
+                        {
+                            cresultBox.showResultBox(false);
+                            cresultBox.showAnimBox(false);
+                            cresultBox.showResultTable(false)
+                            cmessBox.sendSuccessMessage(`ASR: '${successAsrID}' успешно удалён!`);
+                            btnSave.style.display = "none";
+                            successAsrID = null;
+                            clearResultBox();
+                        }
+                        else
+                        {
+                            cmessBox.sendErrorMessage(data.error_text, "", 15000);
+                        }
+                    },
+                    error: function(error) {
+                        // responseProcess = false
+                        cmessBox.sendErrorMessage("Ошибка AJAX на стороне сервера!");
+                    }
+                })
+            }
+            else
+            {
+                alert("Ошибка на странице!")
+            }
+        }
+    }
+    else // no
+    {
+
+    }
+    return false;
+}
+
+function clearResultBox()
+{
+    let box = document.getElementById("result_table");
+    if(box !== null)
+    {
+        let arrSpans = box.querySelectorAll("tr span[class='value']");
+        if(arrSpans !== undefined)
+        {
+            for(let item of arrSpans)
+            {
+                item.innerText = "-"
+            }
+        }
+    }
+}
+
+
+
+function getASRData(inputData) // получение инфы о аср
 {
     if(!inputData.asrName)
     {
@@ -95,6 +189,10 @@ function getASRData(inputData)
     cresultBox.showResultBox(true);
     cresultBox.showAnimBox(true);
     cresultBox.showResultTable(false)
+    if(successAsrID !== null)
+    {
+        clearResultBox();
+    }
 
     $.ajax({
         data : completed_json,
@@ -130,7 +228,7 @@ function getASRData(inputData)
                     entries.forEach(([key, value]) => {
                         if(value !== null)
                         {
-                            console.log(`${key}: ${value}`)
+                            //console.log(`${key}: ${value}`)
                             let elementID = document.getElementById(`${key}`);
                             if(elementID !== null)
                             {
@@ -179,22 +277,7 @@ function getASRData(inputData)
     return true
 }
 
-function onUserPressedOnDeleteBtn()
-{
-        // TODO Заменить на модальное окно с Да и Нет потом
-    if (confirm("Вы действительно хотите удалить выбранную ASR ?\n" +
-        "Отменить действие будет невозможно!")) // yes
-    {
-        console.log("yes");
-    }
-    else // no
-    {
-        console.log("no");
-    }
-    return false;
-}
-
-
+// ----------------------------------------------------------------- FUNC END
 
 $(document).ready(function() {
     let blockID = {};
@@ -230,7 +313,7 @@ $(document).ready(function() {
             }
         }
     })
-
+    clearResultBox();
     //
     inputFieldASR = document.getElementById("asr_name")
     if(inputFieldASR !== undefined)

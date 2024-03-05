@@ -8,11 +8,13 @@ class SQL_TABLE_NAME:
 
 
 # Название полей в конфиге готовых тв
-class SQL_PLAN_SETT_FIELD_NAME_ASSEMBLED_TV:
+class SQL_ASSEMBLED_TV_FIELDS:
     fd_assy_id = "assy_id"
     fd_tvfk = "tv_fk"
     fd_linefk = "line_fk"  # Линия вторичный ключ
-    fd_tv_sn = "tv_sn"  # Линия вторичный ключ
+    fd_tv_sn = "tv_sn"
+    fd_tv_mac = "ethernet_mac"
+    fd_tv_mb_sn = "mainboard_sn"
     fd_completed_date = "timestamp_st100"  # Дата прохождения черезе упаковку
 
 
@@ -46,7 +48,7 @@ class SQL_USERS_FIELDS:
 
 class SQL_ASR_FIELDS:
     asr_fd_tv_asr_id = "tv_asr_id"
-    asr_fd_tv_asr = "tv_asr"
+    asr_fd_tv_asr_name = "tv_asr"
     asr_fd_tv_fk = "tv_fk"
     asr_fd_line_fk = "line_fk"
     asr_fd_wifi_module_sn = "wifi_module_sn"

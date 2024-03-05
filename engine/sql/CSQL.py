@@ -332,8 +332,26 @@ class csql_eng:
                     self.set_sql_console_log(str(err))
                     self.sql_disconnect()
                     raise ErrorSQLQuery("Error SQL: Error in query!")
+        elif mode == '_d':  # Запрос на delete
 
-        elif mode == '_i':  # Запрос на обновление или INSERT
+            # fetch ALL rows. Return first value of a first row
+            # Получит все строки. Вернёт первое значение первой строки
+            if query_str.find("DELETE") == -1:
+                return False
+
+            try:
+
+                cursor = sql_handle.cursor()
+                cursor.execute(query_str, args)
+                sql_handle.commit()
+                s = True
+            except Exception as err:
+                if self.__sql_error_log is True:
+                    self.set_sql_console_log(str(err))
+                    self.sql_disconnect()
+                    raise ErrorSQLQuery("Error SQL: Error in query!")
+
+        elif mode == '_i':  # Запрос INSERT
 
             # fetch ALL rows. Return first value of a first row
             # Получит все строки. Вернёт первое значение первой строки

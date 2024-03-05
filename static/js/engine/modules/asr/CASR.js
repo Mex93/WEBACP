@@ -1,36 +1,44 @@
 
-let index = 0;
 
 class CASRFields
 {
+    /*
+     TODO Класс обработки ASR: полей, динамический тип из бэка для использования
+    Доступные типы для филдов:
+    ASR_NAME: 0,
+    ASR_SQL_ID: 0,
+    ASR_TV_FK: 0,
+    ASR_LINE_ID: 0,
+    ASR_WF: 0,
+    ASR_BT: 0,
+    ASR_MAC: 0,
+    ASR_PANEL: 0,
+    ASR_OC: 0,
+    ASR_MB: 0,
+    ASR_PB: 0,
+    ASR_TCON: 0,
+    ASR_SCAN_DATE: 0,
+    ASR_OPS: 0,
+    ASR_MODEL_NAME: 0,
+    ASR_MODEL_TYPE_NAME: 0,
+    ASR_VENDOR_CODE: 0
+    */
+
     #fieldsArr = [];
 
-    TYPE_ASR_FIELD = {
-        ASR_SQL_ID: index++,
-        ASR_NAME: index++,
-        ASR_TV_FK: index++,
-        ASR_LINE_ID: index++,
-        ASR_WF: index++,
-        ASR_BT: index++,
-        ASR_MAC: index++,
-        ASR_PANEL: index++,
-        ASR_OC: index++,
-        ASR_MB: index++,
-        ASR_PB: index++,
-        ASR_TCON: index++,
-        ASR_SCAN_DATE: index++,
-        ASR_OPS: index++,
-        ASR_MODEL_NAME: index++,
-        ASR_MODEL_TYPE_NAME: index++,
-        ASR_VENDOR_CODE: index++,
-    }
-    index = 0;
+    TYPE_ASR_FIELD = {}
 
     FIELD_POD_TYPE = {
-        FIELD_TYPE: index++,
-        KEY_NAME: index++,
-        VALUE: index++,
-        HTML_OBJECT_ID: index++,
+        FIELD_TYPE: 0,
+        KEY_NAME: 1,
+        VALUE: 2,
+        HTML_OBJECT_ID: 3,
+    }
+    ASSOC_POD_TYPE = {
+        LABEL_NAME: 0,
+        BACK_NAME: 1,
+        BACK_TYPE: 2,
+        JS_TYPES_NAME: 3,
     }
     #assocArray = undefined
 
@@ -38,9 +46,26 @@ class CASRFields
     {
         if(objData)
         {
+            objData.forEach((element, index) =>
+            {
+                this.TYPE_ASR_FIELD[element[this.ASSOC_POD_TYPE.JS_TYPES_NAME]] = element[this.ASSOC_POD_TYPE.BACK_TYPE];
+
+                // console.log(`Инициализация ${element[this.ASSOC_POD_TYPE.LABEL_NAME]}\n
+                // Тип BACK_TYPE ${element[this.ASSOC_POD_TYPE.BACK_TYPE]}
+                // Тип в объекте JS_TYPES_NAME ${element[this.ASSOC_POD_TYPE.JS_TYPES_NAME]}`)
+            })
             this.#assocArray = objData;
         }
     }
+
+    #initFieldTypeFromLabelName(lbName)
+    {
+        // switch(lbName)
+        // {
+        //     case ""
+        // }
+    }
+
     addField(fieldType, keyName, currentValue, htmlID)
     {
         if(fieldType && keyName && currentValue && htmlID)
@@ -84,7 +109,7 @@ class CASRFields
     {
         if(this.isArrayIndexValid(arrIndex))
         {
-            this.#fieldsArr[index][this.FIELD_POD_TYPE.FIELD_TYPE] = null;
+            this.#fieldsArr[arrIndex][this.FIELD_POD_TYPE.FIELD_TYPE] = null;
             this.#reUpdateArr();
         }
         return false;
@@ -110,7 +135,7 @@ class CASRFields
     {
         if(this.isArrayIndexValid(arrIndex))
         {
-            return this.#fieldsArr[index][this.FIELD_POD_TYPE.VALUE];
+            return this.#fieldsArr[arrIndex][this.FIELD_POD_TYPE.VALUE];
         }
         return null;
     }
@@ -119,7 +144,7 @@ class CASRFields
     {
         if(this.isArrayIndexValid(arrIndex))
         {
-           this.#fieldsArr[index][this.FIELD_POD_TYPE.VALUE] = value;
+           this.#fieldsArr[arrIndex][this.FIELD_POD_TYPE.VALUE] = value;
            return true;
         }
         return false;
@@ -129,7 +154,7 @@ class CASRFields
     {
         if(this.isArrayIndexValid(arrIndex))
         {
-            this.#fieldsArr[index][this.FIELD_POD_TYPE.HTML_OBJECT_ID] = value;
+            this.#fieldsArr[arrIndex][this.FIELD_POD_TYPE.HTML_OBJECT_ID] = value;
             return true;
         }
         return false;
@@ -157,7 +182,7 @@ class CASRFields
     {
         if(this.isArrayIndexValid(arrIndex))
         {
-            this.#fieldsArr[index][this.FIELD_POD_TYPE.KEY_NAME] = value;
+            this.#fieldsArr[arrIndex][this.FIELD_POD_TYPE.KEY_NAME] = value;
             return true;
         }
         return false;
@@ -173,7 +198,7 @@ class CASRFields
                 if(miniArr)
                 {
                     if(miniArr[0].indexOf(keyName) !== -1)
-                        return miniArr[1];
+                        return miniArr[2];
                 }
             }
         }
@@ -182,6 +207,14 @@ class CASRFields
     isArrayIndexValid(arrIndex)
     {
         return arrIndex >= 0 && arrIndex <= this.#fieldsArr.length;
+    }
+    getFieldsArr()
+    {
+        return this.#fieldsArr
+    }
+    getAssocArr()
+    {
+        return this.#assocArray
     }
 }
 
