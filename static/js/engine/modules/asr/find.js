@@ -25,6 +25,7 @@ import {
 
 
 let cmessBox = new CMessBox("error_box");
+
 let casr = undefined;
 
 let cresultBox = undefined;
@@ -33,6 +34,11 @@ let antiFlood = 0;
 let responseProcess = false;
 
 let inputFieldASR = undefined;
+let btnEdit = undefined;
+let btnDel = undefined;
+let btnSave = undefined;
+
+let usedSourceType = null;
 
 function getASRData(inputData)
 {
@@ -153,37 +159,6 @@ function getASRData(inputData)
                     {
                         cmessBox.sendErrorMessage("Ошибка в построении таблицы результата");
                     }
-
-
-
-
-
-                    // const entries = Object.entries(data.asr_data);
-                    // entries.forEach(([key, value]) => {
-                    //     if(value !== null)
-                    //     {
-                    //         let element = document.getElementById(key);
-                    //         if(element !== null)
-                    //         {
-                    //             element.innerText = value;
-                    //             resultCount ++;
-                    //         }
-                    //     }
-                    //     console.log(`${key}: ${value}`)
-                    // })
-                    // if(resultCount)
-                    // {
-                    //     cresultBox.showAnimBox(false);
-                    //     cresultBox.showResultTable(true)
-                    // }
-
-
-
-
-
-
-
-
                 }
             }
             else
@@ -204,6 +179,21 @@ function getASRData(inputData)
     return true
 }
 
+function onUserPressedOnDeleteBtn()
+{
+        // TODO Заменить на модальное окно с Да и Нет потом
+    if (confirm("Вы действительно хотите удалить выбранную ASR ?\n" +
+        "Отменить действие будет невозможно!")) // yes
+    {
+        console.log("yes");
+    }
+    else // no
+    {
+        console.log("no");
+    }
+    return false;
+}
+
 
 
 $(document).ready(function() {
@@ -213,11 +203,19 @@ $(document).ready(function() {
     blockID.loadAnimBlock = document.getElementById("load_anim_block");
     blockID.asrResultBlock = document.getElementById("asr_result_block");
 
-    if(!blockID.resultBox || !blockID.loadAnimBlock || !blockID.asrResultBlock)
+    btnEdit = document.getElementById("btn_edit");
+    btnDel = document.getElementById("btn_del");
+    btnSave = document.getElementById("btn_save");
+
+    if(!blockID.resultBox || !blockID.loadAnimBlock || !blockID.asrResultBlock ||
+        !btnEdit || !btnDel || !btnSave)
     {
         alert("Ошибка на странице!")
         return false;
     }
+    btnSave.style.display = "none";
+
+
     cresultBox = new ResultWindow(blockID);
 
     cresultBox.showResultBox(false);
@@ -248,6 +246,13 @@ $(document).ready(function() {
             }
             getASRData(inputData)
         });
+
+
+        btnDel.addEventListener("click", (event) =>
+        {
+            event.preventDefault(); // Отменяем стандартное поведение формы
+            onUserPressedOnDeleteBtn();
+        })
     }
 
 }); // document ready

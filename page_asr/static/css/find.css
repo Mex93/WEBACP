@@ -6,3 +6,6 @@
 .table-asr .custom-table {
 	width: 100%;
 }
+.inline_buttom .btm_submit-common.delete {
+	background: red;
+}

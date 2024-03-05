@@ -5,7 +5,6 @@ class CASRFields
 {
     #fieldsArr = [];
 
-
     TYPE_ASR_FIELD = {
         ASR_SQL_ID: index++,
         ASR_NAME: index++,
@@ -87,6 +86,20 @@ class CASRFields
         {
             this.#fieldsArr[index][this.FIELD_POD_TYPE.FIELD_TYPE] = null;
             this.#reUpdateArr();
+        }
+        return false;
+    }
+    isValidField(fieldType)
+    {
+        for(const arr of this.#fieldsArr)
+        {
+            if(arr)
+            {
+                if(arr[this.FIELD_POD_TYPE.FIELD_TYPE] === fieldType)
+                {
+                    return true;
+                }
+            }
         }
         return false;
     }
