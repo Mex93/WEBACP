@@ -23,13 +23,16 @@ import {
     CCaptha,
 } from "/static/js/engine/CCaptha.js";
 
+
+let cmessBox = new CMessBox("error_box");
+let casr = undefined;
+
+let cresultBox = undefined;
+let successAsrID = 0;
 let antiFlood = 0;
 let responseProcess = false;
 
 let inputFieldASR = undefined;
-let cmessBox = new CMessBox("error_box");
-let cresultBox = undefined;
-let successAsrID = 0;
 
 function getASRData(inputData)
 {
@@ -111,20 +114,24 @@ function getASRData(inputData)
             {
                 successAsrID = inputData.asrName;
 
-                if(data.asr_data)
+                if(data.asr_data && data.assoc_tup)
                 {
+                    //console.log(data.assoc_tup)
                     let resultCount = 0;
-                    let casr = new CASRFields();
+                    casr = new CASRFields(data.assoc_tup);
                     const entries = Object.entries(data.asr_data);
+
                     entries.forEach(([key, value]) => {
                         if(value !== null)
                         {
-                            let elementID = document.getElementById(key);
+                            console.log(`${key}: ${value}`)
+                            let elementID = document.getElementById(`${key}`);
                             if(elementID !== null)
                             {
                                 let fieldType = casr.getFieldTypeFromKeyName(key);
                                 if(fieldType != null)
                                 {
+                                    //console.log(`${key}: ${value}`)
                                     let result = casr.addField(fieldType, key, value, elementID);
                                     if(result)
                                     {
@@ -135,7 +142,7 @@ function getASRData(inputData)
 
                             }
                         }
-                        console.log(`${key}: ${value}`)
+                        //console.log(`${key}: ${value}`)
                     })
                     if(resultCount)
                     {

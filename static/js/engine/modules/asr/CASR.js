@@ -33,12 +33,13 @@ class CASRFields
         VALUE: index++,
         HTML_OBJECT_ID: index++,
     }
+    #assocArray = undefined
 
     constructor(objData)
     {
         if(objData)
         {
-
+            this.#assocArray = objData;
         }
     }
     addField(fieldType, keyName, currentValue, htmlID)
@@ -154,23 +155,14 @@ class CASRFields
     {
         if(keyName)
         {
-            if(keyName.indexOf("asr_id") !== -1) return this.TYPE_ASR_FIELD.ASR_SQL_ID;
-            else if(keyName.indexOf("asr_name") !== -1) return this.TYPE_ASR_FIELD.ASR_NAME;
-            else if(keyName.indexOf("tv_fk") !== -1) return this.TYPE_ASR_FIELD.ASR_TV_FK;
-            else if(keyName.indexOf("line_id") !== -1) return this.TYPE_ASR_FIELD.ASR_LINE_ID;
-            else if(keyName.indexOf("wf") !== -1) return this.TYPE_ASR_FIELD.ASR_WF;
-            else if(keyName.indexOf("bt") !== -1) return this.TYPE_ASR_FIELD.ASR_BT;
-            else if(keyName.indexOf("mac") !== -1) return this.TYPE_ASR_FIELD.ASR_MAC;
-            else if(keyName.indexOf("panel") !== -1) return this.TYPE_ASR_FIELD.ASR_PANEL;
-            else if(keyName.indexOf("oc") !== -1) return this.TYPE_ASR_FIELD.ASR_OC;
-            else if(keyName.indexOf("mb") !== -1) return this.TYPE_ASR_FIELD.ASR_MB;
-            else if(keyName.indexOf("pb") !== -1) return this.TYPE_ASR_FIELD.ASR_PB;
-            else if(keyName.indexOf("tcon") !== -1) return this.TYPE_ASR_FIELD.ASR_TCON;
-            else if(keyName.indexOf("scan_date") !== -1) return this.TYPE_ASR_FIELD.ASR_SCAN_DATE;
-            else if(keyName.indexOf("ops") !== -1) return this.TYPE_ASR_FIELD.ASR_OPS;
-            else if(keyName.indexOf("model_name") !== -1) return this.TYPE_ASR_FIELD.ASR_MODEL_NAME;
-            else if(keyName.indexOf("model_type") !== -1) return this.TYPE_ASR_FIELD.ASR_MODEL_TYPE_NAME;
-            else if(keyName.indexOf("code") !== -1) return this.TYPE_ASR_FIELD.ASR_VENDOR_CODE;
+            for(const miniArr of this.#assocArray)
+            {
+                if(miniArr)
+                {
+                    if(miniArr[0].indexOf(keyName) !== -1)
+                        return miniArr[1];
+                }
+            }
         }
         return null;
     }

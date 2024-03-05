@@ -20,7 +20,7 @@ from engine.sql.sql_data import SQL_ASR_FIELDS, SQL_TV_MODEL_INFO_FIELDS
 from engine.common import convert_date_from_sql_format
 
 from engine.tv_models.CModels import CModels
-from engine.tv_models.enums import MODELS_TYPE
+from engine.asr.CASRFields import CASRFields, ASRFieldsType
 
 cdebug = CDebug()
 cdebug.debug_system_on(True)
@@ -54,21 +54,32 @@ def asr_find_ajax(asr_name):
                     asr_dict = dict()
                     index = 0
 
+                    asr_unit = CASRFields()
                     for key, value in result.items():
                         if key == SQL_ASR_FIELDS.asr_fd_timestamp_st10:
                             if value:
                                 value = convert_date_from_sql_format(str(value))
+
                         elif key == SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_name:
                             new_name, type_name = CModels.get_parced_name_and_type(value)
-                            asr_dict.update({SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_model_type_name: type_name})
-                            # print(type_name)
-                            value = new_name
 
-                        asr_dict.update({key: value})
+                            html_label = asr_unit.get_html_field_name_from_field_type(ASRFieldsType.MODEL_TYPE_NAME)
+                            if html_label is not None:
+                                asr_dict.update({f"{html_label}": type_name})
+                                # print(type_name)
+                                value = new_name
+
+                        new_key = asr_unit.get_html_field_name_from_sql_name(key)
+                        # print(key, new_key)
+                        if new_key is not None:
+                            asr_dict.update({f"{new_key}": value})
+
                         # print(key, value)
                         index += 1
 
                     if index > 5:
+                        assoc_tup = asr_unit.get_assoc_tuple()
+                        response_for_client.update({"assoc_tup": assoc_tup})
                         #  ----------------------------------------------------------------------------------------
 
                         #################################
