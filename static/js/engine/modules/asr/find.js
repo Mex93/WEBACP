@@ -13,7 +13,8 @@ import {
 } from "/static/js/engine/modules/asr/CResultWindow.js";
 
 import {
-    CASRFields
+    CASRFields,
+    CASRArray
 
 } from "/static/js/engine/modules/asr/CASR.js";
 
@@ -30,6 +31,7 @@ import {
 let cmessBox = new CMessBox("error_box");
 
 let casr = undefined; // класс asr CASRFields
+let casrArray = undefined;
 
 let cresultBox = undefined; // класс результ бокса
 let successAsrID = null;  // название полученного ASR если успех
@@ -222,40 +224,79 @@ function getASRData(inputData) // получение инфы о аср
                 {
                     //console.log(data.assoc_tup)
                     let resultCount = 0;
-                    casr = new CASRFields(data.assoc_tup);
+                    casrArray = new CASRArray(data.assoc_tup)
+                    casr = new CASRFields();
                     const entries = Object.entries(data.asr_data);
+
+
+                    let table = document.createElement("table");
+                    table.id = "result_table"
+                    table.className = "custom-table"
+
+                    // header
+                    let tr = document.createElement("tr");
+                    //
+                    let th = document.createElement("th");
+                    th.innerText = "Название параметра:"
+                    tr.append(th)
+                    th = document.createElement("th");
+                    th.innerText = "Текущее значение"
+                    tr.append(th)
+                    table.append(tr)  // Добавление header in table
+                    //
+
 
                     entries.forEach(([key, value]) => {
                         if(value !== null)
                         {
                             //console.log(`${key}: ${value}`)
-                            let elementID = document.getElementById(`${key}`);
-                            if(elementID !== null)
-                            {
-                                let fieldType = casr.getFieldTypeFromKeyName(key);
-                                if(fieldType != null)
-                                {
-                                    //console.log(`${key}: ${value}`)
-                                    let result = casr.addField(fieldType, key, value, elementID);
-                                    if(result)
-                                    {
-                                        elementID.innerText = value;
-                                        resultCount ++;
-                                    }
-                                }
 
+                            let fieldType = casrArray.getFieldTypeFromKeyName(key);
+                            let assocArrayIndex = casrArray.getArrIDFromHTMLFieldType(key)
+                            if(fieldType != null && assocArrayIndex !== null)
+                            {
+                                //console.log(`${key}: ${value}`)
+                                let result = casr.addField(fieldType, key, value);
+                                if(result)
+                                {
+                                    // body
+                                    tr = document.createElement("tr");
+
+                                    let td = document.createElement("td");
+                                    let span = document.createElement("span");
+                                    span.className = "label";
+                                    span.innerText = casrArray.getValueName(assocArrayIndex);
+                                    td.append(span);
+                                    tr.append(td)
+
+                                    td = document.createElement("td");
+                                    span = document.createElement("span");
+                                    span.className = "value";
+                                    span.id = key;
+                                    span.innerText = value;
+                                    td.append(span);
+                                    tr.append(td)
+                                    table.append(tr)
+                                    resultCount ++;
+                                }
                             }
                         }
                         //console.log(`${key}: ${value}`)
                     })
                     if(resultCount)
                     {
-                        cresultBox.showAnimBox(false);
-                        cresultBox.showResultTable(true)
+                        let elementTableID = document.getElementById("table_asr_id")
+                        if(elementTableID !== null)
+                        {
+                            elementTableID.append(table);
+                            cresultBox.showAnimBox(false);
+                            cresultBox.showResultTable(true)
+                        }
+                        else cmessBox.sendErrorMessage("Ошибка в построении таблицы результата [2]");
                     }
                     else
                     {
-                        cmessBox.sendErrorMessage("Ошибка в построении таблицы результата");
+                        cmessBox.sendErrorMessage("Ошибка в построении таблицы результата [1]");
                     }
                 }
             }

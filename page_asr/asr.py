@@ -39,16 +39,8 @@ def asr_find():
 
     if request.method == 'GET':
         new_captcha_dict = SIMPLE_CAPTCHA.create()
-        asr_unit = CASRFields()
-        asr_tuple = asr_unit.get_types_tuple()
 
-        vars_dict = dict()
-        for types in asr_tuple:
-            html_label = asr_unit.get_html_field_name_from_field_type(types)
-            if html_label is not None:
-                vars_dict.update({f"{html_label}": html_label})
-
-        return cpages.set_render_page(PAGE_ID.ASR_FIND, captcha=new_captcha_dict, vars_dict=vars_dict)
+        return cpages.set_render_page(PAGE_ID.ASR_FIND, captcha=new_captcha_dict)
 
     return cpages.set_render_page(PAGE_ID.ASR_FIND)
 

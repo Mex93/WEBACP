@@ -1,5 +1,92 @@
 
 
+class CASRArray
+{
+    ASSOC_POD_TYPE = {
+        LABEL_HTML_NAME: 0,
+        BACK_SQL_NAME: 1,
+        BACK_ENUM_TYPE: 2,
+        JS_TYPES_NAME: 3,
+        VALUE_NAME: 4
+    }
+    #assocArray = undefined
+    TYPE_ASR_FIELD = {}
+
+
+    constructor(objData)
+    {
+        if(objData)
+        {
+            // objData.forEach((element, index) =>
+            // {
+            //     this.TYPE_ASR_FIELD[element[this.ASSOC_POD_TYPE.JS_TYPES_NAME]] = element[this.ASSOC_POD_TYPE.BACK_TYPE];
+            //
+            //     // console.log(`Инициализация ${element[this.ASSOC_POD_TYPE.LABEL_NAME]}\n
+            //     // Тип BACK_TYPE ${element[this.ASSOC_POD_TYPE.BACK_TYPE]}
+            //     // Тип в объекте JS_TYPES_NAME ${element[this.ASSOC_POD_TYPE.JS_TYPES_NAME]}`)
+            // })
+            this.#assocArray = objData;
+        }
+    }
+    isArrayIndexValid(arrIndex)
+    {
+        return (String(this.#assocArray[arrIndex][this.ASSOC_POD_TYPE.VALUE_NAME]).length > 0)
+
+    }
+
+    getArrIDFromJSFieldType(fieldType)
+    {
+        for(const [index, value] of this.#assocArray.entries())
+        {
+            if(value)
+            {
+                if(value[this.ASSOC_POD_TYPE.JS_TYPES_NAME] !== fieldType)continue;
+                return index;
+            }
+        }
+        return null;
+    }
+    getArrIDFromHTMLFieldType(fieldType)
+    {
+        for(const [index, value] of this.#assocArray.entries())
+        {
+            if(value)
+            {
+                if(value[this.ASSOC_POD_TYPE.LABEL_HTML_NAME] !== fieldType)continue;
+                return index;
+            }
+        }
+        return null;
+    }
+
+    getValueName(arrIndex)
+    {
+        if(this.isArrayIndexValid(arrIndex))
+        {
+            return this.#assocArray[arrIndex][this.ASSOC_POD_TYPE.VALUE_NAME]
+        }
+        return false;
+    }
+
+    getFieldTypeFromKeyName(keyName)
+    {
+        if(keyName)
+        {
+            for(const miniArr of this.#assocArray)
+            {
+                if(miniArr)
+                {
+                    if(miniArr[0].indexOf(keyName) !== -1)
+                        return miniArr[2];
+                }
+            }
+        }
+        return null;
+    }
+}
+
+
+
 class CASRFields
 {
     /*
@@ -26,36 +113,15 @@ class CASRFields
 
     #fieldsArr = [];
 
-    TYPE_ASR_FIELD = {}
-
     FIELD_POD_TYPE = {
         FIELD_TYPE: 0,
         KEY_NAME: 1,
         VALUE: 2,
-        HTML_OBJECT_ID: 3,
     }
-    ASSOC_POD_TYPE = {
-        LABEL_NAME: 0,
-        BACK_NAME: 1,
-        BACK_TYPE: 2,
-        JS_TYPES_NAME: 3,
-    }
-    #assocArray = undefined
 
-    constructor(objData)
+    constructor()
     {
-        if(objData)
-        {
-            objData.forEach((element, index) =>
-            {
-                this.TYPE_ASR_FIELD[element[this.ASSOC_POD_TYPE.JS_TYPES_NAME]] = element[this.ASSOC_POD_TYPE.BACK_TYPE];
 
-                // console.log(`Инициализация ${element[this.ASSOC_POD_TYPE.LABEL_NAME]}\n
-                // Тип BACK_TYPE ${element[this.ASSOC_POD_TYPE.BACK_TYPE]}
-                // Тип в объекте JS_TYPES_NAME ${element[this.ASSOC_POD_TYPE.JS_TYPES_NAME]}`)
-            })
-            this.#assocArray = objData;
-        }
     }
 
     #initFieldTypeFromLabelName(lbName)
@@ -66,13 +132,13 @@ class CASRFields
         // }
     }
 
-    addField(fieldType, keyName, currentValue, htmlID)
+    addField(fieldType, keyName, currentValue)
     {
-        if(fieldType && keyName && currentValue && htmlID)
+        if(fieldType && keyName && currentValue)
         {
             if(this.getArrIDFromFieldType(fieldType) === null)
             {
-                this.#fieldsArr.push([fieldType, keyName, currentValue, htmlID])
+                this.#fieldsArr.push([fieldType, keyName, currentValue])
                 return this.#fieldsArr.length;
             }
         }
@@ -105,6 +171,7 @@ class CASRFields
         }
         return false;
     }
+
     deleteField(arrIndex)
     {
         if(this.isArrayIndexValid(arrIndex))
@@ -150,23 +217,6 @@ class CASRFields
         return false;
     }
     // HTML
-    setHTML(arrIndex, value)
-    {
-        if(this.isArrayIndexValid(arrIndex))
-        {
-            this.#fieldsArr[arrIndex][this.FIELD_POD_TYPE.HTML_OBJECT_ID] = value;
-            return true;
-        }
-        return false;
-    }
-    getHTMLID(arrIndex)
-    {
-        if(this.isArrayIndexValid(arrIndex))
-        {
-            return this.#fieldsArr[arrIndex][this.FIELD_POD_TYPE.HTML_OBJECT_ID];
-        }
-        return null;
-    }
     //keys
 
     getKey(arrIndex)
@@ -189,35 +239,13 @@ class CASRFields
     }
 
     //
-    getFieldTypeFromKeyName(keyName)
-    {
-        if(keyName)
-        {
-            for(const miniArr of this.#assocArray)
-            {
-                if(miniArr)
-                {
-                    if(miniArr[0].indexOf(keyName) !== -1)
-                        return miniArr[2];
-                }
-            }
-        }
-        return null;
-    }
     isArrayIndexValid(arrIndex)
     {
         return arrIndex >= 0 && arrIndex <= this.#fieldsArr.length;
     }
-    getFieldsArr()
-    {
-        return this.#fieldsArr
-    }
-    getAssocArr()
-    {
-        return this.#assocArray
-    }
+
 }
 
 export {
-    CASRFields
+    CASRFields, CASRArray
 }

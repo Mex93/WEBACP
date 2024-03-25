@@ -14,9 +14,9 @@ class CSQLASRQuerys(CSqlAgent):
     def get_asr_data_from_name(self, asr_name: str) -> str | bool:
 
         query_string = (f"SELECT "
-                        f"{SQL_TABLE_NAME.asr_tv}.*, "
                         f"{SQL_TABLE_NAME.tv_model_info_tv}.{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_name},"
-                        f"{SQL_TABLE_NAME.tv_model_info_tv}.{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_vendor_code} "
+                        f"{SQL_TABLE_NAME.tv_model_info_tv}.{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_vendor_code},"
+                        f"{SQL_TABLE_NAME.asr_tv}.* "
                         f"FROM {SQL_TABLE_NAME.asr_tv} "
                         f"JOIN {SQL_TABLE_NAME.tv_model_info_tv} "
                         f"ON {SQL_TABLE_NAME.asr_tv}.{SQL_ASR_FIELDS.asr_fd_tv_fk}= "
