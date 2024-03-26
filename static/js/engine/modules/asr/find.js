@@ -30,8 +30,8 @@ import {
 
 let cmessBox = new CMessBox("error_box");
 
-let casr = undefined; // класс asr CASRFields
-let casrArray = undefined;
+let casr = new CASRFields(); // класс asr CASRFields
+let casrArray = new CASRArray();
 
 let cresultBox = undefined; // класс результ бокса
 let successAsrID = null;  // название полученного ASR если успех
@@ -135,6 +135,137 @@ function clearResultBox()
 }
 
 
+class CTable
+{
+    TABLE_TYPE = {
+        TYPE_NONE: 0,
+        TYPE_STANDART: 1,
+        TYPE_EDITTING: 3
+    }
+    #tableID = undefined;
+    #tableType = undefined;
+    #headerID = undefined;
+    #bodyArray = undefined;
+    #tablePlaceID = undefined;
+    #bodyCounts = 0;
+    constructor(placeIDName) {
+        let tablePlace = document.getElementById(placeIDName);
+        if(tablePlace)
+        {
+            this.#tablePlaceID = tablePlace;
+
+            this.#tableType = this.TABLE_TYPE.TYPE_NONE
+            this.#headerID = undefined;
+            this.#bodyArray = Array();
+
+
+            let table = document.createElement("table");
+            table.id = "result_table"
+            table.className = "custom-table"
+            this.#tableID = table;
+            tablePlace.innerHTML = table;
+        }
+    }
+    setType(type)
+    {
+        if(type !== this.#tableType)
+        {
+            this.#tableType = type;
+            console.log("успех тип задан")
+            return true;
+        }
+        return false;
+    }
+    clearHeader()
+    {
+        if(this.#headerID !== null)
+        {
+            this.#headerID.remove();
+        }
+        this.#headerID = undefined;
+    }
+    clearBody()
+    {
+        this.#bodyArray.forEach( (element, index) =>
+        {
+            if(element)
+            {
+                let current = document.getElementById(`${element}`)
+                if(current !== null)
+                {
+                    current.remove();
+                }
+            }
+        })
+        this.#bodyArray = [];
+        this.#bodyCounts = 0;
+    }
+    addHeader(headerArr)
+    {
+        if(Array.isArray(headerArr))
+        {
+            // header
+            let tr = document.createElement("tr");
+            //
+            headerArr.forEach((element) => {
+                let th = document.createElement("th");
+                th.innerText = `${element}:`;
+                tr.append(th);
+            })
+            if(this.#tableType === this.TABLE_TYPE.TYPE_EDITTING)
+            {
+                let th = document.createElement("th");
+                th.innerText = "Новое значение:";
+                tr.append(th);
+            }
+
+            this.#tableID.append(tr);
+            this.#headerID = tr;
+            console.log("успех addHeader")
+        }
+    }
+    addBody(elementName, currentValue)
+    {
+        if(typeof elementName === 'string' && currentValue)
+        {
+            this.#bodyCounts++;
+            // body
+            let tr = document.createElement("tr");
+
+            let td = document.createElement("td");
+            let span = document.createElement("span");
+            span.className = "label";
+            span.innerText = elementName;
+            td.append(span);
+            tr.append(td)
+
+            td = document.createElement("td");
+            span = document.createElement("span");
+            span.className = "value";
+            span.id = `table_element_old_value_${this.#bodyCounts}`;
+            span.innerText = currentValue;
+            td.append(span);
+            tr.append(td)
+
+            //
+            if(this.#tableType === this.TABLE_TYPE.TYPE_EDITTING)
+            {
+                td = document.createElement("td");
+                span = document.createElement("span");
+                span.className = "value";
+                span.id = `table_element_new_value_${this.#bodyCounts}`;
+                span.innerText = currentValue;
+                td.append(span);
+                tr.append(td)
+            }
+
+            this.#tableID.append(tr)
+            this.#bodyArray.push(tr);
+            console.log("успех addBody")
+        }
+    }
+}
+
 
 function getASRData(inputData) // получение инфы о аср
 {
@@ -224,27 +355,29 @@ function getASRData(inputData) // получение инфы о аср
                 {
                     //console.log(data.assoc_tup)
                     let resultCount = 0;
-                    casrArray = new CASRArray(data.assoc_tup)
-                    casr = new CASRFields();
+                    casrArray = new CASRArray()
+                    casrArray.addData(data.assoc_tup)
                     const entries = Object.entries(data.asr_data);
 
 
-                    let table = document.createElement("table");
-                    table.id = "result_table"
-                    table.className = "custom-table"
+                    // let table = document.createElement("table");
+                    // table.id = "result_table"
+                    // table.className = "custom-table"
 
                     // header
-                    let tr = document.createElement("tr");
+                    // let tr = document.createElement("tr");
+                    // //
+                    // let th = document.createElement("th");
+                    // th.innerText = "Название параметра:"
+                    // tr.append(th)
+                    // th = document.createElement("th");
+                    // th.innerText = "Текущее значение"
+                    // tr.append(th)
+                    // table.append(tr)  // Добавление header in table
                     //
-                    let th = document.createElement("th");
-                    th.innerText = "Название параметра:"
-                    tr.append(th)
-                    th = document.createElement("th");
-                    th.innerText = "Текущее значение"
-                    tr.append(th)
-                    table.append(tr)  // Добавление header in table
-                    //
-
+                    let table = new CTable("table_asr_id");
+                    table.setType(table.TABLE_TYPE.TYPE_STANDART)
+                    table.addHeader(["Название параметра", "Текущее значение"])
 
                     entries.forEach(([key, value]) => {
                         if(value !== null)
@@ -252,31 +385,32 @@ function getASRData(inputData) // получение инфы о аср
                             //console.log(`${key}: ${value}`)
 
                             let fieldType = casrArray.getFieldTypeFromKeyName(key);
-                            let assocArrayIndex = casrArray.getArrIDFromHTMLFieldType(key)
+                            let assocArrayIndex = casrArray.getArrIDFromHTMLFieldType(key);
                             if(fieldType != null && assocArrayIndex !== null)
                             {
                                 //console.log(`${key}: ${value}`)
                                 let result = casr.addField(fieldType, key, value);
                                 if(result)
                                 {
-                                    // body
-                                    tr = document.createElement("tr");
-
-                                    let td = document.createElement("td");
-                                    let span = document.createElement("span");
-                                    span.className = "label";
-                                    span.innerText = casrArray.getValueName(assocArrayIndex);
-                                    td.append(span);
-                                    tr.append(td)
-
-                                    td = document.createElement("td");
-                                    span = document.createElement("span");
-                                    span.className = "value";
-                                    span.id = key;
-                                    span.innerText = value;
-                                    td.append(span);
-                                    tr.append(td)
-                                    table.append(tr)
+                                    table.addBody(`${casrArray.getValueName(assocArrayIndex)}:`, value);
+                                    // // body
+                                    // tr = document.createElement("tr");
+                                    //
+                                    // let td = document.createElement("td");
+                                    // let span = document.createElement("span");
+                                    // span.className = "label";
+                                    // span.innerText = `${casrArray.getValueName(assocArrayIndex)}:`;
+                                    // td.append(span);
+                                    // tr.append(td)
+                                    //
+                                    // td = document.createElement("td");
+                                    // span = document.createElement("span");
+                                    // span.className = "value";
+                                    // span.id = key;
+                                    // span.innerText = value;
+                                    // td.append(span);
+                                    // tr.append(td)
+                                    // table.append(tr)
                                     resultCount ++;
                                 }
                             }
@@ -288,7 +422,7 @@ function getASRData(inputData) // получение инфы о аср
                         let elementTableID = document.getElementById("table_asr_id")
                         if(elementTableID !== null)
                         {
-                            elementTableID.append(table);
+                            // elementTableID.append(table);
                             cresultBox.showAnimBox(false);
                             cresultBox.showResultTable(true)
                         }

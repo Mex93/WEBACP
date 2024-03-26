@@ -13,7 +13,11 @@ class CASRArray
     TYPE_ASR_FIELD = {}
 
 
-    constructor(objData)
+    constructor()
+    {
+
+    }
+    addData(objData)
     {
         if(objData)
         {

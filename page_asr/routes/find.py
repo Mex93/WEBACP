@@ -181,6 +181,7 @@ def asr_find_ajax(asr_name):
 
                     asr_unit = CASRFields()
                     for key, value in result.items():
+
                         if key == SQL_ASR_FIELDS.asr_fd_timestamp_st10:
                             if value:
                                 value = convert_date_from_sql_format(str(value))
@@ -203,8 +204,6 @@ def asr_find_ajax(asr_name):
                         index += 1
 
                     if index > 5:
-                        assoc_tup = asr_unit.get_assoc_tuple()
-                        response_for_client.update({"assoc_tup": assoc_tup})
                         #  ----------------------------------------------------------------------------------------
 
                         #################################
@@ -232,9 +231,12 @@ def asr_find_ajax(asr_name):
                                 f"asr_find_ajax AJAX -> [{nickname}] -> [Исключение] [Exception: '{err}']")
                         finally:
                             user_csql.disconnect_from_db()
-
-                        response_for_client.update({"result": True})
+                        # TODO развернуть словарь, что бы значения названия и типа были вверху
+                        # JS почему то преобразует словарь в объект с конца
                         response_for_client.update({"asr_data": asr_dict})
+                        assoc_tup = asr_unit.get_assoc_tuple()
+                        response_for_client.update({"assoc_tup": assoc_tup})
+                        response_for_client.update({"result": True})
                         cdebug.debug_print(
                             f"asr_find_ajax AJAX -> [{nickname}] -> [ASR успешно предоставлен] -> [Ответ в JS]")
                 else:

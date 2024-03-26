@@ -18,7 +18,7 @@ class CASRFields:
             (HTMLFieldsName.tv_field_mac, SQL_ASR_FIELDS.asr_fd_ethernet_mac, ASRFieldsType.MB_MAC, "ASR_MAC", "MAC"),
             (HTMLFieldsName.tv_field_panel, SQL_ASR_FIELDS.asr_fd_lcm_sn, ASRFieldsType.PANEL_SN, "ASR_PANEL", "Номер панели"),
             (HTMLFieldsName.tv_field_oc, SQL_ASR_FIELDS.asr_fd_oc_sn, ASRFieldsType.OC_SN, "ASR_OC", "Номер стекла"),
-            (HTMLFieldsName.tv_field_mb, SQL_ASR_FIELDS.asr_fd_mainboard_sn, ASRFieldsType.MB_SN), "ASR_MB", "Номер материнской платы",
+            (HTMLFieldsName.tv_field_mb, SQL_ASR_FIELDS.asr_fd_mainboard_sn, ASRFieldsType.MB_SN, "ASR_MB", "Номер материнской платы"),
             (HTMLFieldsName.tv_field_pb, SQL_ASR_FIELDS.asr_fd_powerboard_sn, ASRFieldsType.PB_SN, "ASR_PB", "Номер блока питания"),
             (HTMLFieldsName.tv_field_tcon, SQL_ASR_FIELDS.asr_fd_tcon_sn, ASRFieldsType.TCON_SN, "ASR_TCON", "Номер TCON"),
             (HTMLFieldsName.tv_field_scan_date, SQL_ASR_FIELDS.asr_fd_timestamp_st10, ASRFieldsType.SCAN_DATE, "ASR_SCAN_DATE", "Дата сканировки"),
