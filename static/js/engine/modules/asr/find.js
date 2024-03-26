@@ -163,7 +163,8 @@ class CTable
             table.id = "result_table"
             table.className = "custom-table"
             this.#tableID = table;
-            tablePlace.innerHTML = table;
+            // tablePlace.innerHTML = table;
+            tablePlace.append(table);
         }
     }
     setType(type)
@@ -376,7 +377,7 @@ function getASRData(inputData) // получение инфы о аср
                     // table.append(tr)  // Добавление header in table
                     //
                     let table = new CTable("table_asr_id");
-                    table.setType(table.TABLE_TYPE.TYPE_STANDART)
+                    table.setType(table.TABLE_TYPE.TYPE_EDITTING)
                     table.addHeader(["Название параметра", "Текущее значение"])
 
                     entries.forEach(([key, value]) => {
