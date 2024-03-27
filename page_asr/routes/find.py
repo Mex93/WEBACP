@@ -204,6 +204,7 @@ def asr_find_ajax(asr_name):
                         index += 1
 
                     if index > 5:
+
                         #  ----------------------------------------------------------------------------------------
 
                         #################################
@@ -234,8 +235,6 @@ def asr_find_ajax(asr_name):
                         # TODO развернуть словарь, что бы значения названия и типа были вверху
                         # JS почему то преобразует словарь в объект с конца
                         response_for_client.update({"asr_data": asr_dict})
-                        assoc_tup = asr_unit.get_assoc_tuple()
-                        response_for_client.update({"assoc_tup": assoc_tup})
                         response_for_client.update({"result": True})
                         cdebug.debug_print(
                             f"asr_find_ajax AJAX -> [{nickname}] -> [ASR успешно предоставлен] -> [Ответ в JS]")

@@ -116,3 +116,24 @@ def asr_del_ajax():
                     response_for_client.update({"error_text": "Ошибка в названии ASR"})
 
     return jsonify(response_for_client)
+
+@bp_page_asr.route('/asr_load_assoc_ajax', methods=['POST', 'GET'])
+def asr_load_assoc_ajax():
+    if cuser_access.is_sessions_start() is False:
+        return cpages.redirect_on_page(PAGE_ID.ACCOUNT_LOGIN)
+
+    if cuser_access.is_avalible_any_access_field(USER_SECTION_ACCESS_TYPE.ASR) is False:
+        return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
+
+    response_for_client = {
+        "error_text": "Error query Type",
+        "result": False
+    }
+
+    if request.method == "POST":
+        asr_unit = CASRFields()
+        assoc_tup = asr_unit.get_assoc_tuple()
+        response_for_client.update({"assoc_tup": assoc_tup})
+        response_for_client.update({"result": True})
+
+    return jsonify(response_for_client)

@@ -14,9 +14,21 @@ import {
 
 import {
     CASRFields,
-    CASRArray
-
+    CASRArray,
 } from "/static/js/engine/modules/asr/CASR.js";
+
+import {
+    CTable,
+} from "/static/js/engine/modules/asr/CTable.js";
+
+import {
+    cButtons,
+} from "/static/js/engine/modules/asr/cButtons.js";
+
+import {
+    BUTTOM_TYPE,
+    TABLE_TYPE,
+} from "/static/js/engine/modules/asr/common.js";
 
 import {CForms} from "/static/js/engine/CForms.js";
 
@@ -30,8 +42,10 @@ import {
 
 let cmessBox = new CMessBox("error_box");
 
-let casr = new CASRFields(); // класс asr CASRFields
+let casrField = new CASRFields(); // класс asr CASRFields
 let casrArray = new CASRArray();
+let cTable = new CTable(); // класс управления таблицей
+let cButton = new cButtons(); // класс управления кнопками
 
 let cresultBox = undefined; // класс результ бокса
 let successAsrID = null;  // название полученного ASR если успех
@@ -40,81 +54,104 @@ let responseProcess = false;  // отправка ajax
 
 let inputFieldASR = undefined;  // инпат с ввода аср
 let btnEdit = undefined; // кнопка редактировать в результ боксе
-let btnDel = undefined; // результ бокс удалить
-let btnSave = undefined;  // результ бокс сохранить
+let btnDel = undefined; // кнопка удалить
+let btnSave = undefined;  // кнопка сохранить
+let btnCancel = undefined;  // кнопка отмена
 
 let usedSourceType = false;  // если включено редактирование таблицы
 // ----------------------------------------------------------------- VARS END
 // ----------------------------------------------------------------- FUNC
 
-function onUserPressedOnDeleteBtn()  // если нажата кнопка удаления
+function onUserPressedOnDeleteBtn(btnType)  // если нажата кнопка удаления
 {
-    // TODO Заменить на модальное окно с Да и Нет потом
-    if (confirm(`"Вы действительно хотите удалить выбранную ASR '${successAsrID}' ?\\n"` +
-        "Отменить действие будет невозможно!")) // yes
+    switch(btnType)
     {
-        if(successAsrID && !responseProcess)
+        case BUTTOM_TYPE.TYPE_EDIT:
         {
-            responseProcess = true;
-
-            inputFieldASR.value = "";
-
-            let asrSqlID = casr.getArrIDFromFieldType(casr.TYPE_ASR_FIELD.ASR_SQL_ID);
-            // console.log("casr.getAssocArr()")
-            // console.log(casr.getAssocArr())
-            // console.log("casr.getFieldsArr()")
-            // console.log(casr.getFieldsArr())
-            if(asrSqlID !== null)
+            break;
+        }
+        case BUTTOM_TYPE.TYPE_SAVE:
+        {
+            break;
+        }
+        case BUTTOM_TYPE.TYPE_CANCEL:
+        {
+            break;
+        }
+        case BUTTOM_TYPE.TYPE_DEL:
+        {
+            // TODO Заменить на модальное окно с Да и Нет потом
+            if (confirm(`"Вы действительно хотите удалить выбранную ASR '${successAsrID}' ?
+            \nОтменить действие будет невозможно!"`)) // yes
             {
-                asrSqlID = casr.getValue(asrSqlID);
-            }
-            if(asrSqlID && asrSqlID)
-            {
-                let completed_json = JSON.stringify({
-                    casrname: successAsrID,
-                    cassyid: asrSqlID,
-                }); //$.parseJSON(json_text);
+                if(successAsrID && !responseProcess)
+                {
+                    responseProcess = true;
 
-                $.ajax({
-                    data : completed_json,
-                    dataType: 'json',
-                    type : 'POST',
-                    url : './asr_del_ajax',
-                    contentType: "application/json",
-                    success: function(data) {
-                        responseProcess = false
+                    inputFieldASR.value = "";
 
-                        if(data.result === true)
-                        {
-                            cresultBox.showResultBox(false);
-                            cresultBox.showAnimBox(false);
-                            cresultBox.showResultTable(false)
-                            cmessBox.sendSuccessMessage(`ASR: '${successAsrID}' успешно удалён!`);
-                            btnSave.style.display = "none";
-                            successAsrID = null;
-                            clearResultBox();
-                        }
-                        else
-                        {
-                            cmessBox.sendErrorMessage(data.error_text, "", 15000);
-                        }
-                    },
-                    error: function(error) {
-                        // responseProcess = false
-                        cmessBox.sendErrorMessage("Ошибка AJAX на стороне сервера!");
+
+                    let asrSqlID = casrField.getArrIDFromFieldType(casrArray.TYPE_ASR_FIELD.ASR_SQL_ID);
+                    // console.log("casr.getAssocArr()")
+                    // console.log(casr.getAssocArr())
+                    // console.log("casr.getFieldsArr()")
+                    // console.log(casr.getFieldsArr())
+                    if(asrSqlID !== null)
+                    {
+                        asrSqlID = casrField.getValue(asrSqlID);
                     }
-                })
+                    if(asrSqlID && asrSqlID)
+                    {
+                        let completed_json = JSON.stringify({
+                            casrname: successAsrID,
+                            cassyid: asrSqlID,
+                        }); //$.parseJSON(json_text);
+
+                        $.ajax({
+                            data : completed_json,
+                            dataType: 'json',
+                            type : 'POST',
+                            url : './asr_del_ajax',
+                            contentType: "application/json",
+                            success: function(data) {
+                                responseProcess = false
+
+                                if(data.result === true)
+                                {
+                                    cresultBox.showResultBox(false);
+                                    cresultBox.showAnimBox(false);
+                                    cresultBox.showResultTable(false)
+                                    cmessBox.sendSuccessMessage(`ASR: '${successAsrID}' успешно удалён!`);
+                                    successAsrID = null;
+                                    clearResultBox();
+                                    cTable.destroyTable()
+                                    cButton.setShowForAll(false)
+                                }
+                                else
+                                {
+                                    cmessBox.sendErrorMessage(data.error_text, "", 15000);
+                                }
+                            },
+                            error: function(error) {
+                                // responseProcess = false
+                                cmessBox.sendErrorMessage("Ошибка AJAX на стороне сервера!");
+                            }
+                        })
+                    }
+                    else
+                    {
+                        alert("Ошибка на странице!")
+                    }
+                }
             }
-            else
+            else // no
             {
-                alert("Ошибка на странице!")
+
             }
+            break;
         }
     }
-    else // no
-    {
 
-    }
     return false;
 }
 
@@ -134,138 +171,6 @@ function clearResultBox()
     }
 }
 
-
-class CTable
-{
-    TABLE_TYPE = {
-        TYPE_NONE: 0,
-        TYPE_STANDART: 1,
-        TYPE_EDITTING: 3
-    }
-    #tableID = undefined;
-    #tableType = undefined;
-    #headerID = undefined;
-    #bodyArray = undefined;
-    #tablePlaceID = undefined;
-    #bodyCounts = 0;
-    constructor(placeIDName) {
-        let tablePlace = document.getElementById(placeIDName);
-        if(tablePlace)
-        {
-            this.#tablePlaceID = tablePlace;
-
-            this.#tableType = this.TABLE_TYPE.TYPE_NONE
-            this.#headerID = undefined;
-            this.#bodyArray = Array();
-
-
-            let table = document.createElement("table");
-            table.id = "result_table"
-            table.className = "custom-table"
-            this.#tableID = table;
-            // tablePlace.innerHTML = table;
-            tablePlace.append(table);
-        }
-    }
-    setType(type)
-    {
-        if(type !== this.#tableType)
-        {
-            this.#tableType = type;
-            console.log("успех тип задан")
-            return true;
-        }
-        return false;
-    }
-    clearHeader()
-    {
-        if(this.#headerID !== null)
-        {
-            this.#headerID.remove();
-        }
-        this.#headerID = undefined;
-    }
-    clearBody()
-    {
-        this.#bodyArray.forEach( (element, index) =>
-        {
-            if(element)
-            {
-                let current = document.getElementById(`${element}`)
-                if(current !== null)
-                {
-                    current.remove();
-                }
-            }
-        })
-        this.#bodyArray = [];
-        this.#bodyCounts = 0;
-    }
-    addHeader(headerArr)
-    {
-        if(Array.isArray(headerArr))
-        {
-            // header
-            let tr = document.createElement("tr");
-            //
-            headerArr.forEach((element) => {
-                let th = document.createElement("th");
-                th.innerText = `${element}:`;
-                tr.append(th);
-            })
-            if(this.#tableType === this.TABLE_TYPE.TYPE_EDITTING)
-            {
-                let th = document.createElement("th");
-                th.innerText = "Новое значение:";
-                tr.append(th);
-            }
-
-            this.#tableID.append(tr);
-            this.#headerID = tr;
-            console.log("успех addHeader")
-        }
-    }
-    addBody(elementName, currentValue)
-    {
-        if(typeof elementName === 'string' && currentValue)
-        {
-            this.#bodyCounts++;
-            // body
-            let tr = document.createElement("tr");
-
-            let td = document.createElement("td");
-            let span = document.createElement("span");
-            span.className = "label";
-            span.innerText = elementName;
-            td.append(span);
-            tr.append(td)
-
-            td = document.createElement("td");
-            span = document.createElement("span");
-            span.className = "value";
-            span.id = `table_element_old_value_${this.#bodyCounts}`;
-            span.innerText = currentValue;
-            td.append(span);
-            tr.append(td)
-
-            //
-            if(this.#tableType === this.TABLE_TYPE.TYPE_EDITTING)
-            {
-                td = document.createElement("td");
-                span = document.createElement("span");
-                span.className = "value";
-                span.id = `table_element_new_value_${this.#bodyCounts}`;
-                span.innerText = currentValue;
-                td.append(span);
-                tr.append(td)
-            }
-
-            this.#tableID.append(tr)
-            this.#bodyArray.push(tr);
-            console.log("успех addBody")
-        }
-    }
-}
 
 
 function getASRData(inputData) // получение инфы о аср
@@ -348,38 +253,16 @@ function getASRData(inputData) // получение инфы о аср
                 }
             }
 
-            if(data.result === true)
+            if(data.result === true)  // загрузка ASR
             {
                 successAsrID = inputData.asrName;
 
-                if(data.asr_data && data.assoc_tup)
+                if(data.asr_data)
                 {
-                    //console.log(data.assoc_tup)
                     let resultCount = 0;
-                    casrArray = new CASRArray()
-                    casrArray.addData(data.assoc_tup)
                     const entries = Object.entries(data.asr_data);
-
-
-                    // let table = document.createElement("table");
-                    // table.id = "result_table"
-                    // table.className = "custom-table"
-
-                    // header
-                    // let tr = document.createElement("tr");
-                    // //
-                    // let th = document.createElement("th");
-                    // th.innerText = "Название параметра:"
-                    // tr.append(th)
-                    // th = document.createElement("th");
-                    // th.innerText = "Текущее значение"
-                    // tr.append(th)
-                    // table.append(tr)  // Добавление header in table
-                    //
-                    let table = new CTable("table_asr_id");
-                    table.setType(table.TABLE_TYPE.TYPE_EDITTING)
-                    table.addHeader(["Название параметра", "Текущее значение"])
-
+                    casrField.ClearAllFields()
+                    cTable.destroyTable()
                     entries.forEach(([key, value]) => {
                         if(value !== null)
                         {
@@ -387,31 +270,14 @@ function getASRData(inputData) // получение инфы о аср
 
                             let fieldType = casrArray.getFieldTypeFromKeyName(key);
                             let assocArrayIndex = casrArray.getArrIDFromHTMLFieldType(key);
-                            if(fieldType != null && assocArrayIndex !== null)
+                            console.log(key, fieldType, assocArrayIndex)
+                            if(fieldType !== null && assocArrayIndex !== null)  // TODO остановился
                             {
                                 //console.log(`${key}: ${value}`)
-                                let result = casr.addField(fieldType, key, value);
+                                // console.log(key, fieldType, )
+                                let result = casrField.addField(fieldType, key, value);
                                 if(result)
                                 {
-                                    table.addBody(`${casrArray.getValueName(assocArrayIndex)}:`, value);
-                                    // // body
-                                    // tr = document.createElement("tr");
-                                    //
-                                    // let td = document.createElement("td");
-                                    // let span = document.createElement("span");
-                                    // span.className = "label";
-                                    // span.innerText = `${casrArray.getValueName(assocArrayIndex)}:`;
-                                    // td.append(span);
-                                    // tr.append(td)
-                                    //
-                                    // td = document.createElement("td");
-                                    // span = document.createElement("span");
-                                    // span.className = "value";
-                                    // span.id = key;
-                                    // span.innerText = value;
-                                    // td.append(span);
-                                    // tr.append(td)
-                                    // table.append(tr)
                                     resultCount ++;
                                 }
                             }
@@ -420,14 +286,9 @@ function getASRData(inputData) // получение инфы о аср
                     })
                     if(resultCount)
                     {
-                        let elementTableID = document.getElementById("table_asr_id")
-                        if(elementTableID !== null)
-                        {
-                            // elementTableID.append(table);
-                            cresultBox.showAnimBox(false);
-                            cresultBox.showResultTable(true)
-                        }
-                        else cmessBox.sendErrorMessage("Ошибка в построении таблицы результата [2]");
+                        showTable(TABLE_TYPE.TYPE_STANDART);
+                        cresultBox.showAnimBox(false);
+                        cresultBox.showResultTable(true)
                     }
                     else
                     {
@@ -453,6 +314,87 @@ function getASRData(inputData) // получение инфы о аср
     return true
 }
 
+
+function showTable(tableType)
+{
+    if(cTable.isTypeValid(tableType))
+    {
+        let arrJSTypes = casrArray.getArrayHTMLNames();
+        if(arrJSTypes && arrJSTypes.length > 1)
+        {
+            if(cTable.createTable("table_asr_id"))
+            {
+                if(cTable.addHeader(["Название параметра", "Текущее значение"]))
+                {
+                    cTable.setType(tableType);
+
+                    let count = 0;
+                    for(let htmlName of arrJSTypes.values())
+                    {
+                        let fieldIndex = casrField.getArrIDFromFieldHTMLName(htmlName); // fieldIndex
+                        if(fieldIndex)
+                        {
+                            let assocArrayIndex = casrArray.getArrIDFromHTMLFieldType(htmlName);
+                            if(assocArrayIndex)
+                            {
+                                if(cTable.addBody(`${casrArray.getValueName(assocArrayIndex)}:`,
+                                    casrField.getValue(fieldIndex)))
+                                {
+                                    count++;
+                                }
+                            }
+                        }
+                    }
+                    if(count)
+                    {
+                        cButton.switchBTNStatus(tableType)
+                        return true;
+                    }
+                    else
+                    {
+                        cTable.destroyTable()
+                    }
+                }
+
+            }
+        }
+    }
+    cmessBox.sendErrorMessage("Возникла ошибка в обработке структуры таблицы!");
+
+    return false;
+}
+
+///////////////////////
+
+function LoadAssocArray()
+{
+    responseProcess = true;
+    antiFlood = getTimestampInSeconds() + 2;
+
+    $.ajax({
+        data : {},
+        dataType: 'json',
+        type : 'POST',
+        url : './asr_load_assoc_ajax',
+        contentType: "application/json",
+        success: function(data) {
+            responseProcess = false
+
+            if(data.result === true && data.assoc_tup)
+            {
+                casrArray.addData(data.assoc_tup)
+            }
+        },
+        error: function(error) {
+            // responseProcess = false
+            cresultBox.showResultBox(false);
+            cmessBox.sendErrorMessage("Ошибка AJAX на стороне сервера!");
+            return false
+        }
+    })
+}
+
+
 // ----------------------------------------------------------------- FUNC END
 
 $(document).ready(function() {
@@ -465,14 +407,20 @@ $(document).ready(function() {
     btnEdit = document.getElementById("btn_edit");
     btnDel = document.getElementById("btn_del");
     btnSave = document.getElementById("btn_save");
+    btnCancel = document.getElementById("btn_cancel");
 
     if(!blockID.resultBox || !blockID.loadAnimBlock || !blockID.asrResultBlock ||
-        !btnEdit || !btnDel || !btnSave)
+        !btnEdit || !btnDel || !btnSave || !btnCancel)
     {
         alert("Ошибка на странице!")
         return false;
     }
-    btnSave.style.display = "none";
+
+    cButton.addBTN(btnEdit, "Редактировать", BUTTOM_TYPE.TYPE_EDIT);
+    cButton.addBTN(btnDel, "Удалить", BUTTOM_TYPE.TYPE_DEL);
+    cButton.addBTN(btnSave, "Сохранить", BUTTOM_TYPE.TYPE_SAVE);
+    cButton.addBTN(btnCancel, "Отменить редактирование", BUTTOM_TYPE.TYPE_CANCEL);
+    cButton.setShowForAll(false)
 
 
     cresultBox = new ResultWindow(blockID);
@@ -510,8 +458,25 @@ $(document).ready(function() {
         btnDel.addEventListener("click", (event) =>
         {
             event.preventDefault(); // Отменяем стандартное поведение формы
-            onUserPressedOnDeleteBtn();
+            onUserPressedOnDeleteBtn(BUTTOM_TYPE.TYPE_DEL);
+        })
+        btnSave.addEventListener("click", (event) =>
+        {
+            event.preventDefault(); // Отменяем стандартное поведение формы
+            onUserPressedOnDeleteBtn(BUTTOM_TYPE.TYPE_SAVE);
+        })
+        btnEdit.addEventListener("click", (event) =>
+        {
+            event.preventDefault(); // Отменяем стандартное поведение формы
+            onUserPressedOnDeleteBtn(BUTTOM_TYPE.TYPE_EDIT);
+        })
+        btnCancel.addEventListener("click", (event) =>
+        {
+            event.preventDefault(); // Отменяем стандартное поведение формы
+            onUserPressedOnDeleteBtn(BUTTOM_TYPE.TYPE_CANCEL);
         })
     }
+    // загрузка ассоциативного массива
+    setTimeout(LoadAssocArray, 1000)
 
 }); // document ready

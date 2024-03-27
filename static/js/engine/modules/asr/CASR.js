@@ -2,6 +2,7 @@
 
 class CASRArray
 {
+    // TODO Класс для обработки массива прихордящего из бэка, который содержит множество данных
     ASSOC_POD_TYPE = {
         LABEL_HTML_NAME: 0,
         BACK_SQL_NAME: 1,
@@ -21,14 +22,14 @@ class CASRArray
     {
         if(objData)
         {
-            // objData.forEach((element, index) =>
-            // {
-            //     this.TYPE_ASR_FIELD[element[this.ASSOC_POD_TYPE.JS_TYPES_NAME]] = element[this.ASSOC_POD_TYPE.BACK_TYPE];
-            //
-            //     // console.log(`Инициализация ${element[this.ASSOC_POD_TYPE.LABEL_NAME]}\n
-            //     // Тип BACK_TYPE ${element[this.ASSOC_POD_TYPE.BACK_TYPE]}
-            //     // Тип в объекте JS_TYPES_NAME ${element[this.ASSOC_POD_TYPE.JS_TYPES_NAME]}`)
-            // })
+            objData.forEach((element, index) =>
+            {
+                this.TYPE_ASR_FIELD[element[this.ASSOC_POD_TYPE.JS_TYPES_NAME]] = element[this.ASSOC_POD_TYPE.BACK_ENUM_TYPE];
+
+                // console.log(`Инициализация ${element[this.ASSOC_POD_TYPE.LABEL_NAME]}\n
+                // Тип BACK_TYPE ${element[this.ASSOC_POD_TYPE.BACK_TYPE]}
+                // Тип в объекте JS_TYPES_NAME ${element[this.ASSOC_POD_TYPE.JS_TYPES_NAME]}`)
+            })
             this.#assocArray = objData;
         }
     }
@@ -87,6 +88,19 @@ class CASRArray
         }
         return null;
     }
+    getArrayHTMLNames() // получит все типы пришедшие с бека, нужно для обработки дальше CASRFields
+    {
+        let arr = [];
+        for(let i = 0; i < this.#assocArray.length; i++)
+        {
+            if(!this.isArrayIndexValid(i))continue;
+            arr.push(this.#assocArray[i][this.ASSOC_POD_TYPE.LABEL_HTML_NAME])
+        }
+        if(arr.length)
+        {
+            return arr;
+        }
+    }
 }
 
 
@@ -94,7 +108,7 @@ class CASRArray
 class CASRFields
 {
     /*
-     TODO Класс обработки ASR: полей, динамический тип из бэка для использования
+     TODO Класс обработки ASR: создание филдов с данными конфига конкретного ASR на основе данных пришедших с бэка
     Доступные типы для филдов:
     ASR_NAME: 0,
     ASR_SQL_ID: 0,
@@ -160,6 +174,18 @@ class CASRFields
         }
         return null;
     }
+    getArrIDFromFieldHTMLName(fieldType)
+    {
+        for(const [index, value] of this.#fieldsArr.entries())
+        {
+            if(value)
+            {
+                if(value[this.FIELD_POD_TYPE.KEY_NAME] !== fieldType)continue;
+                return index;
+            }
+        }
+        return null;
+    }
     #reUpdateArr() {
 
         const newArr = this.#fieldsArr.filter((value) => {
@@ -183,6 +209,22 @@ class CASRFields
             this.#fieldsArr[arrIndex][this.FIELD_POD_TYPE.FIELD_TYPE] = null;
             this.#reUpdateArr();
         }
+        return false;
+    }
+    ClearAllFields()
+    {
+        let count = 0;
+        this.#fieldsArr.forEach((element, index) =>
+        {
+            if(this.isArrayIndexValid(index))
+            {
+                this.#fieldsArr[index][this.FIELD_POD_TYPE.FIELD_TYPE] = null;
+                count++;
+            }
+        })
+        if(count)
+            this.#reUpdateArr();
+
         return false;
     }
     isValidField(fieldType)
