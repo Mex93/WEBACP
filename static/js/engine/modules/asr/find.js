@@ -68,6 +68,16 @@ function onUserPressedOnDeleteBtn(btnType)  // если нажата кнопк�
     {
         case BUTTOM_TYPE.TYPE_EDIT:
         {
+            if(cTable.getCurrentType() === TABLE_TYPE.TYPE_STANDART)
+            {
+                cTable.destroyTable();
+                showTable(TABLE_TYPE.TYPE_EDITTING);
+                return true;
+            }
+            else
+            {
+                cmessBox.sendErrorMessage("Ошибка определения типа таблицы!");
+            }
             break;
         }
         case BUTTOM_TYPE.TYPE_SAVE:
@@ -76,6 +86,16 @@ function onUserPressedOnDeleteBtn(btnType)  // если нажата кнопк�
         }
         case BUTTOM_TYPE.TYPE_CANCEL:
         {
+            if(cTable.getCurrentType() === TABLE_TYPE.TYPE_EDITTING)
+            {
+                cTable.destroyTable();
+                showTable(TABLE_TYPE.TYPE_STANDART);
+                return true;
+            }
+            else
+            {
+                cmessBox.sendErrorMessage("Ошибка определения типа таблицы!");
+            }
             break;
         }
         case BUTTOM_TYPE.TYPE_DEL:
@@ -270,7 +290,6 @@ function getASRData(inputData) // получение инфы о аср
 
                             let fieldType = casrArray.getFieldTypeFromKeyName(key);
                             let assocArrayIndex = casrArray.getArrIDFromHTMLFieldType(key);
-                            console.log(key, fieldType, assocArrayIndex)
                             if(fieldType !== null && assocArrayIndex !== null)  // TODO остановился
                             {
                                 //console.log(`${key}: ${value}`)
@@ -278,6 +297,7 @@ function getASRData(inputData) // получение инфы о аср
                                 let result = casrField.addField(fieldType, key, value);
                                 if(result)
                                 {
+                                    //console.log("В результате" + key, fieldType, assocArrayIndex, value)
                                     resultCount ++;
                                 }
                             }
@@ -289,6 +309,9 @@ function getASRData(inputData) // получение инфы о аср
                         showTable(TABLE_TYPE.TYPE_STANDART);
                         cresultBox.showAnimBox(false);
                         cresultBox.showResultTable(true)
+
+                        //console.log(casrField.getArray())
+
                     }
                     else
                     {
@@ -324,21 +347,22 @@ function showTable(tableType)
         {
             if(cTable.createTable("table_asr_id"))
             {
+                cTable.setType(tableType);  // строго до add header and addbody
                 if(cTable.addHeader(["Название параметра", "Текущее значение"]))
                 {
-                    cTable.setType(tableType);
-
                     let count = 0;
                     for(let htmlName of arrJSTypes.values())
                     {
                         let fieldIndex = casrField.getArrIDFromFieldHTMLName(htmlName); // fieldIndex
-                        if(fieldIndex)
+                        if(fieldIndex !== null)
                         {
                             let assocArrayIndex = casrArray.getArrIDFromHTMLFieldType(htmlName);
-                            if(assocArrayIndex)
+                            if(assocArrayIndex !== null)
                             {
+                                //console.log(htmlName)
+                                let isNonEdit = casrArray.isTypeNonEditting(htmlName);
                                 if(cTable.addBody(`${casrArray.getValueName(assocArrayIndex)}:`,
-                                    casrField.getValue(fieldIndex)))
+                                    casrField.getValue(fieldIndex), isNonEdit))
                                 {
                                     count++;
                                 }
@@ -355,7 +379,6 @@ function showTable(tableType)
                         cTable.destroyTable()
                     }
                 }
-
             }
         }
     }
@@ -384,6 +407,7 @@ function LoadAssocArray()
             {
                 casrArray.addData(data.assoc_tup)
             }
+            //console.log(casrArray.getArrayHTMLNames())
         },
         error: function(error) {
             // responseProcess = false

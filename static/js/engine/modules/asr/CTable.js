@@ -112,7 +112,7 @@ class CTable
             return true;
         }
     }
-    addBody(elementName, currentValue)
+    addBody(elementName, currentValue, isNonEdit)
     {
         if(typeof elementName === 'string' && currentValue)
         {
@@ -147,6 +147,10 @@ class CTable
                 input.maxLength = 30;
                 input.minLength = 1;
                 input.value = currentValue;
+                if(isNonEdit)
+                {
+                    input.disabled = true;
+                }
 
                 td.append(input)
                 tr.append(td)
@@ -162,12 +166,9 @@ class CTable
     {
         for(let val in Object.values(TABLE_TYPE))
         {
-            if(val)
+            if(val == curType)  // не изменять! тип не нужно сопоставлять в проверке
             {
-                if(val == curType)  // не изменять! тип не нужно сопоставлять в проверке
-                {
-                    return true;
-                }
+                return true;
             }
         }
         return false;

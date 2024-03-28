@@ -10,9 +10,10 @@ class CASRArray
         JS_TYPES_NAME: 3,
         VALUE_NAME: 4
     }
-    #assocArray = undefined
-    TYPE_ASR_FIELD = {}
+    #assocArray = undefined;
+    TYPE_ASR_FIELD = {};
 
+    #nonEdittingFields = [];
 
     constructor()
     {
@@ -24,6 +25,7 @@ class CASRArray
         {
             objData.forEach((element, index) =>
             {
+                // Инициализация JS имён объекта для типов
                 this.TYPE_ASR_FIELD[element[this.ASSOC_POD_TYPE.JS_TYPES_NAME]] = element[this.ASSOC_POD_TYPE.BACK_ENUM_TYPE];
 
                 // console.log(`Инициализация ${element[this.ASSOC_POD_TYPE.LABEL_NAME]}\n
@@ -31,7 +33,61 @@ class CASRArray
                 // Тип в объекте JS_TYPES_NAME ${element[this.ASSOC_POD_TYPE.JS_TYPES_NAME]}`)
             })
             this.#assocArray = objData;
+
+            // типы для запрета редактирования
+            let nonEdittingFields = [
+                this.TYPE_ASR_FIELD.ASR_SQL_ID,
+                this.TYPE_ASR_FIELD.ASR_MODEL_NAME,
+                this.TYPE_ASR_FIELD.ASR_NAME,
+                this.TYPE_ASR_FIELD.ASR_MODEL_TYPE_NAME,
+                this.TYPE_ASR_FIELD.ASR_VENDOR_CODE,
+            ];
+
+            for(let item of nonEdittingFields)
+            {
+                this.#nonEdittingFields.push(item)
+            }
+
         }
+    }
+    isTypeNonEditting(htmlType)
+    {
+        // 1) Поиск JS названия типа ASR_NAME
+        // 2) Поиск в массиве TYPE_ASR_FIELD по названию JS объекта > вернётся ID JS объекта
+        // 3) Перебор циклом в типах JS массива nonEdittingFields для запрета редактирования
+        let jsType = this.getJSTypeFromHTMLType(htmlType);
+        if(jsType !== null)
+        {
+            jsType = this.TYPE_ASR_FIELD[jsType];
+            if(jsType !== undefined)
+            {
+                for(let item of this.#nonEdittingFields)
+                {
+                    if(item === jsType)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+        }
+        return false;
+    }
+    getJSTypeFromHTMLType(htmlType)
+    {
+        for(const [index, value] of this.#assocArray.entries())
+        {
+            if(value)
+            {
+                if(value[this.ASSOC_POD_TYPE.LABEL_HTML_NAME] !== htmlType)continue;
+                let buff = value[this.ASSOC_POD_TYPE.JS_TYPES_NAME];
+                if(buff)
+                {
+                    return buff;
+                }
+            }
+        }
+        return null;
     }
     isArrayIndexValid(arrIndex)
     {
@@ -43,21 +99,21 @@ class CASRArray
     {
         for(const [index, value] of this.#assocArray.entries())
         {
-            if(value)
-            {
-                if(value[this.ASSOC_POD_TYPE.JS_TYPES_NAME] !== fieldType)continue;
-                return index;
-            }
+            if(value[this.ASSOC_POD_TYPE.JS_TYPES_NAME] !== fieldType)continue;
+            return index;
         }
         return null;
     }
     getArrIDFromHTMLFieldType(fieldType)
     {
+        //console.log("Пришло ", fieldType)
         for(const [index, value] of this.#assocArray.entries())
         {
             if(value)
             {
+                //console.log("Сравнивается " + value[this.ASSOC_POD_TYPE.LABEL_HTML_NAME])
                 if(value[this.ASSOC_POD_TYPE.LABEL_HTML_NAME] !== fieldType)continue;
+                //console.log("Вернули индекс " + index)
                 return index;
             }
         }
@@ -288,6 +344,10 @@ class CASRFields
     isArrayIndexValid(arrIndex)
     {
         return arrIndex >= 0 && arrIndex <= this.#fieldsArr.length;
+    }
+    getArray()
+    {
+       return this.#fieldsArr
     }
 
 }

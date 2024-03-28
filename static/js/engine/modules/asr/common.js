@@ -1,7 +1,7 @@
 let TABLE_TYPE = {
     TYPE_NONE: 0,
     TYPE_STANDART: 1,
-    TYPE_EDITTING: 3
+    TYPE_EDITTING: 2
 }
 let BUTTOM_TYPE = {
     TYPE_NONE: 0,
