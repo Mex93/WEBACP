@@ -41,6 +41,7 @@ class CASRArray
                 this.TYPE_ASR_FIELD.ASR_NAME,
                 this.TYPE_ASR_FIELD.ASR_MODEL_TYPE_NAME,
                 this.TYPE_ASR_FIELD.ASR_VENDOR_CODE,
+                this.TYPE_ASR_FIELD.ASR_SCAN_DATE,
             ];
 
             for(let item of nonEdittingFields)

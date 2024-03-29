@@ -18,6 +18,11 @@ import {
 } from "/static/js/engine/modules/asr/CASR.js";
 
 import {
+    CEditParameters
+} from "/static/js/engine/CEditParameters.js";
+
+
+import {
     CTable,
 } from "/static/js/engine/modules/asr/CTable.js";
 
@@ -57,10 +62,15 @@ let btnEdit = undefined; // кнопка редактировать в резу�
 let btnDel = undefined; // кнопка удалить
 let btnSave = undefined;  // кнопка сохранить
 let btnCancel = undefined;  // кнопка отмена
+let tableHTMLNameID = "result_table";
+let tableHTMLPlaceID = "table_asr_id";
 
-let usedSourceType = false;  // если включено редактирование таблицы
 // ----------------------------------------------------------------- VARS END
 // ----------------------------------------------------------------- FUNC
+
+
+
+
 
 function onUserPressedOnDeleteBtn(btnType)  // если нажата кнопка удаления
 {
@@ -82,6 +92,63 @@ function onUserPressedOnDeleteBtn(btnType)  // если нажата кнопк�
         }
         case BUTTOM_TYPE.TYPE_SAVE:
         {
+            if(antiFlood > getTimestampInSeconds())
+            {
+                cmessBox.sendErrorMessage("Не флудите!");
+                return false;  //(false - не отправляем форму на сервер)
+            }
+            antiFlood = getTimestampInSeconds() + 1;
+
+            // сохранение редактирования
+
+            let valuesTable = document.querySelectorAll(`table[id='${tableHTMLNameID}']`);
+            let tableArray = valuesTable.item(0);
+
+            let valuesOld = document.querySelectorAll(`span[class='value_current']`);
+            let valuesNew = document.querySelectorAll(`input[class='value_new']`);
+
+            let cOldValues = new CEditParameters();
+            let cNewValues = new CEditParameters();
+
+            valuesOld.values().forEach( (element) => {
+                //console.log(element.id.split("|"))
+                cOldValues.addData(String(element.id.split("|")[1]), element.innerText);
+                //console.log(element.innerText)
+            })
+
+            valuesNew.values().forEach( (element) => {
+
+                cNewValues.addData(String(element.id.split("|")[1]), element.value)
+                //console.log(element.value)
+            })
+            let resultArray = cNewValues.isTotalAllSame(cOldValues); // сравнение коллекций
+            /*
+            * resultArray:
+            * null = полностью одинаковые коллекции
+            * false = расхождение ключей
+            * если есть отличия - вернёт массив формата [ключ html, старое значение, новое значение]
+            *
+            * */
+
+            if(resultArray === false)
+            {
+                cmessBox.sendErrorMessage("Ошибка определения значений таблицы! Перезагрузите страницу...");
+            }
+            else if(resultArray === null)
+            {
+                cmessBox.sendErrorMessage("Вы не вносили никаких изменений.");
+            }
+            else
+            {
+                console.log(resultArray)
+            }
+            // for (let [incKeys, incValues] of cNewValues.getElementsArray().entries())
+            // {
+            //     console.log(incKeys, incValues);
+            // }
+
+
+
             break;
         }
         case BUTTOM_TYPE.TYPE_CANCEL:
@@ -177,7 +244,7 @@ function onUserPressedOnDeleteBtn(btnType)  // если нажата кнопк�
 
 function clearResultBox()
 {
-    let box = document.getElementById("result_table");
+    let box = document.getElementById(tableHTMLNameID);
     if(box !== null)
     {
         let arrSpans = box.querySelectorAll("tr span[class='value']");
@@ -237,7 +304,7 @@ function getASRData(inputData) // получение инфы о аср
 
     //
     responseProcess = true;
-    antiFlood = getTimestampInSeconds() + 2;
+    antiFlood = getTimestampInSeconds() + 1;
 
     let completed_json = JSON.stringify({
         captcha_hash: cresult.captcha_hash,
@@ -345,7 +412,7 @@ function showTable(tableType)
         let arrJSTypes = casrArray.getArrayHTMLNames();
         if(arrJSTypes && arrJSTypes.length > 1)
         {
-            if(cTable.createTable("table_asr_id"))
+            if(cTable.createTable(tableHTMLPlaceID))
             {
                 cTable.setType(tableType);  // строго до add header and addbody
                 if(cTable.addHeader(["Название параметра", "Текущее значение"]))
@@ -361,7 +428,7 @@ function showTable(tableType)
                             {
                                 //console.log(htmlName)
                                 let isNonEdit = casrArray.isTypeNonEditting(htmlName);
-                                if(cTable.addBody(`${casrArray.getValueName(assocArrayIndex)}:`,
+                                if(cTable.addBody(htmlName,`${casrArray.getValueName(assocArrayIndex)}:`,
                                     casrField.getValue(fieldIndex), isNonEdit))
                                 {
                                     count++;
@@ -392,7 +459,7 @@ function showTable(tableType)
 function LoadAssocArray()
 {
     responseProcess = true;
-    antiFlood = getTimestampInSeconds() + 2;
+    antiFlood = getTimestampInSeconds() + 1;
 
     $.ajax({
         data : {},

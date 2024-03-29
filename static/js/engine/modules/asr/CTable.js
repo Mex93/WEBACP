@@ -108,11 +108,11 @@ class CTable
 
             this.#tableID.append(tr);
             this.#headerID = tr;
-            console.log("успех addHeader")
+            //console.log("успех addHeader")
             return true;
         }
     }
-    addBody(elementName, currentValue, isNonEdit)
+    addBody(htmlName, elementName, currentValue, isNonEdit)
     {
         if(typeof elementName === 'string' && currentValue)
         {
@@ -129,8 +129,9 @@ class CTable
 
             td = document.createElement("td");
             span = document.createElement("span");
-            span.className = "value";
-            span.id = `table_element_old_value_${this.#bodyCounts}`;
+            span.className = "value_current";
+            span.id = `table_element_old_value|${htmlName}`;
+            // span.name = `table_element_old_value|${htmlName}`;  // обработчик формы
             span.innerText = currentValue;
             td.append(span);
             tr.append(td)
@@ -140,9 +141,10 @@ class CTable
             {
                 td = document.createElement("td");
                 let input = document.createElement("input");
-                input.id = `table_element_new_value_${this.#bodyCounts}`;
-                input.name = `table_element_new_value_${this.#bodyCounts}`;  // обработчик формы
+                input.id = `table_element_new_value|${htmlName}`;
+                // input.name = `table_element_new_value|${htmlName}`;  // обработчик формы
                 input.type = "text";
+                input.className = "value_new";
                 input.placeholder = currentValue;
                 input.maxLength = 30;
                 input.minLength = 1;
