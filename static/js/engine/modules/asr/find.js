@@ -92,6 +92,13 @@ function onUserPressedOnDeleteBtn(btnType)  // если нажата кнопк�
         }
         case BUTTOM_TYPE.TYPE_SAVE:
         {
+            if(responseProcess === true)
+            {
+                cmessBox.sendErrorMessage("Ответ от сервера ещё не пришёл!");
+                return false;  //(false - не отправляем форму на сервер)
+            }
+
+
             if(antiFlood > getTimestampInSeconds())
             {
                 cmessBox.sendErrorMessage("Не флудите!");
@@ -140,7 +147,84 @@ function onUserPressedOnDeleteBtn(btnType)  // если нажата кнопк�
             }
             else
             {
-                console.log(resultArray)
+                // TODO Запилить проверку даты.
+                // TODO сделать возврат значения таблицы если запрещена нулевая дата
+                let name = undefined;
+                let index = undefined;
+                for(let arr of resultArray)
+                {
+                    index = casrArray.isTypeNonZeroValueEditting(arr[cNewValues.ARRAY_INDEX.HTML_LABEL]);
+                    if(index)
+                    {
+                        name = casrArray.getValueName(index);
+                        if(name)
+                        {
+                            cmessBox.sendErrorMessage(`Оставлять поле '${name}' пустым запрещено!`);
+                        }
+                        return false;
+                    }
+                }
+
+
+                let asrSqlID = casrField.getArrIDFromFieldType(casrArray.TYPE_ASR_FIELD.ASR_SQL_ID);
+                let asrSqlValue = null;
+                if(asrSqlID !== null)
+                {
+                    asrSqlValue = casrField.getValue(asrSqlID);
+                }
+                if(asrSqlValue !== null)
+                {
+                    let completed_json = JSON.stringify({
+                        casrname: successAsrID,
+                        editarray: resultArray,
+                        cassyid: asrSqlValue,
+                    }); //$.parseJSON(json_text);
+
+                    $.ajax({
+                        data : completed_json,
+                        dataType: 'json',
+                        type : 'POST',
+                        url : './asr_replace_ajax',
+                        contentType: "application/json",
+                        success: function(data) {
+                            responseProcess = false
+
+                            if(data.result === true)
+                            {
+                                resultArray.forEach( (element, index) => {
+                                    let cfieldArrayID = casrField.getArrIDFromFieldHTMLName(
+                                        element[cOldValues.ARRAY_INDEX.HTML_LABEL]);
+                                    if(cfieldArrayID !== null)
+                                    {
+                                        casrField.setValue(cfieldArrayID,
+                                            element[cOldValues.ARRAY_INDEX.NEW_VALUE]);
+                                    }
+                                    else
+                                    {
+                                        cmessBox.sendErrorMessage("Ошибка обработки филдов из массива изменений!");
+                                        return 1;
+                                    }
+                                })
+
+
+                                cmessBox.sendSuccessMessage(`ASR: '${successAsrID}' успешно отредактирован!`);
+                                cTable.destroyTable()
+                                showTable(TABLE_TYPE.TYPE_EDITTING);
+                            }
+                            else
+                            {
+                                cmessBox.sendErrorMessage(data.error_text, "", 15000);
+                            }
+                        },
+                        error: function(error) {
+                            // responseProcess = false
+                            cmessBox.sendErrorMessage("Ошибка AJAX на стороне сервера!");
+                        }
+                    })
+                }
+                else cmessBox.sendErrorMessage("Ошибка определения SQL ID.");
+
+
             }
             // for (let [incKeys, incValues] of cNewValues.getElementsArray().entries())
             // {
@@ -177,21 +261,21 @@ function onUserPressedOnDeleteBtn(btnType)  // если нажата кнопк�
 
                     inputFieldASR.value = "";
 
-
                     let asrSqlID = casrField.getArrIDFromFieldType(casrArray.TYPE_ASR_FIELD.ASR_SQL_ID);
                     // console.log("casr.getAssocArr()")
                     // console.log(casr.getAssocArr())
                     // console.log("casr.getFieldsArr()")
                     // console.log(casr.getFieldsArr())
+                    let asrSqlValue = null;
                     if(asrSqlID !== null)
                     {
-                        asrSqlID = casrField.getValue(asrSqlID);
+                        asrSqlValue = casrField.getValue(asrSqlID);
                     }
-                    if(asrSqlID && asrSqlID)
+                    if(asrSqlValue !== null)
                     {
                         let completed_json = JSON.stringify({
                             casrname: successAsrID,
-                            cassyid: asrSqlID,
+                            cassyid: asrSqlValue,
                         }); //$.parseJSON(json_text);
 
                         $.ajax({

@@ -14,7 +14,7 @@ class CEditParameters
 
     addData(htmlType, cValue)
     {
-        if(this.#isHTMLValid(htmlType) && cValue)
+        if(this.#isHTMLValid(htmlType))
         {
             this.#arrayData.set(htmlType, cValue);
             return true;

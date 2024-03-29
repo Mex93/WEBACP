@@ -137,3 +137,41 @@ def asr_load_assoc_ajax():
         response_for_client.update({"result": True})
 
     return jsonify(response_for_client)
+
+
+@bp_page_asr.route('/asr_replace_ajax', methods=['POST', 'GET'])
+def asr_replace_ajax():
+    if cuser_access.is_sessions_start() is False:
+        return cpages.redirect_on_page(PAGE_ID.ACCOUNT_LOGIN)
+
+    if cuser_access.is_avalible_any_access_field(USER_SECTION_ACCESS_TYPE.ASR) is False:
+        return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
+
+    if cuser_access.is_access_for_panel(USER_SECTIONS_TYPE.ACCESS_ASR_EDIT) is False:
+        return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
+
+    response_for_client = {
+        "error_text": "Error query Type",
+        "result": False
+    }
+
+    if request.method == "POST":
+        json_ajax = request.get_json()
+        asr_name = json_ajax.get('casrname')
+        asr_id = json_ajax.get('cassyid')
+        edit_list = json_ajax.get('editarray')
+        # edit_dict
+        if asr_name and asr_id and edit_list:
+            if isinstance(asr_name, str) and isinstance(edit_list, list):
+                if CASR.check_asr_text(asr_name):
+                    from page_asr.routes.find import asr_replace_ajax
+                    response_for_client.update({"result": True})
+                    response_for_client.update({"error_text": "Заебись"})
+                    return jsonify(response_for_client)
+                    # return asr_replace_ajax(asr_name, asr_id, edit_dict)
+                else:
+                    response_for_client.update({"error_text": "Ошибка в названии ASR"})
+            else:
+                response_for_client.update({"error_text": "Ошибка в параметрах ASR"})
+
+    return jsonify(response_for_client)

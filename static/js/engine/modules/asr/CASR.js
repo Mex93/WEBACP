@@ -13,7 +13,8 @@ class CASRArray
     #assocArray = undefined;
     TYPE_ASR_FIELD = {};
 
-    #nonEdittingFields = [];
+    #nonEdittingFields = []; // запрет на редактирование
+    #nonZeroValuesFields = []; // // запрет на нулевое значений
 
     constructor()
     {
@@ -43,13 +44,47 @@ class CASRArray
                 this.TYPE_ASR_FIELD.ASR_VENDOR_CODE,
                 this.TYPE_ASR_FIELD.ASR_SCAN_DATE,
             ];
+            // запрет на нулевое значений
+            let nonZeroValuesFields = [
+                this.TYPE_ASR_FIELD.ASR_SQL_ID,
+                this.TYPE_ASR_FIELD.ASR_NAME,
+                this.TYPE_ASR_FIELD.ASR_TV_FK,
+                this.TYPE_ASR_FIELD.ASR_LINE_ID,
+            ];
 
             for(let item of nonEdittingFields)
             {
-                this.#nonEdittingFields.push(item)
+                this.#nonEdittingFields.push(item);
+            }
+            for(let item of nonZeroValuesFields)
+            {
+                this.#nonZeroValuesFields.push()
             }
 
         }
+    }
+    isTypeNonZeroValueEditting(htmlType)
+    {
+        // 1) Поиск JS названия типа ASR_NAME
+        // 2) Поиск в массиве TYPE_ASR_FIELD по названию JS объекта > вернётся ID JS объекта
+        // 3) Перебор циклом в типах JS массива nonZeroValuesFields для запрета редактирования
+        let jsType = this.getJSTypeFromHTMLType(htmlType);
+        if(jsType !== null)
+        {
+            jsType = this.TYPE_ASR_FIELD[jsType];
+            if(jsType !== undefined)
+            {
+                for(let item of this.#nonZeroValuesFields)
+                {
+                    if(item === jsType)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+        }
+        return false;
     }
     isTypeNonEditting(htmlType)
     {

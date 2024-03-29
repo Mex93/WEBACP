@@ -32,6 +32,11 @@ cuser_access = CUserAccess()
 cuser = CUser()
 
 
+def asr_replace_ajax(asr_name, asr_id, replace_dict):
+    pass
+
+
+
 def asr_del_ajax(asr_name, asr_id):
     nickname = cuser_access.get_session_var(USER_SECTIONS_TYPE.NICKNAME)
     acc_index = cuser_access.get_session_var(USER_SECTIONS_TYPE.ACC_INDEX)

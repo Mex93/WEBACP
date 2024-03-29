@@ -114,7 +114,7 @@ class CTable
     }
     addBody(htmlName, elementName, currentValue, isNonEdit)
     {
-        if(typeof elementName === 'string' && currentValue)
+        if(typeof elementName === 'string')
         {
             this.#bodyCounts++;
             // body
