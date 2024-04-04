@@ -150,21 +150,56 @@ function onUserPressedOnDeleteBtn(btnType)  // если нажата кнопк�
                 // TODO Запилить проверку даты.
                 // TODO сделать возврат значения таблицы если запрещена нулевая дата
                 let name = undefined;
-                let index = undefined;
                 for(let arr of resultArray)
                 {
-                    index = casrArray.isTypeNonZeroValueEditting(arr[cNewValues.ARRAY_INDEX.HTML_LABEL]);
-                    if(index)
+                    let labelHTMLName = arr[cNewValues.ARRAY_INDEX.HTML_LABEL];
+                    let index = casrArray.getArrIDFromHTMLFieldType(labelHTMLName)
+                    if(index !== null)
                     {
+                        // проверка на пустое поле
+                        let currentValue = cNewValues.getValue(labelHTMLName);
                         name = casrArray.getValueName(index);
-                        if(name)
+                        if(casrArray.isTypeNonZeroValueEditting(labelHTMLName))
                         {
-                            cmessBox.sendErrorMessage(`Оставлять поле '${name}' пустым запрещено!`);
+                            if(!currentValue)
+                            {
+                                //console.log(`name ${name}`)
+                                if(name)
+                                {
+                                    cmessBox.sendErrorMessage(`Оставлять поле '${name}' пустым запрещено!`);
+                                }
+                                return false;
+                            }
                         }
-                        return false;
+                        // проверка на запрет редактирования
+                        if(casrArray.isTypeNonEditting(labelHTMLName))
+                        {
+                            if(currentValue !== cOldValues.getValue(labelHTMLName))
+                            {
+                                cmessBox.sendErrorMessage(`Редактирование поля '${name}' запрещено!`);
+                                return false;
+                            }
+                        }
+
+                        // проверка на на валидность ввода данных
+                        let JSTypeSTR = casrArray.getJSTypeFromHTMLType(labelHTMLName);
+                        let JSTypeValue = casrArray.TYPE_ASR_FIELD[JSTypeSTR];
+                        if(JSTypeValue !== undefined)
+                        {
+                            if(!casrArray.isCorrectDate(JSTypeValue, currentValue))
+                            {
+                                if(name)
+                                {
+                                    cmessBox.sendErrorMessage(`Ошибка в поле '${name}'!`);
+                                }
+                                return false;
+                            }
+                        }
                     }
                 }
 
+
+                // Проверка даты
 
                 let asrSqlID = casrField.getArrIDFromFieldType(casrArray.TYPE_ASR_FIELD.ASR_SQL_ID);
                 let asrSqlValue = null;

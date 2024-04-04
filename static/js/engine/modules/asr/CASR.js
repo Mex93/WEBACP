@@ -42,7 +42,7 @@ class CASRArray
                 this.TYPE_ASR_FIELD.ASR_NAME,
                 this.TYPE_ASR_FIELD.ASR_MODEL_TYPE_NAME,
                 this.TYPE_ASR_FIELD.ASR_VENDOR_CODE,
-                this.TYPE_ASR_FIELD.ASR_SCAN_DATE,
+                //this.TYPE_ASR_FIELD.ASR_SCAN_DATE,
             ];
             // запрет на нулевое значений
             let nonZeroValuesFields = [
@@ -58,11 +58,56 @@ class CASRArray
             }
             for(let item of nonZeroValuesFields)
             {
-                this.#nonZeroValuesFields.push()
+                this.#nonZeroValuesFields.push(item);
             }
 
         }
     }
+    isCorrectDate(JSType, cValue)
+    {
+        let check = 0;
+        // проверка типов
+
+        let integerValues = [
+            this.TYPE_ASR_FIELD.ASR_SQL_ID,
+            this.TYPE_ASR_FIELD.ASR_TV_FK,
+            this.TYPE_ASR_FIELD.ASR_LINE_ID];
+
+
+        for(let item of integerValues)
+        {
+            if(item === JSType)
+            {
+                cValue = +cValue;
+                if(Number.isInteger(cValue))
+                {
+                    check = 1;
+                }
+                break;
+            }
+        }
+
+        if(check)
+        {
+            if(JSType === this.TYPE_ASR_FIELD.ASR_TV_FK)
+            {
+                if(cValue >= 1 && cValue <= 999)
+                {
+                    return true;
+                }
+            }
+            else if(JSType === this.TYPE_ASR_FIELD.ASR_LINE_ID)
+            {
+                if(cValue >= 1 && cValue <= 8)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
     isTypeNonZeroValueEditting(htmlType)
     {
         // 1) Поиск JS названия типа ASR_NAME
@@ -127,8 +172,11 @@ class CASRArray
     }
     isArrayIndexValid(arrIndex)
     {
-        return (String(this.#assocArray[arrIndex][this.ASSOC_POD_TYPE.VALUE_NAME]).length > 0)
-
+        if(Array.isArray(this.#assocArray))
+        {
+            return (String(this.#assocArray[arrIndex][this.ASSOC_POD_TYPE.VALUE_NAME]).length > 0)
+        }
+        return false;
     }
 
     getArrIDFromJSFieldType(fieldType)
