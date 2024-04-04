@@ -23,6 +23,7 @@ from engine.common import convert_date_from_sql_format
 
 from engine.tv_models.CModels import CModels
 from engine.asr.CASRFields import CASRFields, ASRFieldsType
+from engine.asr.HTMLFieldsName import HTMLFieldsName
 
 cdebug = CDebug()
 cdebug.debug_system_on(True)
@@ -34,11 +35,77 @@ cuser = CUser()
 
 def asr_replace_ajax(asr_name, asr_id, replace_dict):
 
+    nickname = cuser_access.get_session_var(USER_SECTIONS_TYPE.NICKNAME)
+    acc_index = cuser_access.get_session_var(USER_SECTIONS_TYPE.ACC_INDEX)
 
+    cdebug.debug_print(f"asr_replace_ajax AJAX -> [{acc_index},{nickname}: {asr_name}]")
 
+    response_for_client = {
+        "error_text": "",
+        "result": False
+    }
+    asr = CASRFields()
+    result = True
+    for field_list in replace_dict:
 
+        html_field = field_list[0]
+        if html_field:
 
-    pass
+            # запрещено редактировать
+            if html_field in (
+                    HTMLFieldsName.tv_field_asr_id,
+                    HTMLFieldsName.tv_fild_model_name,
+                    HTMLFieldsName.tv_field_asr_name,
+                    HTMLFieldsName.tv_fild_model_type_name,
+                    HTMLFieldsName.tv_fild_vendor_code,
+                              ):
+                result = False
+                break
+
+            old_value: str | int = field_list[1]
+            new_value: str | int = field_list[2]
+
+            if old_value == new_value:  # Если по какой то причине значения пришли одинаковые
+                result = False
+                break
+
+            if html_field in (HTMLFieldsName.tv_field_asr_id,
+                              HTMLFieldsName.tv_field_line_id,
+                              HTMLFieldsName.tv_field_tv_fk
+                              ):
+                # if integer
+                old_value = int(old_value)
+                new_value = int(new_value)
+                match html_field:
+                    case HTMLFieldsName.tv_field_line_id:
+                        if new_value < 1 or new_value > 8:  # as in js scripts
+                            result = False
+                            break
+                    case HTMLFieldsName.tv_field_tv_fk:
+                        if new_value < 1 or new_value > 999:  # as in js scripts
+                            result = False
+                            break
+
+            sql_field = asr.get_sql_field_name_from_html_field(html_field)
+            if sql_field:
+
+               pass
+            else:
+                result = False
+            break
+
+    if result:  # если все проверки пройдены на увалидность данных
+        response_for_client.update({"result": True})
+        response_for_client.update({"error_text": "Заебись"})
+    else:
+        response_for_client.update({"error_text": "Возникла ошибка при обработке запроса"})
+        cdebug.debug_print(
+            f"asr_replace_ajax AJAX -> [{nickname}] -> [Ошибка в обработчике данных]]")
+
+    result = json.dumps(response_for_client)
+    cdebug.debug_print(f"asr_replace_ajax AJAX -> [{nickname}] -> "
+                       f"[Ответ в JS] ->[{result}]")
+    return result
 
 
 

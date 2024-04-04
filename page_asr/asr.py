@@ -165,10 +165,10 @@ def asr_replace_ajax():
             if isinstance(asr_name, str) and isinstance(edit_list, list):
                 if CASR.check_asr_text(asr_name):
                     from page_asr.routes.find import asr_replace_ajax
-                    response_for_client.update({"result": True})
-                    response_for_client.update({"error_text": "Заебись"})
-                    return jsonify(response_for_client)
-                    # return asr_replace_ajax(asr_name, asr_id, edit_dict)
+                    # response_for_client.update({"result": True})
+                    # response_for_client.update({"error_text": "Заебись"})
+                    # return jsonify(response_for_client)
+                    return asr_replace_ajax(asr_name, asr_id, edit_list)
                 else:
                     response_for_client.update({"error_text": "Ошибка в названии ASR"})
             else:

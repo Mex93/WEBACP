@@ -16,6 +16,7 @@ class CASRArray
     #nonEdittingFields = []; // запрет на редактирование
     #nonZeroValuesFields = []; // // запрет на нулевое значений
 
+    #JSTypesRulesArr = [];
     constructor()
     {
 
@@ -60,9 +61,43 @@ class CASRArray
             {
                 this.#nonZeroValuesFields.push(item);
             }
-
+            // массив с проверочными значениями
+            this.#JSTypesRulesArr.push([this.TYPE_ASR_FIELD.ASR_MODEL_NAME, 0, 64]);
+            this.#JSTypesRulesArr.push([this.TYPE_ASR_FIELD.ASR_NAME, 0, 10]);
+            this.#JSTypesRulesArr.push([this.TYPE_ASR_FIELD.ASR_MODEL_TYPE_NAME, 0, 64]);
+            this.#JSTypesRulesArr.push([this.TYPE_ASR_FIELD.ASR_VENDOR_CODE, 0, 64]);
+            this.#JSTypesRulesArr.push([this.TYPE_ASR_FIELD.ASR_TV_FK, 1, 999]);
+            this.#JSTypesRulesArr.push([this.TYPE_ASR_FIELD.ASR_LINE_ID, 1, 8]);
+            this.#JSTypesRulesArr.push([this.TYPE_ASR_FIELD.ASR_WF, 0, 64]);
+            this.#JSTypesRulesArr.push([this.TYPE_ASR_FIELD.ASR_BT, 0, 64]);
+            this.#JSTypesRulesArr.push([this.TYPE_ASR_FIELD.ASR_MAC, 0, 64]);
+            this.#JSTypesRulesArr.push([this.TYPE_ASR_FIELD.ASR_PANEL, 0, 64]);
+            this.#JSTypesRulesArr.push([this.TYPE_ASR_FIELD.ASR_OC, 0, 64]);
+            this.#JSTypesRulesArr.push([this.TYPE_ASR_FIELD.ASR_MB, 0, 64]);
+            this.#JSTypesRulesArr.push([this.TYPE_ASR_FIELD.ASR_PB, 0, 64]);
+            this.#JSTypesRulesArr.push([this.TYPE_ASR_FIELD.ASR_TCON, 0, 64]);
+            this.#JSTypesRulesArr.push([this.TYPE_ASR_FIELD.ASR_SCAN_DATE, 0, 64]);
+            this.#JSTypesRulesArr.push([this.TYPE_ASR_FIELD.ASR_OPS, 0, 64]);
         }
     }
+    getRulesIndexFromJSType(jsType)
+    {
+        // jsType вход не строка а число
+        for(const [index, item] of this.#JSTypesRulesArr)
+        {
+            if(item === jsType)
+            {
+                return index;
+            }
+        }
+        return null;
+    }
+    #getRulesMin = (rIndex) => this.#JSTypesRulesArr[rIndex][1];
+    #getRulesMax = (rIndex) => this.#JSTypesRulesArr[rIndex][2];
+    #getRulesJSTypeName = (rIndex) => this.#JSTypesRulesArr[rIndex][0];
+
+    // TODO Остановился на впиливании проверки из массива на мин макс и в пайтоне на обработке входа данных
+
     isCorrectDate(JSType, cValue)
     {
         let check = 0;
@@ -101,6 +136,25 @@ class CASRArray
                 if(cValue >= 1 && cValue <= 8)
                 {
                     return true;
+                }
+            }
+            else
+            {
+                if(typeof cValue == "string")
+                {
+                    let cLen = cValue.length;
+                    if(JSType === this.TYPE_ASR_FIELD.ASR_NAME)
+                    {
+                        if(cValue.length < 10)
+                        {
+                            return true;
+                        }
+                    }
+
+                    if(cValue.length < 64)
+                    {
+                        return true;
+                    }
                 }
             }
         }
