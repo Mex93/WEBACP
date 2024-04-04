@@ -147,8 +147,7 @@ function onUserPressedOnDeleteBtn(btnType)  // если нажата кнопк�
             }
             else
             {
-                // TODO Запилить проверку даты.
-                // TODO сделать возврат значения таблицы если запрещена нулевая дата
+
                 let name = undefined;
                 for(let arr of resultArray)
                 {
@@ -159,7 +158,8 @@ function onUserPressedOnDeleteBtn(btnType)  // если нажата кнопк�
                         // проверка на пустое поле
                         let currentValue = cNewValues.getValue(labelHTMLName);
                         name = casrArray.getValueName(index);
-                        if(casrArray.isTypeNonZeroValueEditting(labelHTMLName))
+                        let isNonZero = casrArray.isTypeNonZeroValueEditting(labelHTMLName);
+                        if(isNonZero)
                         {
                             if(!currentValue)
                             {
@@ -172,7 +172,9 @@ function onUserPressedOnDeleteBtn(btnType)  // если нажата кнопк�
                             }
                         }
                         // проверка на запрет редактирования
-                        if(casrArray.isTypeNonEditting(labelHTMLName))
+                        let JSTypeSTR = casrArray.getJSTypeFromHTMLType(labelHTMLName);
+                        let JSTypeValue = casrArray.TYPE_ASR_FIELD[JSTypeSTR];
+                        if(casrArray.isTypeNonEditting(labelHTMLName, JSTypeSTR))
                         {
                             if(currentValue !== cOldValues.getValue(labelHTMLName))
                             {
@@ -182,11 +184,27 @@ function onUserPressedOnDeleteBtn(btnType)  // если нажата кнопк�
                         }
 
                         // проверка на на валидность ввода данных
-                        let JSTypeSTR = casrArray.getJSTypeFromHTMLType(labelHTMLName);
-                        let JSTypeValue = casrArray.TYPE_ASR_FIELD[JSTypeSTR];
+
                         if(JSTypeValue !== undefined)
                         {
-                            if(!casrArray.isCorrectDate(JSTypeValue, currentValue))
+                            // для даты
+                            if(JSTypeValue === casrArray.TYPE_ASR_FIELD.ASR_SCAN_DATE)
+                            {
+                                const regex = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;  //2024-03-06 10:36:56
+                                if (!regex.test(currentValue))
+                                {
+                                    // дата может быть пустым полем, поэтому проверка
+                                    if(currentValue)
+                                    {
+                                        if(name)
+                                        {
+                                            cmessBox.sendErrorMessage(`Ошибка в поле '${name}'! Некорректная дата!`);
+                                        }
+                                        return false;
+                                    }
+                                }
+                            }
+                            else if(!casrArray.isCorrectDate(JSTypeValue, currentValue))
                             {
                                 if(name)
                                 {

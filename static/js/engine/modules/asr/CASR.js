@@ -131,12 +131,22 @@ class CASRArray
         }
         return false;
     }
-    isTypeNonEditting(htmlType)
+    isTypeNonEditting(htmlType, isJTypesAvalible = undefined)
     {
         // 1) Поиск JS названия типа ASR_NAME
         // 2) Поиск в массиве TYPE_ASR_FIELD по названию JS объекта > вернётся ID JS объекта
         // 3) Перебор циклом в типах JS массива nonEdittingFields для запрета редактирования
-        let jsType = this.getJSTypeFromHTMLType(htmlType);
+        let jsType = null;
+
+        if(!isJTypesAvalible)
+        {
+            jsType = this.getJSTypeFromHTMLType(htmlType);
+        }
+        else
+        {
+            jsType = isJTypesAvalible;
+        }
+
         if(jsType !== null)
         {
             jsType = this.TYPE_ASR_FIELD[jsType];
