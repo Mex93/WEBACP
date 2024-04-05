@@ -105,6 +105,6 @@ class CSQLASRQuerys(CSqlAgent):
                         )
         print(query_string)
         result = self.sql_query_and_get_result(
-            self.get_sql_handle(), query_string, (asr_id, asr_name, *update_values), "_u", )  #
+            self.get_sql_handle(), query_string, (*update_values, asr_id, asr_name), "_u", )  #
 
         return result

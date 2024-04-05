@@ -484,17 +484,17 @@ function getASRData(inputData) // получение инфы о аср
                 if(data.asr_data)
                 {
                     let resultCount = 0;
-                    const entries = Object.entries(data.asr_data);
+                    const entrie = Object.entries(data.asr_data);
                     casrField.ClearAllFields()
                     cTable.destroyTable()
-                    entries.forEach(([key, value]) => {
+                    entrie.forEach(([key, value]) => {
                         if(value !== null)
                         {
                             //console.log(`${key}: ${value}`)
 
                             let fieldType = casrArray.getFieldTypeFromKeyName(key);
                             let assocArrayIndex = casrArray.getArrIDFromHTMLFieldType(key);
-                            if(fieldType !== null && assocArrayIndex !== null)  // TODO остановился
+                            if(fieldType !== null && assocArrayIndex !== null)
                             {
                                 //console.log(`${key}: ${value}`)
                                 // console.log(key, fieldType, )
@@ -565,6 +565,7 @@ function showTable(tableType)
                             {
                                 //console.log(htmlName)
                                 let isNonEdit = casrArray.isTypeNonEditting(htmlName);
+
                                 if(cTable.addBody(htmlName,`${casrArray.getValueName(assocArrayIndex)}:`,
                                     casrField.getValue(fieldIndex), isNonEdit))
                                 {

@@ -67,7 +67,7 @@ class CASRArray
             this.#JSTypesRulesArr.push([this.TYPE_ASR_FIELD.ASR_MODEL_TYPE_NAME, 0, 64]);
             this.#JSTypesRulesArr.push([this.TYPE_ASR_FIELD.ASR_VENDOR_CODE, 0, 64]);
             this.#JSTypesRulesArr.push([this.TYPE_ASR_FIELD.ASR_TV_FK, 1, 999]);
-            this.#JSTypesRulesArr.push([this.TYPE_ASR_FIELD.ASR_LINE_ID, 1, 8]);
+            this.#JSTypesRulesArr.push([this.TYPE_ASR_FIELD.ASR_LINE_ID, 1, 4]);
             this.#JSTypesRulesArr.push([this.TYPE_ASR_FIELD.ASR_WF, 0, 64]);
             this.#JSTypesRulesArr.push([this.TYPE_ASR_FIELD.ASR_BT, 0, 64]);
             this.#JSTypesRulesArr.push([this.TYPE_ASR_FIELD.ASR_MAC, 0, 64]);
@@ -85,7 +85,6 @@ class CASRArray
         // jsType вход не строка а число
         for(const [index, item] of this.#JSTypesRulesArr.entries())
         {
-            console.log(item[0], jsType)
             if(item[0] === jsType)
             {
                 return index;
@@ -108,6 +107,24 @@ class CASRArray
             this.TYPE_ASR_FIELD.ASR_TV_FK,
             this.TYPE_ASR_FIELD.ASR_LINE_ID];
 
+        let stringValues = [
+            this.TYPE_ASR_FIELD.ASR_MODEL_NAME,
+            this.TYPE_ASR_FIELD.ASR_NAME,
+            this.TYPE_ASR_FIELD.ASR_MODEL_TYPE_NAME,
+            this.TYPE_ASR_FIELD.ASR_VENDOR_CODE,
+            this.TYPE_ASR_FIELD.ASR_WF,
+            this.TYPE_ASR_FIELD.ASR_BT,
+            this.TYPE_ASR_FIELD.ASR_MAC,
+            this.TYPE_ASR_FIELD.ASR_PANEL,
+            this.TYPE_ASR_FIELD.ASR_OC,
+            this.TYPE_ASR_FIELD.ASR_MB,
+            this.TYPE_ASR_FIELD.ASR_PB,
+            this.TYPE_ASR_FIELD.ASR_TCON,
+            this.TYPE_ASR_FIELD.ASR_SCAN_DATE,
+            this.TYPE_ASR_FIELD.ASR_OPS
+        ];
+
+
         let rulesIndex = this.#getRulesIndexFromJSType(JSType);
 
         for(let item of integerValues)
@@ -122,13 +139,22 @@ class CASRArray
                 break;
             }
         }
+        if(!check)
+        {
+            for(let item of stringValues)
+            {
+                if(item === JSType)
+                {
+                   check = 1;
+                   break;
+                }
+            }
+        }
 
         if(check)
         {
-            console.log("122334")
             if(rulesIndex)
             {
-                console.log("22222")
                 if(typeof cValue == "string")
                 {
                     let cLen = cValue.length;
@@ -139,10 +165,8 @@ class CASRArray
                 }
                 else if(typeof cValue == "number")
                 {
-                    console.log("122")
                     if(cValue >= this.#getRulesMin(rulesIndex) && cValue <= this.#getRulesMax(rulesIndex))
                     {
-                        console.log("33")
                         return true;
                     }
                 }
@@ -346,7 +370,7 @@ class CASRFields
 
     addField(fieldType, keyName, currentValue)
     {
-        if(fieldType && keyName && currentValue)
+        if(fieldType && keyName)
         {
             if(this.getArrIDFromFieldType(fieldType) === null)
             {
