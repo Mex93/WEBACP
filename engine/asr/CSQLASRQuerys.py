@@ -95,3 +95,16 @@ class CSQLASRQuerys(CSqlAgent):
             self.get_sql_handle(), query_string, (asr_id, asr_name, ), "_d", )  #
 
         return result
+
+    def update_asr(self, asr_id: str, asr_name: str, update_string: str, update_values: list):
+
+        query_string = (f"UPDATE {SQL_TABLE_NAME.asr_tv} SET {update_string} "
+                        f" WHERE "
+                        f"{SQL_ASR_FIELDS.asr_fd_tv_asr_id} = %s AND "
+                        f"{SQL_ASR_FIELDS.asr_fd_tv_asr_name} = %s"
+                        )
+        print(query_string)
+        result = self.sql_query_and_get_result(
+            self.get_sql_handle(), query_string, (asr_id, asr_name, *update_values), "_u", )  #
+
+        return result

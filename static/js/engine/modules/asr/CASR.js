@@ -63,7 +63,7 @@ class CASRArray
             }
             // массив с проверочными значениями
             this.#JSTypesRulesArr.push([this.TYPE_ASR_FIELD.ASR_MODEL_NAME, 0, 64]);
-            this.#JSTypesRulesArr.push([this.TYPE_ASR_FIELD.ASR_NAME, 0, 10]);
+            this.#JSTypesRulesArr.push([this.TYPE_ASR_FIELD.ASR_NAME, 8, 10]);
             this.#JSTypesRulesArr.push([this.TYPE_ASR_FIELD.ASR_MODEL_TYPE_NAME, 0, 64]);
             this.#JSTypesRulesArr.push([this.TYPE_ASR_FIELD.ASR_VENDOR_CODE, 0, 64]);
             this.#JSTypesRulesArr.push([this.TYPE_ASR_FIELD.ASR_TV_FK, 1, 999]);
@@ -80,12 +80,13 @@ class CASRArray
             this.#JSTypesRulesArr.push([this.TYPE_ASR_FIELD.ASR_OPS, 0, 64]);
         }
     }
-    getRulesIndexFromJSType(jsType)
+    #getRulesIndexFromJSType(jsType)
     {
         // jsType вход не строка а число
-        for(const [index, item] of this.#JSTypesRulesArr)
+        for(const [index, item] of this.#JSTypesRulesArr.entries())
         {
-            if(item === jsType)
+            console.log(item[0], jsType)
+            if(item[0] === jsType)
             {
                 return index;
             }
@@ -96,7 +97,6 @@ class CASRArray
     #getRulesMax = (rIndex) => this.#JSTypesRulesArr[rIndex][2];
     #getRulesJSTypeName = (rIndex) => this.#JSTypesRulesArr[rIndex][0];
 
-    // TODO Остановился на впиливании проверки из массива на мин макс и в пайтоне на обработке входа данных
 
     isCorrectDate(JSType, cValue)
     {
@@ -108,6 +108,7 @@ class CASRArray
             this.TYPE_ASR_FIELD.ASR_TV_FK,
             this.TYPE_ASR_FIELD.ASR_LINE_ID];
 
+        let rulesIndex = this.#getRulesIndexFromJSType(JSType);
 
         for(let item of integerValues)
         {
@@ -124,35 +125,24 @@ class CASRArray
 
         if(check)
         {
-            if(JSType === this.TYPE_ASR_FIELD.ASR_TV_FK)
+            console.log("122334")
+            if(rulesIndex)
             {
-                if(cValue >= 1 && cValue <= 999)
-                {
-                    return true;
-                }
-            }
-            else if(JSType === this.TYPE_ASR_FIELD.ASR_LINE_ID)
-            {
-                if(cValue >= 1 && cValue <= 8)
-                {
-                    return true;
-                }
-            }
-            else
-            {
+                console.log("22222")
                 if(typeof cValue == "string")
                 {
                     let cLen = cValue.length;
-                    if(JSType === this.TYPE_ASR_FIELD.ASR_NAME)
+                    if(cLen >= this.#getRulesMin(rulesIndex) && cLen <= this.#getRulesMax(rulesIndex))
                     {
-                        if(cValue.length < 10)
-                        {
-                            return true;
-                        }
+                        return true;
                     }
-
-                    if(cValue.length < 64)
+                }
+                else if(typeof cValue == "number")
+                {
+                    console.log("122")
+                    if(cValue >= this.#getRulesMin(rulesIndex) && cValue <= this.#getRulesMax(rulesIndex))
                     {
+                        console.log("33")
                         return true;
                     }
                 }
