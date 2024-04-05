@@ -43,6 +43,8 @@ def asr_replace_ajax(asr_name, asr_id, replace_list):
         "error_text": "",
         "result": False
     }
+    # TODO остановился на том что не прилетает массив с изменениями так как на js что то сломалось когда я отключил проверку на пустое значение в валуес в fields addfields
+
     asr = CASRFields()
     result = True
     for_update_list = list()
