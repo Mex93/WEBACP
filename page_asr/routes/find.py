@@ -43,12 +43,11 @@ def asr_replace_ajax(asr_name, asr_id, replace_list):
         "error_text": "",
         "result": False
     }
-    # TODO остановился на том что не прилетает массив с изменениями так как на js что то сломалось когда я отключил проверку на пустое значение в валуес в fields addfields
 
     asr = CASRFields()
     result = True
     for_update_list = list()
-    print(for_update_list)
+    # print(replace_list)
     if len(replace_list):
         for field_list in replace_list:
 
@@ -122,7 +121,6 @@ def asr_replace_ajax(asr_name, asr_id, replace_list):
                     update_values_list.append(arr[1])
 
                 if len(update_values_list):
-
                     update_string_fields = ','.join(buff_list)
                     del buff_list
 
@@ -145,8 +143,9 @@ def asr_replace_ajax(asr_name, asr_id, replace_list):
                                 start_next = False
                                 if (sql_assy_id == asr_id) and (sql_asr_name == asr_name):
 
-                                    if sql_mb_sn or sql_mac:
-                                        result_assembled = line_csql.check_asr_data_in_assembled_table(sql_mb_sn, sql_mac)
+                                    if sql_mb_sn is not None or sql_mac is not None:
+                                        result_assembled = line_csql.check_asr_data_in_assembled_table(sql_mb_sn,
+                                                                                                       sql_mac)
                                         if result_assembled:
                                             result_assembled = result_assembled[0]
                                             assembled_tv_sn = result_assembled.get(SQL_ASSEMBLED_TV_FIELDS.fd_tv_sn, None)
@@ -425,7 +424,7 @@ def asr_find_ajax(asr_name):
                         # print(key, value)
                         index += 1
 
-                    if index > 5:
+                    if index > 4:
 
                         #  ----------------------------------------------------------------------------------------
 

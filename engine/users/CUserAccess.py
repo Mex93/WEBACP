@@ -8,7 +8,6 @@ class CUserAccess(CUserSessions):
         super().__init__()
 
     def is_access_for_panel(self, session_type: USER_SECTIONS_TYPE):
-
         current_var = self.get_session_var(session_type)
         if current_var is not False:
             if current_var in (False, 0, None):

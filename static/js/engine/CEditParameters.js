@@ -108,8 +108,6 @@ class CEditParameters
                             let itsArraysNotSame = false; // если массивы не одинаковы, а именно значения
                             for (let [incKeys, incValues] of incomingValues)
                             {
-
-                                //TODO Остановился на херне. не отсылается массив в пайтион с изменениями из за того что удалил проверку на значение в filds addfield
                                 for (let [curKeys, curValues] of currentValues)
                                 {
                                     if(incKeys !== curKeys)continue;

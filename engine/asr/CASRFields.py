@@ -25,9 +25,6 @@ class CASRFields:
             (HTMLFieldsName.tv_field_ops, SQL_ASR_FIELDS.asr_fd_ops_sn, ASRFieldsType.OPS_SN, "ASR_OPS", "Номер OPS"),
         )
 
-
-
-
     def get_html_field_name_from_sql_name(self, sql_name):
         for item in self.__ASRFieldsAssoc:
             if item[1].find(sql_name, 0, len(sql_name)) != -1:

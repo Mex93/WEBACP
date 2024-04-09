@@ -41,7 +41,7 @@ class CTable
         if(type !== this.#tableType)
         {
             this.#tableType = type;
-            console.log("успех тип задан")
+            //console.log("успех тип задан")
             return true;
         }
         return false;
@@ -160,7 +160,7 @@ class CTable
 
             this.#tableID.append(tr)
             this.#bodyArray.push(tr);
-            console.log("успех addBody")
+            //console.log("успех addBody")
             return true;
         }
     }

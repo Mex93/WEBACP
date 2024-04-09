@@ -103,7 +103,6 @@ class CSQLASRQuerys(CSqlAgent):
                         f"{SQL_ASR_FIELDS.asr_fd_tv_asr_id} = %s AND "
                         f"{SQL_ASR_FIELDS.asr_fd_tv_asr_name} = %s"
                         )
-        print(query_string)
         result = self.sql_query_and_get_result(
             self.get_sql_handle(), query_string, (*update_values, asr_id, asr_name), "_u", )  #
 

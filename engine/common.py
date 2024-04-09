@@ -32,7 +32,9 @@ def get_data_stamp_from_unix_time(cur_unix_time,
 
 
 def convert_date_from_sql_format(date: str):
-    string = date.split(".")[0]
+    string = date.split("+")[0]
+    if string.find(".") != -1:
+        string = date.split(".")[0]
     if string is False:
         string = ""
     return string

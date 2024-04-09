@@ -93,7 +93,7 @@ def ulogin(password, email, savemy):
                             # blocked
                             account_disable_aindex = query_data.get(SQL_USERS_FIELDS.ufd_account_dis_aindex, None)
                             account_disable_date = query_data.get(SQL_USERS_FIELDS.ufd_account_dis_date, None)
-                            if account_disable_aindex and account_disable_date is not None:
+                            if account_disable_aindex is not None and account_disable_date is not None:
                                 cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCOUNT_DIS_AINDEX,
                                                              account_disable_aindex)
                                 cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCOUNT_DIS_DATE, account_disable_date)
@@ -102,7 +102,7 @@ def ulogin(password, email, savemy):
                             nickname = query_data.get(SQL_USERS_FIELDS.ufd_nickname, None)
                             firstname = query_data.get(SQL_USERS_FIELDS.ufd_firtname, None)
                             lastname = query_data.get(SQL_USERS_FIELDS.ufd_lastname, None)
-                            if nickname and firstname and lastname is not None:
+                            if nickname is not None and firstname is not None and lastname is not None:
                                 cuser_access.set_session_var(USER_SECTIONS_TYPE.NICKNAME,
                                                              nickname)
                                 cuser_access.set_session_var(USER_SECTIONS_TYPE.FIRSTNAME,
@@ -132,10 +132,9 @@ def ulogin(password, email, savemy):
                             #
                             access_config_serial_add = query_data.get(SQL_USERS_FIELDS.ufd_user_access_sn_add, None)
 
-                            if (access_config_serial_edit
-                                    and access_config_serial_del
-                                    and access_config_serial_add
-                                    is not None):
+                            if (access_config_serial_edit is not None
+                                    and access_config_serial_del is not None
+                                    and access_config_serial_add is not None):
                                 cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_SN_EDIT,
                                                              access_config_serial_edit)
                                 cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_SN_DELETE,
@@ -156,10 +155,10 @@ def ulogin(password, email, savemy):
                             #
                             access_config_scan_edit = query_data.get(SQL_USERS_FIELDS.ufd_user_access_scan_edit, None)
 
-                            if (access_config_scan_add
-                                    and access_config_scan_delete
-                                    and access_config_scan_edit
-                                    is not None):
+                            if (access_config_scan_add is not None
+                                    and access_config_scan_delete is not None
+                                    and access_config_scan_edit is not None
+                                    ):
                                 cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_SCAN_ADD,
                                                              access_config_scan_add)
                                 cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_SCAN_DELETE,
@@ -180,8 +179,8 @@ def ulogin(password, email, savemy):
                             #
                             access_config_asr_add = query_data.get(SQL_USERS_FIELDS.ufd_user_access_asr_add, None)
 
-                            if (access_config_asr_delete
-                                    and access_config_asr_edit
+                            if (access_config_asr_delete is not None
+                                    and access_config_asr_edit is not None
                                     and access_config_asr_add
                                     is not None):
                                 cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_ASR_DELETE,

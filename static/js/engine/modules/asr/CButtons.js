@@ -68,23 +68,22 @@ class cButtons
         let btnIndexDel = this.getArrayIndexFromBTNType(BUTTOM_TYPE.TYPE_DEL);
         let btnIndexSave = this.getArrayIndexFromBTNType(BUTTOM_TYPE.TYPE_SAVE);
         let btnIndexCancel = this.getArrayIndexFromBTNType(BUTTOM_TYPE.TYPE_CANCEL);
-        if(btnIndexEdit != null && btnIndexDel != null && btnIndexSave != null && btnIndexCancel != null)
+
+        if(btnSwitchType === TABLE_TYPE.TYPE_EDITTING)
         {
-            if(btnSwitchType === TABLE_TYPE.TYPE_EDITTING)
-            {
-                this.showStatus(btnIndexEdit, false);
-                this.showStatus(btnIndexDel, true);
-                this.showStatus(btnIndexSave, true);
-                this.showStatus(btnIndexCancel, true);
-            }
-            else if(btnSwitchType === TABLE_TYPE.TYPE_STANDART)
-            {
-                this.showStatus(btnIndexEdit, true);
-                this.showStatus(btnIndexDel, true);
-                this.showStatus(btnIndexSave, false);
-                this.showStatus(btnIndexCancel, false);
-            }
+            if(btnIndexEdit !== null)this.showStatus(btnIndexEdit, false);
+            if(btnIndexDel !== null)this.showStatus(btnIndexDel, true);
+            if(btnIndexSave !== null)this.showStatus(btnIndexSave, true);
+            if(btnIndexCancel !== null)this.showStatus(btnIndexCancel, true);
         }
+        else if(btnSwitchType === TABLE_TYPE.TYPE_STANDART)
+        {
+            if(btnIndexEdit !== null)this.showStatus(btnIndexEdit, true);
+            if(btnIndexDel !== null)this.showStatus(btnIndexDel, true);
+            if(btnIndexSave !== null)this.showStatus(btnIndexSave, false);
+            if(btnIndexCancel !== null)this.showStatus(btnIndexCancel, false);
+        }
+
     }
 
 }

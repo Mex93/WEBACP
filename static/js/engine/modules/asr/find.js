@@ -488,16 +488,16 @@ function getASRData(inputData) // получение инфы о аср
                     casrField.ClearAllFields()
                     cTable.destroyTable()
                     entrie.forEach(([key, value]) => {
-                        if(value !== null)
+                        if(key)
                         {
                             //console.log(`${key}: ${value}`)
-
                             let fieldType = casrArray.getFieldTypeFromKeyName(key);
                             let assocArrayIndex = casrArray.getArrIDFromHTMLFieldType(key);
                             if(fieldType !== null && assocArrayIndex !== null)
                             {
                                 //console.log(`${key}: ${value}`)
                                 // console.log(key, fieldType, )
+                              //console.log(fieldType, key, value)
                                 let result = casrField.addField(fieldType, key, value);
                                 if(result)
                                 {
@@ -638,17 +638,48 @@ $(document).ready(function() {
     btnSave = document.getElementById("btn_save");
     btnCancel = document.getElementById("btn_cancel");
 
-    if(!blockID.resultBox || !blockID.loadAnimBlock || !blockID.asrResultBlock ||
-        !btnEdit || !btnDel || !btnSave || !btnCancel)
+    if(!blockID.resultBox || !blockID.loadAnimBlock || !blockID.asrResultBlock)
     {
         alert("Ошибка на странице!")
         return false;
     }
 
-    cButton.addBTN(btnEdit, "Редактировать", BUTTOM_TYPE.TYPE_EDIT);
-    cButton.addBTN(btnDel, "Удалить", BUTTOM_TYPE.TYPE_DEL);
-    cButton.addBTN(btnSave, "Сохранить", BUTTOM_TYPE.TYPE_SAVE);
-    cButton.addBTN(btnCancel, "Отменить редактирование", BUTTOM_TYPE.TYPE_CANCEL);
+    if(btnEdit !== null)
+    {
+        cButton.addBTN(btnEdit, "Редактировать", BUTTOM_TYPE.TYPE_EDIT);
+        btnEdit.addEventListener("click", (event) =>
+        {
+            event.preventDefault(); // Отменяем стандартное поведение формы
+            onUserPressedOnDeleteBtn(BUTTOM_TYPE.TYPE_EDIT);
+        })
+    }
+    if(btnDel !== null)
+    {
+        cButton.addBTN(btnDel, "Удалить", BUTTOM_TYPE.TYPE_DEL);
+        btnDel.addEventListener("click", (event) =>
+        {
+            event.preventDefault(); // Отменяем стандартное поведение формы
+            onUserPressedOnDeleteBtn(BUTTOM_TYPE.TYPE_DEL);
+        })
+    }
+    if(btnSave !== null)
+    {
+        cButton.addBTN(btnSave, "Сохранить", BUTTOM_TYPE.TYPE_SAVE);
+        btnSave.addEventListener("click", (event) =>
+        {
+            event.preventDefault(); // Отменяем стандартное поведение формы
+            onUserPressedOnDeleteBtn(BUTTOM_TYPE.TYPE_SAVE);
+        })
+    }
+    if(btnCancel !== null)
+    {
+        cButton.addBTN(btnCancel, "Отменить редактирование", BUTTOM_TYPE.TYPE_CANCEL);
+        btnCancel.addEventListener("click", (event) =>
+        {
+            event.preventDefault(); // Отменяем стандартное поведение формы
+            onUserPressedOnDeleteBtn(BUTTOM_TYPE.TYPE_CANCEL);
+        })
+    }
     cButton.setShowForAll(false)
 
 
@@ -682,28 +713,6 @@ $(document).ready(function() {
             }
             getASRData(inputData)
         });
-
-
-        btnDel.addEventListener("click", (event) =>
-        {
-            event.preventDefault(); // Отменяем стандартное поведение формы
-            onUserPressedOnDeleteBtn(BUTTOM_TYPE.TYPE_DEL);
-        })
-        btnSave.addEventListener("click", (event) =>
-        {
-            event.preventDefault(); // Отменяем стандартное поведение формы
-            onUserPressedOnDeleteBtn(BUTTOM_TYPE.TYPE_SAVE);
-        })
-        btnEdit.addEventListener("click", (event) =>
-        {
-            event.preventDefault(); // Отменяем стандартное поведение формы
-            onUserPressedOnDeleteBtn(BUTTOM_TYPE.TYPE_EDIT);
-        })
-        btnCancel.addEventListener("click", (event) =>
-        {
-            event.preventDefault(); // Отменяем стандартное поведение формы
-            onUserPressedOnDeleteBtn(BUTTOM_TYPE.TYPE_CANCEL);
-        })
     }
     // загрузка ассоциативного массива
     setTimeout(LoadAssocArray, 1000)
