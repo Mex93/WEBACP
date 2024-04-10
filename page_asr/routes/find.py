@@ -43,7 +43,6 @@ def asr_replace_ajax(asr_name, asr_id, replace_list):
         "error_text": "",
         "result": False
     }
-
     asr = CASRFields()
     result = True
     for_update_list = list()
@@ -158,6 +157,8 @@ def asr_replace_ajax(asr_name, asr_id, replace_list):
                                                 f"[MAC или SN материнской платы из ASR '{sql_asr_name}' найден в собранном устр. SN: '{assembled_tv_sn}']]")
                                         else:
                                             start_next = True
+                                    else:
+                                        start_next = True
 
                                     #  ----------------------------------------------------------------------------------------
                                     if start_next is True:
@@ -281,7 +282,7 @@ def asr_del_ajax(asr_name, asr_id):
                     start_next = False
                     if (sql_assy_id == asr_id) and (sql_asr_name == asr_name):
 
-                        if sql_mb_sn or sql_mac:
+                        if sql_mb_sn is not None or sql_mac is not None:
                             result_assembled = line_csql.check_asr_data_in_assembled_table(sql_mb_sn, sql_mac)
                             if result_assembled:
                                 result_assembled = result_assembled[0]
@@ -295,6 +296,8 @@ def asr_del_ajax(asr_name, asr_id):
                                     f"[MAC или SN материнской платы из ASR '{sql_asr_name}' найден в собранном устр. SN: '{assembled_tv_sn}']]")
                             else:
                                 start_next = True
+                        else:
+                            start_next = True
 
                         #  ----------------------------------------------------------------------------------------
                         if start_next is True:
