@@ -64,6 +64,7 @@ let btnSave = undefined;  // кнопка сохранить
 let btnCancel = undefined;  // кнопка отмена
 let tableHTMLNameID = "result_table";
 let tableHTMLPlaceID = "table_asr_id";
+let assocArraySuccess = false;
 
 // ----------------------------------------------------------------- VARS END
 // ----------------------------------------------------------------- FUNC
@@ -74,6 +75,7 @@ let tableHTMLPlaceID = "table_asr_id";
 
 function onUserPressedOnDeleteBtn(btnType)  // если нажата кнопка удаления
 {
+    if(!assocArraySuccess)return
     switch(btnType)
     {
         case BUTTOM_TYPE.TYPE_EDIT:
@@ -399,6 +401,7 @@ function clearResultBox()
 
 function getASRData(inputData) // получение инфы о аср
 {
+    if(!assocArraySuccess)return false;
     if(!inputData.asrName)
     {
         return false;
@@ -611,6 +614,7 @@ function LoadAssocArray()
             if(data.result === true && data.assoc_tup)
             {
                 casrArray.addData(data.assoc_tup)
+                assocArraySuccess = true;
             }
             //console.log(casrArray.getArrayHTMLNames())
         },
@@ -628,7 +632,7 @@ function LoadAssocArray()
 
 $(document).ready(function() {
     let blockID = {};
-
+    assocArraySuccess = false;
     blockID.resultBox = document.getElementById("all_result_block");
     blockID.loadAnimBlock = document.getElementById("load_anim_block");
     blockID.asrResultBlock = document.getElementById("asr_result_block");
