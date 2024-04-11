@@ -428,22 +428,18 @@ function getASRData(inputData) // получение инфы о аср
     if(!resultObj) return false
     if(resultObj.result === false)
     {
-        console.log("1")
         resultObj = cfield.set_check_mac(inputData.asrName);
         if(resultObj.result === false)
         {
-            console.log("2")
             resultObj = cfield.set_check_ms_sn(inputData.asrName);
             if(resultObj.result === false)
             {
-                console.log("3")
                 ccfPass.clearField()
                 cmessBox.sendErrorMessage("Ошибка в названии ASR, SN МП или MAC");
                 return false;
             }
         }
     }
-    console.log("4")
 
     // класс должен быть объявлен тут для капчи, иначе значение блока не будед перезаписываться
     let cCaptha = new CCaptha('div input[name=captcha-hash]', "captcha-text");
