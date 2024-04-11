@@ -403,13 +403,16 @@ def asr_find_ajax(asr_name):
                     result = result[0]
                     asr_dict = dict()
                     index = 0
-
+                    asr_find_name = None
                     asr_unit = CASRFields()
                     for key, value in result.items():
 
                         if key == SQL_ASR_FIELDS.asr_fd_timestamp_st10:
                             if value:
                                 value = convert_date_from_sql_format(str(value))
+                        elif key == SQL_ASR_FIELDS.asr_fd_tv_asr_name:
+                            if value:
+                                asr_find_name = value
 
                         elif key == SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_name:
                             new_name, type_name = CModels.get_parced_name_and_type(value)
@@ -427,7 +430,7 @@ def asr_find_ajax(asr_name):
                         # print(key, value)
                         index += 1
 
-                    if index > 4:
+                    if index > 4 and asr_find_name is not None:
 
                         #  ----------------------------------------------------------------------------------------
 
@@ -437,7 +440,7 @@ def asr_find_ajax(asr_name):
                             if log_connect is True:
 
                                 log_unit = CSQLUserLogQuerys(user_csql, acc_index)
-                                text = f"Пользователь ID: [{acc_index}] запросил информацию ASR {asr_name}"
+                                text = f"Пользователь ID: [{acc_index}] запросил информацию ASR {asr_find_name}"
                                 log_unit.add_log(
                                     LOG_OBJECT_TYPE.LGOT_USER,
                                     LOG_TYPE.LGT_ASR,
@@ -457,6 +460,8 @@ def asr_find_ajax(asr_name):
                         finally:
                             user_csql.disconnect_from_db()
                         # JS почему то преобразует словарь в объект с конца
+
+                        response_for_client.update({"asr_name": asr_find_name})
                         response_for_client.update({"asr_data": asr_dict})
                         response_for_client.update({"result": True})
                         cdebug.debug_print(

@@ -17,6 +17,9 @@ class CFieldsCheck
     #re_Nickname = new RegExp(/[^a-zA-Z0-9]/);
     #re_Email = new RegExp(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/);
     #re_Lastname = new RegExp(/[^а-яА-Я]/);
+    #re_MAC = new RegExp(/^\d{2}:\d{2}:\d{2}:\d{2}:\d{2}:\d{2}$/);  //04:06:DD:9A:48:22/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/
+    // TODO придумать как написать эту ебучую регулярку на проверку asr + in python
+    #re_MBSN =  null;
 
     #ASR_TEXT_LEN = 8;
 
@@ -46,6 +49,52 @@ class CFieldsCheck
             }
             else errorObj.errorText = `Название должно начинаться с 'ASR...'!`
             return errorObj
+        }
+        return false
+    }
+    set_check_mac(field)
+    {
+        if (typeof field === 'string')
+        {
+            let errorObj = {
+                result: false,
+                errorText: ""
+            }
+            if(field.indexOf(":") !== -1)
+            {
+                let dataObj = {
+                    field: field,
+                    text: "MAC",
+                    textPattern: "XX:XX:XX:XX:XX:XX",
+                    maxLen: 18,
+                    minLen: 16,
+                    rePattern: this.#re_MAC
+                }
+                return this.#set_check_validator(dataObj)
+            }
+            else errorObj.errorText = `MAC должен быть формата 'XX:XX:XX:XX:XX:XX'!`
+            return errorObj
+        }
+        return false
+    }
+    set_check_ms_sn(field)
+    {
+        if (typeof field === 'string')
+        {
+            let errorObj = {
+                result: false,
+                errorText: ""
+            }
+
+            let dataObj = {
+                field: field,
+                text: "MB SN",
+                textPattern: "-",
+                maxLen: 50,
+                minLen: 17,
+                rePattern: this.#re_MBSN
+            }
+            return this.#set_check_validator(dataObj)
         }
         return false
     }
@@ -117,7 +166,7 @@ class CFieldsCheck
 
     #set_check_validator({ field, text, textPattern, maxLen, minLen, rePattern })
     {
-        if (text && field && maxLen && minLen && rePattern && textPattern)
+        if (text && field && maxLen && minLen && textPattern)
         {
             let errorObj = {
                 result: false,
@@ -128,12 +177,17 @@ class CFieldsCheck
                 let len = field.length
                 if(len >= minLen && len <= maxLen)
                 {
-                    if(!rePattern.test(field))
+                    if(rePattern !== null)
                     {
-                        errorObj.result = true
-                        errorObj.errorText = `Validator Success !`
+                        if(rePattern.test(field))
+                        {
+                            errorObj.errorText = `${text} должен состоять из символов ${textPattern}`
+                            return false;
+                        }
                     }
-                    else errorObj.errorText = `${text} должен состоять из символов ${textPattern}`
+
+                    errorObj.result = true
+                    errorObj.errorText = `Validator Success !`
                 }
                 else errorObj.errorText = `Размер ${text} от ${minLen} до ${maxLen} символов`
             }

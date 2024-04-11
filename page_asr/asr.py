@@ -74,7 +74,7 @@ def asr_find_ajax():
                             from page_asr.routes.find import asr_find_ajax
                             return asr_find_ajax(asr_name)
                         else:
-                            response_for_client.update({"error_text": "Ошибка в названии ASR"})
+                            response_for_client.update({"error_text": "Ошибка в названии ASR, SN МП или MAC"})
             else:
                 response_for_client.update({"error_text": "Вы неверно ввели капчу!"})
                 new_captcha_dict = SIMPLE_CAPTCHA.create()

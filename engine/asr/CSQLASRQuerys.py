@@ -21,11 +21,14 @@ class CSQLASRQuerys(CSqlAgent):
                         f"JOIN {SQL_TABLE_NAME.tv_model_info_tv} "
                         f"ON {SQL_TABLE_NAME.asr_tv}.{SQL_ASR_FIELDS.asr_fd_tv_fk}= "
                         f"{SQL_TABLE_NAME.tv_model_info_tv}.{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_id} "
-                        f"WHERE {SQL_ASR_FIELDS.asr_fd_tv_asr_name} = %s "
+                        f"WHERE "
+                        f"{SQL_ASR_FIELDS.asr_fd_tv_asr_name} = %s OR "
+                        f"{SQL_ASR_FIELDS.asr_fd_mainboard_sn} = %s OR "
+                        f"{SQL_ASR_FIELDS.asr_fd_ethernet_mac} = %s "
                         "LIMIT 1")
 
         result = self.sql_query_and_get_result(
-            self.get_sql_handle(), query_string, (asr_name,), "_1", )  # Запрос типа аасоциативного массива
+            self.get_sql_handle(), query_string, (asr_name, asr_name, asr_name, ), "_1", )  # Запрос типа аасоциативного массива
         if result is False:  # Errorrrrrrrrrrrrr based data
             return False
         # print(result)
