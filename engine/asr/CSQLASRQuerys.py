@@ -43,6 +43,7 @@ class CSQLASRQuerys(CSqlAgent):
         query_string = (f"SELECT "
                         f"{SQL_ASR_FIELDS.asr_fd_tv_asr_id}, "
                         f"{SQL_ASR_FIELDS.asr_fd_tv_asr_name}, "
+                        f"{SQL_ASR_FIELDS.asr_fd_tv_fk}, "
                         f"{SQL_ASR_FIELDS.asr_fd_mainboard_sn}, "
                         f"{SQL_ASR_FIELDS.asr_fd_ethernet_mac} "
                         f"FROM {SQL_TABLE_NAME.asr_tv} "
@@ -60,6 +61,32 @@ class CSQLASRQuerys(CSqlAgent):
         sql_result = result[0].get(SQL_ASR_FIELDS.asr_fd_tv_asr_name, None)
         if sql_result is not None:
             return result
+        return False
+
+    def is_tv_one_way(self, tv_fk: int) -> bool:
+
+        print(tv_fk)
+        query_string = (f"SELECT "
+                        f"{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_software_type_fk} "
+                        f"FROM {SQL_TABLE_NAME.tv_model_info_tv} "
+                        f"WHERE "
+                        f"{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_id} = %s "
+                        "LIMIT 1")
+
+        result = self.sql_query_and_get_result(
+            self.get_sql_handle(), query_string, (tv_fk,), "_1", )  # Запрос типа аасоциативного массива
+        print(result)
+        if result is False:  # Errorrrrrrrrrrrrr based data
+            return False
+        # print(result)
+
+        sql_result = result[0].get(SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_software_type_fk, None)
+
+        if sql_result is None:
+            return False
+
+        if sql_result == 2:
+            return True
         return False
 
     def check_asr_data_in_assembled_table(self, mainboard_sn: str, mac: str) -> dict | bool:

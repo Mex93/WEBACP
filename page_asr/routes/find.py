@@ -138,23 +138,29 @@ def asr_replace_ajax(asr_name, asr_id, replace_list):
                                 sql_asr_name = result.get(SQL_ASR_FIELDS.asr_fd_tv_asr_name, None)
                                 sql_mb_sn = result.get(SQL_ASR_FIELDS.asr_fd_mainboard_sn, None)
                                 sql_mac = result.get(SQL_ASR_FIELDS.asr_fd_ethernet_mac, None)
+                                sql_tv_fk = result.get(SQL_ASR_FIELDS.asr_fd_tv_fk, None)
 
                                 start_next = False
+
                                 if (sql_assy_id == asr_id) and (sql_asr_name == asr_name):
 
-                                    if sql_mb_sn is not None or sql_mac is not None:
-                                        result_assembled = line_csql.check_asr_data_in_assembled_table(sql_mb_sn,
-                                                                                                       sql_mac)
-                                        if result_assembled:
-                                            result_assembled = result_assembled[0]
-                                            assembled_tv_sn = result_assembled.get(SQL_ASSEMBLED_TV_FIELDS.fd_tv_sn, None)
+                                    if line_csql.is_tv_one_way(sql_tv_fk) is True:
 
-                                            response_for_client.update(
-                                                {
-                                                    "error_text": f"MAC или SN МП из ASR: '{sql_asr_name}' найден в собранном устр. SN: '{assembled_tv_sn}'!"})
-                                            cdebug.debug_print(
-                                                f"asr_replace_ajax AJAX -> [{nickname}] -> [Ошибка] "
-                                                f"[MAC или SN материнской платы из ASR '{sql_asr_name}' найден в собранном устр. SN: '{assembled_tv_sn}']]")
+                                        if sql_mb_sn is not None or sql_mac is not None:
+                                            result_assembled = line_csql.check_asr_data_in_assembled_table(sql_mb_sn,
+                                                                                                           sql_mac)
+                                            if result_assembled:
+                                                result_assembled = result_assembled[0]
+                                                assembled_tv_sn = result_assembled.get(SQL_ASSEMBLED_TV_FIELDS.fd_tv_sn, None)
+
+                                                response_for_client.update(
+                                                    {
+                                                        "error_text": f"MAC или SN МП из ASR: '{sql_asr_name}' найден в собранном устр. SN: '{assembled_tv_sn}'!"})
+                                                cdebug.debug_print(
+                                                    f"asr_replace_ajax AJAX -> [{nickname}] -> [Ошибка] "
+                                                    f"[MAC или SN материнской платы из ASR '{sql_asr_name}' найден в собранном устр. SN: '{assembled_tv_sn}']]")
+                                            else:
+                                                start_next = True
                                         else:
                                             start_next = True
                                     else:
@@ -278,22 +284,27 @@ def asr_del_ajax(asr_name, asr_id):
                     sql_asr_name = result.get(SQL_ASR_FIELDS.asr_fd_tv_asr_name, None)
                     sql_mb_sn = result.get(SQL_ASR_FIELDS.asr_fd_mainboard_sn, None)
                     sql_mac = result.get(SQL_ASR_FIELDS.asr_fd_ethernet_mac, None)
+                    sql_tv_fk = result.get(SQL_ASR_FIELDS.asr_fd_tv_fk, None)
 
                     start_next = False
                     if (sql_assy_id == asr_id) and (sql_asr_name == asr_name):
 
-                        if sql_mb_sn is not None or sql_mac is not None:
-                            result_assembled = line_csql.check_asr_data_in_assembled_table(sql_mb_sn, sql_mac)
-                            if result_assembled:
-                                result_assembled = result_assembled[0]
-                                assembled_tv_sn = result_assembled.get(SQL_ASSEMBLED_TV_FIELDS.fd_tv_sn, None)
+                        if line_csql.is_tv_one_way(sql_tv_fk) is True:
 
-                                response_for_client.update(
-                                    {
-                                        "error_text": f"MAC или SN МП из ASR: '{sql_asr_name}' найден в собранном устр. SN: '{assembled_tv_sn}'!"})
-                                cdebug.debug_print(
-                                    f"asr_del_ajax AJAX -> [{nickname}] -> [Ошибка] "
-                                    f"[MAC или SN материнской платы из ASR '{sql_asr_name}' найден в собранном устр. SN: '{assembled_tv_sn}']]")
+                            if sql_mb_sn is not None or sql_mac is not None:
+                                result_assembled = line_csql.check_asr_data_in_assembled_table(sql_mb_sn, sql_mac)
+                                if result_assembled:
+                                    result_assembled = result_assembled[0]
+                                    assembled_tv_sn = result_assembled.get(SQL_ASSEMBLED_TV_FIELDS.fd_tv_sn, None)
+
+                                    response_for_client.update(
+                                        {
+                                            "error_text": f"MAC или SN МП из ASR: '{sql_asr_name}' найден в собранном устр. SN: '{assembled_tv_sn}'!"})
+                                    cdebug.debug_print(
+                                        f"asr_del_ajax AJAX -> [{nickname}] -> [Ошибка] "
+                                        f"[MAC или SN материнской платы из ASR '{sql_asr_name}' найден в собранном устр. SN: '{assembled_tv_sn}']]")
+                                else:
+                                    start_next = True
                             else:
                                 start_next = True
                         else:

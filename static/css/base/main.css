@@ -597,10 +597,13 @@ html, body {
     transition: height 2s, width 2s;
     width: 180px;
     height: 60px;
+    user-select: none;
+
 }
 .captha_box img.simple-captcha-img:hover {
     width: 250px;
     height: 80px;
+    /*pointer-events: none; запрет перетаскивания картинки но не работает увеличение*/
 }
 
 
