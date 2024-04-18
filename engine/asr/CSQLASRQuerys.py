@@ -65,7 +65,6 @@ class CSQLASRQuerys(CSqlAgent):
 
     def is_tv_one_way(self, tv_fk: int) -> bool:
 
-        print(tv_fk)
         query_string = (f"SELECT "
                         f"{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_software_type_fk} "
                         f"FROM {SQL_TABLE_NAME.tv_model_info_tv} "
@@ -75,7 +74,6 @@ class CSQLASRQuerys(CSqlAgent):
 
         result = self.sql_query_and_get_result(
             self.get_sql_handle(), query_string, (tv_fk,), "_1", )  # Запрос типа аасоциативного массива
-        print(result)
         if result is False:  # Errorrrrrrrrrrrrr based data
             return False
         # print(result)
