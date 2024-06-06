@@ -9,7 +9,7 @@ db_standart_connect_params = {
     KEY_VALUE_NAME_USER: 'test_user',
     KEY_VALUE_NAME_PASS: 'sadmin',
     KEY_VALUE_NAME_DATABASE: 'test_db',
-    KEY_VALUE_NAME_HOST: '192.168.6.228',  # job
+    KEY_VALUE_NAME_HOST: '192.168.6.255',  # job
     # KEY_VALUE_NAME_HOST: '192.168.31.37',  # home
     KEY_VALUE_NAME_PORT: '5432'
 }
