@@ -11,6 +11,8 @@ class PAGE_ID(IntEnum):
     ASR_DEL = auto(),
     ASR_EDIT = auto(),
 
+    TEMPLATES_FIND = auto(),
+
     INDEX = auto(),
     ABOUT = auto(),
     PAGE_NOT_FOUND = auto(),

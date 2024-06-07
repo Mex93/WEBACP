@@ -8,6 +8,7 @@ import engine.sql.config as sql_config
 # Импорт эскизов
 from page_account.account import bp_page_account
 from page_asr.asr import bp_page_asr
+from page_templates.templates import bp_page_templates
 
 app = Flask(__name__)
 app.permanent_session_lifetime = timedelta(days=1)
@@ -26,6 +27,7 @@ app.config['WTF_CSRF_SECRET_KEY'] = 'er09gjurewaiugyhw4e0p9tg24hrgrw0we8twgegdrs
 # Соединение эскизов
 app.register_blueprint(bp_page_account, url_prefix='/account')
 app.register_blueprint(bp_page_asr, url_prefix='/asr')
+app.register_blueprint(bp_page_templates, url_prefix='/templates')
 
 # Другое
 csrf = CSRFProtect(app)

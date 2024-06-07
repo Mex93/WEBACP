@@ -71,6 +71,7 @@ class SQL_TV_MODEL_INFO_FIELDS:
     tvmi_fd_scan_type_fk = "scan_type_fk"
     tvmi_fd_software_type_fk = "software_type_fk"
     tvmi_fd_tv_serial_number_template = "tv_serial_number_template"
+    tvmi_fd_last_update_time = "last_updated_time"
 
     tvmi_fd_tv_model_type_name = "model_type_name"  # фальш филды. в бд таких нет. нужно для расчёта
 

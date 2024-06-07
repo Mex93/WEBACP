@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Шаблоны сканировки
+{% endblock %}
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('.static', filename = 'css/std.css') }}">
+{% endblock %}
+
+{% block body %}
+
+{% if access_unit.is_sessions_start() == 1 %}
+    {% if access_unit.is_avalible_any_access_field(access_section.SCAN_TEMPLATES) == True %}
+    <div class = 'container-common container'>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <div class = "header-common">
+            <h1>Шаблоны сканировки</h1>
+        </div>
+        <span id = 'skeleton_anim_block'>
+              <div id = "load_anim_block">
+                  <div class="loaded-anim container">
+                      <div class="box">
+                          <div class="skeleton">
+                            <div class="skeleton-left">
+                                <div class="line h17 w40 m10"></div>
+                                <div class="line"></div>
+                                <div class="line h8 w50"></div>
+                                <div class="line  w75"></div>
+                            </div>
+                            <div class="skeleton-right">
+                              <div class="square"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+       </span>
+
+        <div class = 'table-templates' id = 'res_table_block'>
+            <p id="access_edit" hidden="">
+                {% if access_unit.is_access_for_panel(access_type.ACCESS_SCAN_EDIT) == True %}
+                    1
+                {% else %}
+                    0
+                {% endif %}
+            </p>
+             <p id="access_del" hidden="">
+                {% if access_unit.is_access_for_panel(access_type.ACCESS_SCAN_DELETE) == True %}
+                    1
+                {% else %}
+                    0
+                {% endif %}
+            </p>
+             <div id = "error_box">
+
+            </div>
+            <table class = "custom-table" id = "table_id_models_list">
+               <tr>
+                <th>Устройство:</th>
+                <th>Тип:</th>
+                <th>Дата последнего изменения:</th>
+                <th>Действия:</th>
+               </tr>
+
+               <tr><td><b>iFFALCON iFF43U62</b></td><td>
+                  <p>Телевизор</p>
+
+               </td><td>
+                  <p>07.06.2024 10:08</p>
+               </td><td>
+                 <div class = "inline_buttom">
+                     {% if access_unit.is_access_for_panel(access_type.ACCESS_SCAN_EDIT) == True %}
+                        <button id = "btn_edit_unit_0" type="submit" name = "edit" value = "edit" class = "btm_submit-common">Редактировать</button>
+                     {% endif %}
+                     {% if access_unit.is_access_for_panel(access_type.ACCESS_SCAN_DELETE) == True %}
+                        <button id = "btn_del_unit_0" type="submit" name = "delete" value = "delete" class = "btm_submit-common delete">Удалить</button>
+                     {% endif %}
+                 </div>
+               </td></tr>
+
+            </table>
+        </div>
+
+    </div>
+    {% endif %}
+{% endif %}
+
+<!--    <tr><td>data</td><td>ip</td></tr>-->
+{% endblock %}
+{% block js %}
+<script type = "module" src="{{ url_for('static', filename = '/js/engine/modules/templates/std.js') }}"></script>
+{% endblock %}
+

@@ -21,12 +21,18 @@ class CPages:
         self.__template_name_about = 'about'
         self.__template_name_404 = '404'
 
+        # templates
+
+        self.__template_name_templates_find = 'std'
+
         # asr
         self.__template_name_asr_find = 'find'
         self.__template_name_asr_edit = 'edit'
         self.__template_name_asr_del = 'del'
 
         # templates path
+        # templates
+        self.__template_path_template_find = 'std'
         # asr
         self.__template_path_asr_find = 'find'
         self.__template_path_asr_del = 'del'
@@ -42,6 +48,9 @@ class CPages:
         self.__template_path_index = 'index'
 
         # url routs
+        # templates
+        self.__route_name_templates_find = 'templates/std'
+
         # asr
         self.__route_name_asr_find = 'asr/find'
         self.__route_name_asr_edit = 'asr/edit'
@@ -82,6 +91,9 @@ class CPages:
             case PAGE_ID.ABOUT:
                 name = self.__template_path_about
 
+            case PAGE_ID.TEMPLATES_FIND:
+                name = self.__template_path_template_find
+
             case PAGE_ID.ASR_FIND:
                 name = self.__template_path_asr_find
             case PAGE_ID.ASR_DEL:
@@ -110,6 +122,9 @@ class CPages:
             case PAGE_ID.ABOUT:
                 name = self.__template_name_about
 
+            case PAGE_ID.TEMPLATES_FIND:
+                name = self.__template_name_templates_find
+
             case PAGE_ID.ASR_FIND:
                 name = self.__template_name_asr_find
             case PAGE_ID.ASR_DEL:
@@ -137,6 +152,9 @@ class CPages:
                 name = self.__route_name_index
             case PAGE_ID.ABOUT:
                 name = self.__route_name_about
+
+            case PAGE_ID.TEMPLATES_FIND:
+                name = self.__route_name_templates_find
 
             case PAGE_ID.ASR_FIND:
                 name = self.__route_name_asr_find
