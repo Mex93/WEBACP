@@ -37,6 +37,10 @@
        </span>
 
         <div class = 'table-templates' id = 'res_table_block'>
+
+            <button id = "btn_create" type="submit" name = "create" value = "create" class = "btm_submit-common">Создать шаблон</button>
+
+
             <p id="access_edit" hidden="">
                 {% if access_unit.is_access_for_panel(access_type.ACCESS_SCAN_EDIT) == True %}
                     1
@@ -54,31 +58,16 @@
              <div id = "error_box">
 
             </div>
-            <table class = "custom-table" id = "table_id_models_list">
-               <tr>
-                <th>Устройство:</th>
-                <th>Тип:</th>
-                <th>Дата последнего изменения:</th>
-                <th>Действия:</th>
-               </tr>
-
-               <tr><td><b>iFFALCON iFF43U62</b></td><td>
-                  <p>Телевизор</p>
-
-               </td><td>
-                  <p>07.06.2024 10:08</p>
-               </td><td>
-                 <div class = "inline_buttom">
-                     {% if access_unit.is_access_for_panel(access_type.ACCESS_SCAN_EDIT) == True %}
-                        <button id = "btn_edit_unit_0" type="submit" name = "edit" value = "edit" class = "btm_submit-common">Редактировать</button>
-                     {% endif %}
-                     {% if access_unit.is_access_for_panel(access_type.ACCESS_SCAN_DELETE) == True %}
-                        <button id = "btn_del_unit_0" type="submit" name = "delete" value = "delete" class = "btm_submit-common delete">Удалить</button>
-                     {% endif %}
-                 </div>
-               </td></tr>
-
-            </table>
+            <div id = "block_models_list">
+                <table class = "custom-table" id = "table_models_list">
+                   <tr>
+                    <th>Устройство:</th>
+                    <th>Тип:</th>
+                    <th>Дата последнего изменения:</th>
+                    <th>Действия:</th>
+                   </tr>
+                </table>
+            </div>
         </div>
 
     </div>

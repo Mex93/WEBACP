@@ -12,9 +12,8 @@ from engine.users.enums import USER_SECTIONS_TYPE
 from engine.templates.CSQLTemplatesQuerys import CSQLTemplatesQuerys
 from engine.sql.enums import CONNECT_DB_TYPE
 from engine.sql.CSQL import NotConnectToDB, ErrorSQLQuery, ErrorSQLData
-from engine.sql.sql_data import SQL_LOG_FIELDS
-
-from engine.users.users_log.CSQLUserLogQuerys import CSQLUserLogQuerys
+from engine.sql.sql_data import SQL_TV_MODEL_INFO_FIELDS
+from engine.tv_models.CModels import CModels
 
 cdebug = CDebug()
 cdebug.debug_system_on(True)
@@ -25,7 +24,6 @@ cuser = CUser()
 
 
 def templates_get_models_list_ajax():
-
     response_for_client = {
         "error_text": "",
         "result": False
@@ -38,11 +36,34 @@ def templates_get_models_list_ajax():
         result_connect = csql.connect_to_db(CONNECT_DB_TYPE.LINE)
         if result_connect is True:
             data = csql.get_tv_list()
-            if data is True:
+            if data is not False:
 
-                response_for_client.update({"error_text": "Записи найдены"})
-                response_for_client.update({"result": True})
-                response_for_client.update({"arr": data})
+                result_arr = list()
+                for item in data:
+                    model_name = item.get(SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_name, None)
+                    model_id = item.get(SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_id, None)
+                    model_scan_fk = item.get(SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_scan_type_fk, None)
+                    last_update_time = item.get(SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_last_update_time, None)
+                    serial_number = item.get(SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_serial_number_template, None)
+
+                    if None not in (model_name, model_id, model_scan_fk, last_update_time, serial_number):
+                        count += 1
+                        model_name, model_type_name = CModels.get_parced_name_and_type(model_name)
+
+                        result_arr.append({
+                            'model_name': model_name,
+                            'model_type_name': model_type_name,
+                            'model_id': model_id,
+                            'model_scan_fk': model_scan_fk,
+                            'last_update_time': last_update_time,
+                            'serial_number': serial_number,
+                        })
+                    else:
+                        continue
+                if count:
+                    response_for_client.update({"error_text": "Список моделей предоставлен"})
+                    response_for_client.update({"result": True})
+                    response_for_client.update({"arr": result_arr})
 
             else:
                 response_for_client.update({"error_text": "Не найден список Моделей устройств!"})
@@ -78,6 +99,7 @@ def templates_get_models_list_ajax():
         csql.disconnect_from_db()
 
     result = json.dumps(response_for_client)
-    cdebug.debug_print(f"templates_get_models_list_ajax AJAX -> [Получение списка моделей устройств] -> [IDX:{account_idx}, {account_name}] -> "
-                       f"[Ответ в JS] -> [{count}]")
+    cdebug.debug_print(
+        f"templates_get_models_list_ajax AJAX -> [Получение списка моделей устройств] -> [IDX:{account_idx}, {account_name}] -> "
+        f"[Ответ в JS] -> [{count}]")
     return result

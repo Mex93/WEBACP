@@ -18,7 +18,7 @@ class CSQLTemplatesQuerys(CSqlAgent):
                         f"{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_name}, "
                         f"{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_scan_type_fk}, "
                         f"{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_serial_number_template}, "
-                        f"{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_last_update_time}, "
+                        f"{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_last_update_time} "
                         f"FROM {SQL_TABLE_NAME.tv_model_info_tv} "
                         "LIMIT 100")
 

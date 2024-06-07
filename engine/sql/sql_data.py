@@ -75,6 +75,7 @@ class SQL_TV_MODEL_INFO_FIELDS:
 
     tvmi_fd_tv_model_type_name = "model_type_name"  # фальш филды. в бд таких нет. нужно для расчёта
 
+
 class SQL_LOG_FIELDS:
     lfd_log_index = "log_pk"
     lfd_log_user_id = "user_id"
