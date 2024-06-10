@@ -1,10 +1,8 @@
 from engine.sql.CSQLAgent import CSqlAgent
 from engine.sql.sql_data import (SQL_TABLE_NAME, SQL_ASR_FIELDS,
                                  SQL_TV_MODEL_INFO_FIELDS,
-                                 SQL_ASSEMBLED_TV_FIELDS)
-
-PROGRAM_TIME_TYPE = "0300"  # Russia
-SALT_LEN = 30
+                                 SQL_ASSEMBLED_TV_FIELDS,
+                                 SQL_MASK_FIELDS)
 
 
 class CSQLTemplatesQuerys(CSqlAgent):
@@ -32,6 +30,21 @@ class CSQLTemplatesQuerys(CSqlAgent):
         if sql_result is not None:
             return result
         return False
+
+    def get_scanned_params(self, scan_fk: int) -> list | bool:
+
+        query_string = (f"SELECT * "
+                        f"FROM {SQL_TABLE_NAME.tv_scan_type} "
+                        f"WHERE {SQL_MASK_FIELDS.mfd_scan_type_id} = %s "
+                        "LIMIT 1")
+
+        result = self.sql_query_and_get_result(
+            self.get_sql_handle(), query_string, (scan_fk, ), "_1", )  # Запрос типа аасоциативного массива
+        if result is False:  # Errorrrrrrrrrrrrr based data
+            return False
+        # print(result)
+
+        return result[0]
 
     # def check_asr_data(self, asr_name: str, asr_id: int) -> dict | bool:
     #

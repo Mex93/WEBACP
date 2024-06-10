@@ -5,6 +5,7 @@ class SQL_TABLE_NAME:
     asr_tv = "unfinished_tv"
     tv_model_info_tv = "tv"
     user_logs = "acp_log"
+    tv_scan_type = "public.tv_scan_type"
 
 
 # Название полей в конфиге готовых тв
@@ -86,3 +87,45 @@ class SQL_LOG_FIELDS:
     lfd_log_date = "log_date"
     lfd_log_ip = "log_ip"
     lfd_log_mac = "log_mac"
+
+
+class SQL_MASK_FIELDS:
+
+    mfd_scan_type_id = 'scan_type_id'
+
+    mfd_scan_wifi_module_sn = 'scan_wifi_module_sn'
+    mfd_wifi_module_sn_template = 'wifi_module_sn_template'
+
+    mfd_scan_bt_module_sn = 'scan_bt_module_sn'
+    mfd_bt_module_sn_template = 'bt_module_sn_template'
+
+    mfd_scan_ethernet_mac = 'scan_ethernet_mac'
+    mfd_ethernet_mac_sn_template = 'ethernet_mac_sn_template'
+
+    mfd_scan_lcm_sn = 'scan_lcm_sn'
+    mfd_lcm_sn_template = 'lcm_sn_template'
+
+    mfd_scan_oc_sn = 'scan_oc_sn'
+    mfd_oc_sn_template = 'oc_sn_template'
+
+    mfd_scan_mainboard_sn = 'scan_mainboard_sn'
+    mfd_mainboard_sn_template = 'mainboard_sn_template'
+
+    mfd_scan_powerboard_sn = 'scan_powerboard_sn'
+    mfd_powerboard_sn_template = 'powerboard_sn_template'
+
+    mfd_scan_tcon_sn = 'scan_tcon_sn'
+    mfd_tcon_sn_template = 'tcon_sn_template'
+
+    mfd_scan_ops_sn = 'scan_ops_sn'
+    mfd_ops_sn_template = 'ops_sn_template'
+
+    mfd_scan_ops_mac = 'scan_ops_mac'
+    mfd_ops_mac_template = 'ops_mac_template'
+
+    mfd_scan_mac_usbc = 'scan_mac_usbc'
+    mfd_mac_usbc_template = 'mac_usbc_template'
+
+    mfd_scan_storage_sn = 'scan_storage_sn'
+    mfd_storage_template = 'storage_template'
+

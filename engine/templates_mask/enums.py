@@ -1,0 +1,9 @@
+from enum import IntEnum, auto
+
+
+class MaksArrIndex(IntEnum):
+    TEXT_ID = 0,
+    SQL_LABEL_CHECK = 1,
+    SQL_LABEL_TEMPLATE = 2,
+    FIELD_NAME = 3,
+    FIELD_ID = 4,

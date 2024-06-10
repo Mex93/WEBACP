@@ -11,7 +11,7 @@
 }
 
 #block_models_list {
-	height: 900px;
+	height: 600px;
 	overflow: auto;
 	border-radius: 20px;
 }
