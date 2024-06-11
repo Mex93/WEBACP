@@ -46,6 +46,37 @@ class CSQLTemplatesQuerys(CSqlAgent):
 
         return result[0]
 
+    def is_valid_scanned_mask(self, scan_fk: int, model_fk: int) -> list | bool:
+
+        query_string = (f"SELECT "
+                        f"{SQL_TABLE_NAME.tv_scan_type}.{SQL_MASK_FIELDS.mfd_scan_type_id},"
+                        f"{SQL_TABLE_NAME.tv_model_info_tv}.{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_scan_type_fk},"
+                        f"{SQL_TABLE_NAME.tv_model_info_tv}.{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_id} "
+                        f"FROM {SQL_TABLE_NAME.tv_scan_type} "
+                        f"JOIN {SQL_TABLE_NAME.tv_model_info_tv} ON "
+                        f"{SQL_TABLE_NAME.tv_model_info_tv}.{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_scan_type_fk} = "
+                        f"{SQL_TABLE_NAME.tv_scan_type}.{SQL_MASK_FIELDS.mfd_scan_type_id} "
+                        f"WHERE "
+                        f"{SQL_TABLE_NAME.tv_scan_type}.{SQL_MASK_FIELDS.mfd_scan_type_id} = %s AND "
+                        f"{SQL_TABLE_NAME.tv_model_info_tv}.{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_scan_type_fk} = %s AND "
+                        f"{SQL_TABLE_NAME.tv_model_info_tv}.{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_id} = %s"
+                        "LIMIT 1")
+
+        result = self.sql_query_and_get_result(
+            self.get_sql_handle(), query_string, (scan_fk, scan_fk, model_fk, ), "_1", )  # Запрос типа аасоциативного массива
+        print(result)
+        if result is False:  # Errorrrrrrrrrrrrr based data
+            return False
+        # print(result)
+
+        par_0 = result[0].get(SQL_MASK_FIELDS.mfd_scan_type_id, None)
+        par_1 = result[0].get(SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_scan_type_fk, None)
+        par_2 = result[0].get(SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_id, None)
+        if None not in (par_0, par_1, par_2):
+            return True
+        return False
+
+
     # def check_asr_data(self, asr_name: str, asr_id: int) -> dict | bool:
     #
     #     query_string = (f"SELECT "

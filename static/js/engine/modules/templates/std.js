@@ -1,11 +1,13 @@
 
 import {CMessBox} from "/static/js/engine/CMessBox.js"
 
+
 let query = false;
 
 let acessDelete = false;
 let accessEdit = false;
 let cEditTableID = undefined;
+let modelLabelID = undefined;
 let cmessBox = new CMessBox("error_box")
 
 class TVModelsList
@@ -39,9 +41,33 @@ class TVModelsList
     getLastUpdateDateStamp = () => this.lastUpdateTime;
     getSN = () => this.serialNumber;
     getScanFK = () => this.scanFK;
+    removeModel()
+    {
+        this.constructor.itemsList = this.constructor.itemsList.filter((unitID) =>
+            unitID !== this);
 
+        delete this
+    }
+    static getArrIndexInItems(unitID)
+    {
+        for(let i of this.itemsList.length)
+        {
+            if(this.itemsList[i] !== unitID)continue;
+            return i;
+        }
+    }
+
+    static getItemsCount = () => this.itemsList.length;
     static getItemsList = () => this.itemsList;
 }
+
+function onUserPressedSaveTemplateBtn()
+{
+    console.log("Сохранить шаблон")
+    return false;
+}
+
+
 
 function onUserPressedMainMenuBtnEdit(mmUnit)
 {
@@ -51,6 +77,8 @@ function onUserPressedMainMenuBtnEdit(mmUnit)
     if(query)
         return false;
 
+    if(cEditTableID)
+        return false;
     query = true;
 
     let scanFK = mmUnit.getScanFK();
@@ -82,7 +110,11 @@ function onUserPressedMainMenuBtnEdit(mmUnit)
                 {
                     if(Array.isArray(data.arr))
                     {
-                        destroyEditBlock();
+                        if(cEditTableID)
+                        {
+                            destroyEditBlock();
+                        }
+
                         console.log(data.arr)
 
                         let count = 0;
@@ -95,7 +127,7 @@ function onUserPressedMainMenuBtnEdit(mmUnit)
                             {
                                 let table = document.createElement('table');
                                 table.id = 'edit_table';
-                                table.className = 'custom-table';
+                                table.className = 'custom-table table-templates';
                                 cEditTableID = table;
 
                                 let tr = document.createElement('tr');
@@ -113,15 +145,25 @@ function onUserPressedMainMenuBtnEdit(mmUnit)
                                 tr.append(th)
                                 table.append(tr)
                             }
-                            let [text_id, sql_name, text_name, field_type, cvalue, is_used] = element
-                            new CItemParams(text_name, sql_name, text_id, field_type, cvalue, is_used);
+
+                            let [text_id, field_id, text_name, cvalue, cstate] = element
+                            let fieldUnit = new CItemParams(element);
                             count ++;
+                            let checkedStatus = String();
+                            if(cstate)checkedStatus = 'checked';
+                            else checkedStatus = '';
+
+                            if(cvalue === null)
+                            {
+                                cvalue = '-'
+                            }
 
                             let str = `<tr>
                                         <td>${text_name}</td>
-                                        <td>ff</td>
+                                        <td>
+                                        <input id="input_checkbox_${text_id}" type="checkbox" ${checkedStatus}></td>
                                         <td>${cvalue}</td>
-                                        <td>${cvalue}</td>
+                                        <td><input value="${cvalue}" id="input_field_${text_id}" type="text" maxlength="64" size="40"></td>
                                        </tr>`
                             let createElement = document.createElement("tr");
                             createElement.innerHTML = str;
@@ -130,8 +172,9 @@ function onUserPressedMainMenuBtnEdit(mmUnit)
 
                         if(count > 0)
                         {
+                            modelLabelID.innerText = `Редактирование шаблона ${modelName}`;
                             let AttachBlockID = HTMLBlocks.getHTMLID(HTMLBlocks.BLOCK_TYPE.EDIT_BLOCK);
-                            AttachBlockID.append(cEditTableID)
+                            AttachBlockID.append(cEditTableID);
 
                             HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_RESULT_LIST, false);
                             HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.EDIT_BLOCK, true);
@@ -156,18 +199,106 @@ function onUserPressedMainMenuBtnEdit(mmUnit)
 
     return false;
 }
+
+function onUserPressedCancelEditTemplateBtn()
+{
+    console.log("Нажата клавиша отменить редактирование")
+    destroyEditBlock();
+
+    return false;
+}
 function destroyEditBlock()
 {
-    CItemParams.clearUnits();
+    if(cEditTableID)
+    {
+        cEditTableID.remove()
+        cEditTableID = undefined;
+        CItemParams.clearUnits();
+        HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.EDIT_BLOCK, false);
+    }
 }
-
-
 
 
 function onUserPressedMainMenuBtnDel(mmUnit)
 {
     console.log("Нажата клавиша удалить")
-    console.log(mmUnit.getModelName())
+
+    if(query)
+        return false;
+
+    if(cEditTableID)
+    {
+        alert('Сперва завершите редактирование шаблона!')
+        return
+    }
+
+    let modelName = mmUnit.getModelName();
+    let modelTypeName = mmUnit.getModelTypeName();
+    if (confirm(`"Вы действительно хотите удалить выбранный шаблон '${modelTypeName}' '${modelName}' ?
+            \nОтменить действие будет невозможно!"`)) // yes
+    {
+
+        query = true;
+
+        let scanFK = mmUnit.getScanFK();
+        let modelID = mmUnit.getModelID();
+        console.log(scanFK, modelID)
+        let completed_json = JSON.stringify({
+            scan_fk: scanFK,
+            model_id: modelID,
+            model_name: modelName
+        }); //$.parseJSON(json_text);
+
+        $.ajax({
+            data : completed_json,
+            dataType: 'json',
+            type : 'POST',
+            url : './templates_delete_model_ajax',
+            contentType: "application/json",
+            success: function(data) {
+                query = false;
+
+                if(data.result === true)
+                {
+                    cmessBox.sendSuccessMessage(data.error_text);
+                    if(cEditTableID)
+                    {
+                        // на всякий
+                        destroyEditBlock();
+                    }
+                    mmUnit.removeModel()
+
+                    if(TVModelsList.getItemsCount() === 0)
+                    {
+                        location.reload()
+                        return;
+                    }
+
+                    let element = document.getElementById(`table_models_field_${modelID}`);
+                    if(element !== null)
+                    {
+                        element.remove();
+                    }
+                }
+                else
+                {
+                    cmessBox.sendErrorMessage(data.error_text);
+                    return false
+                }
+            },
+            error: function(error) {
+                // responseProcess = false
+                cmessBox.sendErrorMessage("Ошибка AJAX на стороне сервера!");
+                return false
+            }
+        })
+    }
+    else {
+
+    }
+
+
+
     return false;
 }
 
@@ -217,6 +348,7 @@ function get_tv_list_ajax()
                                 let lastUpdateTime = array['last_update_time'];
                                 let serialNumber = array['serial_number'];
                                 let scanFK = array['model_scan_fk'];
+
                                 if(!modelName || !modelID || !modelTypeName || !lastUpdateTime || !serialNumber || !scanFK)
                                 {
                                     continue;
@@ -230,7 +362,6 @@ function get_tv_list_ajax()
                                     scanFK};
 
                                let unit = new TVModelsList(obj);
-
 
                                 let btn_del = null;
                                 let btn_edit = null;
@@ -251,6 +382,7 @@ function get_tv_list_ajax()
                                        `;
                                 let createElement = document.createElement("tr");
                                 createElement.innerHTML = str;
+                                createElement.id = `table_models_field_${modelID}`;
                                 tableID.append(createElement);
 
                                 // Инициализация клавиш в главное меню списка моделей
@@ -401,23 +533,22 @@ class HTMLBlocks
 class CItemParams
 {
     textName = undefined;
-    sqlLabels = undefined;
     textID = undefined;
-    checkType = undefined;
+    stateChange = undefined;
     currentValue = undefined;
-    isUsed = undefined;
+    fieldID = undefined;
     static units = [];
 
-    constructor(textName, sqlLabels, textID, checkType, cValue, isUsed)
+    //[text_id, field_id, text_name, cvalue, cstate] = element
+    constructor([ text_id, field_id, text_name, cvalue, cstate ])
     {
-        if(textName && sqlLabels && textID)
+        if(text_name)
         {
-            this.textName = textName;
-            this.sqlLabels = sqlLabels;
-            this.textID = textID;
-            this.checkType = checkType;
-            this.currentValue = cValue;
-            this.isUsed = isUsed;
+            this.fieldID = field_id;
+            this.textName = text_name;
+            this.textID = text_id;
+            this.stateChange = cstate;
+            this.currentValue = cvalue;
 
             this.constructor.units.push(this);
         }
@@ -434,10 +565,9 @@ class CItemParams
     }
     getTextName = () => this.textName;
     getTextID = () => this.textID;
-    getCheckType = () => this.checkType;
-    getSQLLabel = () => this.sqlLabels;
+    getState = () => this.stateChange;
+    getFieldID = () => this.fieldID;
     getCValue = () => this.currentValue;
-    getUsedStatus = () => this.isUsed;
     static clearUnits = () =>
     {
         if(this.units.length > 0)
@@ -487,8 +617,30 @@ $(document).ready(function()
             onUserPressedCreateTemplateBtn();
         })
     }
+    let btnSaveTemplate = document.getElementById('btn_save');
+    if(btnSaveTemplate !== null)
+    {
+        btnSaveTemplate.addEventListener("click", function (element) {
+            onUserPressedSaveTemplateBtn();
+        })
+    }
+    let btnCancelTemplate = document.getElementById('btn_edit_template_cancel');
+    if(btnCancelTemplate !== null)
+    {
+        btnCancelTemplate.addEventListener("click", function (element) {
+            onUserPressedCancelEditTemplateBtn();
+        })
+    }
 
-    if(!isValid(acessDelete) || !isValid(accessEdit) || !btnCreateTemplate)
+    modelLabelID = document.getElementById('model_name_field');
+
+    if(
+        !isValid(acessDelete) ||
+        !isValid(accessEdit) ||
+        !btnSaveTemplate ||
+        !btnCreateTemplate ||
+        !modelLabelID ||
+        !btnCancelTemplate)
     {
         alert("Ошибка!!!!")
         console.log(acessDelete)

@@ -7,3 +7,5 @@ class MaksArrIndex(IntEnum):
     SQL_LABEL_TEMPLATE = 2,
     FIELD_NAME = 3,
     FIELD_ID = 4,
+    VALUE_CURRENT = 5,
+    CHECK_STATE = 6,

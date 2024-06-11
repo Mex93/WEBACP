@@ -36,9 +36,9 @@
 
         <div class = 'table-templates' id = 'res_model_list_block'>
 
-            <button id = "btn_create" type="submit" name = "create" value = "create" class = "btm_submit-common">Создать шаблон</button>
-
-
+            <div class="block_btn">
+                <button id = "btn_create" type="submit" name = "create" value = "create" class = "btm_submit-common">Создать шаблон</button>
+            </div>
             <p id="access_edit" hidden="">
                 {% if access_unit.is_access_for_panel(access_type.ACCESS_SCAN_EDIT) == True %}
                     1
@@ -69,6 +69,7 @@
         </div>
         <br>
         <div id = "block_edit">
+
              <span id = 'skeleton_edit_block'>
                   <div class="loaded-anim container">
                       <div class="box">
@@ -86,6 +87,14 @@
                     </div>
                 </div>
             </span>
+            <div class = "header-common">
+                <h1><span id="model_name_field"></span></h1>
+            </div>
+            <div class="block_btn inline_buttom">
+                <button id = "btn_save" type="submit" name = "save" value = "save" class = "btm_submit-common">Сохранить</button>
+                <button id = "btn_edit_template_cancel" type="submit" name = "save" value = "save" class = "btm_submit-common delete">Отмена</button>
+            </div>
+
         </div>
 
 
