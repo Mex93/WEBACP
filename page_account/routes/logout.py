@@ -37,7 +37,7 @@ def logout():
         if result_connect is True:
             #################################
             log_unit = CSQLUserLogQuerys(csql, user_idx)
-            text = f"Пользователь ID: [{user_idx}] вышел из своего аккаунта"
+            text = f"Пользователь ID: [{email}[{user_idx}]] вышел из своего аккаунта"
             log_unit.add_log(
                 LOG_OBJECT_TYPE.LGOT_USER,
                 LOG_TYPE.LGT_USER_LOGOUT,

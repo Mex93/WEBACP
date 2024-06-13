@@ -76,6 +76,41 @@ class CSQLTemplatesQuerys(CSqlAgent):
             return True
         return False
 
+    def delete_template(self, scan_fk: int, model_fk: int):
+
+        handle = self.get_sql_handle()
+        try:
+
+            query_string = (f"DELETE FROM {SQL_TABLE_NAME.tv_model_info_tv}"
+                            f" WHERE "
+                            f"{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_id} = %s"
+                            )
+
+            result = self.sql_query_and_get_result(
+                handle, query_string, (model_fk,), "_d", 1, True)  #
+
+            if result is False:
+                raise "Error"
+
+            query_string = (f"DELETE FROM {SQL_TABLE_NAME.tv_scan_type}"
+                            f" WHERE "
+                            f"{SQL_MASK_FIELDS.mfd_scan_type_id} = %s"
+                            )
+
+            result = self.sql_query_and_get_result(
+                handle, query_string, (scan_fk,), "_d", 1, True)  #
+
+            if result is False:
+                raise "Error"
+        except Exception as err:
+            handle.rollback()
+            print(f"Ошибка трансакции удаления шаблона: '{err}'")
+            return False
+        finally:
+            handle.commit()
+
+        return True
+
 
     # def check_asr_data(self, asr_name: str, asr_id: int) -> dict | bool:
     #

@@ -203,7 +203,7 @@ def ulogin(password, email, savemy):
 
                             #################################
                             log_unit = CSQLUserLogQuerys(csql, sql_user_index)
-                            text = f"Пользователь ID: [{sql_user_index}] авторизировался в свой аккаунт"
+                            text = f"Пользователь ID: [{email}[{sql_user_index}]] авторизировался в свой аккаунт"
                             log_unit.add_log(
                                 LOG_OBJECT_TYPE.LGOT_USER,
                                 LOG_TYPE.LGT_USER_LOGIN,

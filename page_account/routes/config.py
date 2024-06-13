@@ -54,7 +54,7 @@ def urepass(old_pass, new_pass, re_pass):
                         if update_pass_result is not False:
                             #################################
                             log_unit = CSQLUserLogQuerys(csql, user_idx)
-                            text = f"Пользователь ID: [{user_idx}] сменил пароль от своего аккаунта"
+                            text = f"Пользователь ID: [{email}[{user_idx}]] сменил пароль от своего аккаунта"
                             log_unit.add_log(
                                 LOG_OBJECT_TYPE.LGOT_USER,
                                 LOG_TYPE.LGT_USER_ACCOUNT,
@@ -146,7 +146,8 @@ def ucb_settings(cb_timeout):
 
                     #################################
                     log_unit = CSQLUserLogQuerys(csql, user_idx)
-                    text = f"Пользователь ID: [{user_idx}] обновил настройки аккаунта (чекбоксы)"
+
+                    text = f"Пользователь ID: [{email}[{user_idx}]] обновил настройки аккаунта (чекбоксы)"
                     log_unit.add_log(
                         LOG_OBJECT_TYPE.LGOT_USER,
                         LOG_TYPE.LGT_USER_ACCOUNT,

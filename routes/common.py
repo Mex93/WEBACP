@@ -95,7 +95,7 @@ def check_user():
                                     if account_disabled is True:
                                         #################################
                                         log_unit = CSQLUserLogQuerys(csql, user_idx)
-                                        text = (f"Пользователь ID: [{user_idx}] выкинут системой из "
+                                        text = (f"Пользователь ID: [{email}[{user_idx}]]  выкинут системой из "
                                                 f"аккаунта из за блокировки аккаунта")
                                         log_unit.add_log(
                                             LOG_OBJECT_TYPE.LGOT_SYSTEM,
@@ -116,7 +116,7 @@ def check_user():
 
                                     #################################
                                     log_unit = CSQLUserLogQuerys(csql, user_idx)
-                                    text = (f"Пользователь ID: [{user_idx}] выкинут системой из аккаунта, "
+                                    text = (f"Пользователь ID: [{email}[{user_idx}]] выкинут системой из аккаунта, "
                                             f"так как аккаунт не найден")
                                     log_unit.add_log(
                                         LOG_OBJECT_TYPE.LGOT_SYSTEM,
@@ -163,7 +163,7 @@ def check_user():
                                 if result_connect is True:
                                     #################################
                                     log_unit = CSQLUserLogQuerys(csql, user_idx)
-                                    text = f"Пользователь ID: [{user_idx}] выкинут системой из аккаунта из за TimeOut"
+                                    text = f"Пользователь ID: [{email}[{user_idx}]] выкинут системой из аккаунта из за TimeOut"
                                     log_unit.add_log(
                                         LOG_OBJECT_TYPE.LGOT_SYSTEM,
                                         LOG_TYPE.LGT_USER_LOGOUT,

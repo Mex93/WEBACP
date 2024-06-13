@@ -176,38 +176,21 @@ def asr_replace_ajax(asr_name, asr_id, replace_list):
                                             # print("ASR " + str(asr_id), str(asr_name))
 
                                             #################################
-                                            try:
-                                                log_connect = user_csql.connect_to_db(CONNECT_DB_TYPE.LOCAL)
-                                                if log_connect is True:
-                                                    log_string = str()
-                                                    for item in replace_list:
-                                                        log_string += (f"{item[0].replace("tv_field_", "")}:"
-                                                                       f" ({item[1]})->({item[2]}) ")
+                                            account_name = cuser_access.get_session_var(USER_SECTIONS_TYPE.NICKNAME)
 
-                                                    log_unit = CSQLUserLogQuerys(user_csql, acc_index)
-                                                    text = (f"Пользователь ID: [{acc_index}] изменил ASR {asr_name} ID "
-                                                            f"{asr_id}: ({log_string})")
+                                            log_string = str()
+                                            for item in replace_list:
+                                                log_string += (f"{item[0].replace("tv_field_", "")}:"
+                                                               f" ({item[1]})->({item[2]}) ")
 
-                                                    log_unit.add_log(
-                                                        LOG_OBJECT_TYPE.LGOT_USER,
-                                                        LOG_TYPE.LGT_ASR,
-                                                        LOG_SUBTYPE.LGST_UPDATE,
-                                                        text)
-                                                    #################################
-                                                else:
-                                                    response_for_client.update(
-                                                        {
-                                                            "error_text": "errorcode: asr_replace_ajax -> [Log] [Нет подключения к User DB!]"})
-                                                    cdebug.debug_print(
-                                                        f"asr_replace_ajax AJAX -> [{nickname}] -> [Исключение] [Нет подключения к User DB!]")
-
-                                            except Exception as err:
-                                                response_for_client.update(
-                                                    {"error_text": "errorcode: asr_replace_ajax -> [Log] [Exception]"})
-                                                cdebug.debug_print(
-                                                    f"asr_replace_ajax AJAX -> [{nickname}] -> [Исключение] [Exception: '{err}']")
-                                            finally:
-                                                user_csql.disconnect_from_db()
+                                            text = (f"Пользователь ID: [{account_name}[{acc_index}]] изменил ASR '{asr_name}' ID "
+                                                    f"'{asr_id}': ({log_string})")
+                                            CSQLUserLogQuerys.send_log(
+                                                acc_index,
+                                                LOG_OBJECT_TYPE.LGOT_USER,
+                                                LOG_TYPE.LGT_ASR,
+                                                LOG_SUBTYPE.LGST_UPDATE,
+                                                text)
 
                                             response_for_client.update({"result": True})
                                             cdebug.debug_print(
@@ -317,32 +300,13 @@ def asr_del_ajax(asr_name, asr_id):
                                 # print("ASR " + str(asr_id), str(asr_name))
 
                                 #################################
-                                try:
-                                    log_connect = user_csql.connect_to_db(CONNECT_DB_TYPE.LOCAL)
-                                    if log_connect is True:
-
-                                        log_unit = CSQLUserLogQuerys(user_csql, acc_index)
-                                        text = f"Пользователь ID: [{acc_index}] удалил ASR {asr_name} ID:{asr_id}"
-                                        log_unit.add_log(
-                                            LOG_OBJECT_TYPE.LGOT_USER,
-                                            LOG_TYPE.LGT_ASR,
-                                            LOG_SUBTYPE.LGST_DELETE,
-                                            text)
-                                        #################################
-                                    else:
-                                        response_for_client.update(
-                                            {
-                                                "error_text": "errorcode: asr_del_ajax -> [Log] [Нет подключения к User DB!]"})
-                                        cdebug.debug_print(
-                                            f"asr_del_ajax AJAX -> [{nickname}] -> [Исключение] [Нет подключения к User DB!]")
-
-                                except Exception as err:
-                                    response_for_client.update(
-                                        {"error_text": "errorcode: asr_del_ajax -> [Log] [Exception]"})
-                                    cdebug.debug_print(
-                                        f"asr_del_ajax AJAX -> [{nickname}] -> [Исключение] [Exception: '{err}']")
-                                finally:
-                                    user_csql.disconnect_from_db()
+                                text = f"Пользователь ID: [{nickname}[{acc_index}]] удалил ASR '{asr_name}' ID:'{asr_id}'"
+                                CSQLUserLogQuerys.send_log(
+                                    acc_index,
+                                    LOG_OBJECT_TYPE.LGOT_USER,
+                                    LOG_TYPE.LGT_ASR,
+                                    LOG_SUBTYPE.LGST_DELETE,
+                                    text)
 
                                 response_for_client.update({"result": True})
                                 cdebug.debug_print(
@@ -446,30 +410,15 @@ def asr_find_ajax(asr_name):
                         #  ----------------------------------------------------------------------------------------
 
                         #################################
-                        try:
-                            log_connect = user_csql.connect_to_db(CONNECT_DB_TYPE.LOCAL)
-                            if log_connect is True:
 
-                                log_unit = CSQLUserLogQuerys(user_csql, acc_index)
-                                text = f"Пользователь ID: [{acc_index}] запросил информацию ASR {asr_find_name}"
-                                log_unit.add_log(
-                                    LOG_OBJECT_TYPE.LGOT_USER,
-                                    LOG_TYPE.LGT_ASR,
-                                    LOG_SUBTYPE.LGST_FIND,
-                                    text)
-                                #################################
-                            else:
-                                response_for_client.update(
-                                    {"error_text": "errorcode: asr_find_ajax -> [Log] [Нет подключения к User DB!]"})
-                                cdebug.debug_print(
-                                    f"asr_find_ajax AJAX -> [{nickname}] -> [Исключение] [Нет подключения к User DB!]")
+                        text = f"Пользователь ID:  [{nickname}[{acc_index}]] запросил информацию ASR '{asr_find_name}'"
+                        CSQLUserLogQuerys.send_log(
+                            acc_index,
+                            LOG_OBJECT_TYPE.LGOT_USER,
+                            LOG_TYPE.LGT_ASR,
+                            LOG_SUBTYPE.LGST_FIND,
+                            text)
 
-                        except Exception as err:
-                            response_for_client.update({"error_text": "errorcode: asr_find_ajax -> [Log] [Exception]"})
-                            cdebug.debug_print(
-                                f"asr_find_ajax AJAX -> [{nickname}] -> [Исключение] [Exception: '{err}']")
-                        finally:
-                            user_csql.disconnect_from_db()
                         # JS почему то преобразует словарь в объект с конца
 
                         response_for_client.update({"asr_name": asr_find_name})

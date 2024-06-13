@@ -3,6 +3,10 @@ from engine.sql.sql_data import SQL_TABLE_NAME, SQL_USERS_FIELDS, SQL_LOG_FIELDS
 from engine.common import get_inet_ipaddress
 from engine.debug.CDebug import CDebug
 
+from engine.users.CSQLUserQuerys import CSQLUserQuerys
+from engine.users.users_log.enums import LOG_TYPE, LOG_OBJECT_TYPE, LOG_SUBTYPE
+from engine.sql.enums import CONNECT_DB_TYPE
+
 
 class CSQLUserLogQuerys:
 
@@ -66,3 +70,34 @@ class CSQLUserLogQuerys:
             self.__db_handle.get_sql_handle(), query, (self.__user_account_index,), "_1")
 
         return result
+
+    @classmethod
+    def send_log(cls,
+                 account_index: int,
+                 log_object_type: LOG_OBJECT_TYPE,
+                 log_type: LOG_TYPE,
+                 log_sub_type: LOG_SUBTYPE,
+                 text: str, sql_handle=False):
+        if sql_handle is False:
+            user_csql = CSQLUserQuerys()
+        else:
+            user_csql = sql_handle
+        try:
+            log_connect = user_csql.connect_to_db(CONNECT_DB_TYPE.LOCAL)
+            if log_connect is True:
+
+                log_unit = cls(user_csql, account_index)
+
+                log_unit.add_log(
+                    log_object_type,
+                    log_type,
+                    log_sub_type,
+                    text)
+            else:
+                return False
+        except:
+            return False
+        finally:
+            user_csql.disconnect_from_db()
+
+        return True
