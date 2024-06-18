@@ -79,7 +79,6 @@ def get_scan_model_params():
         scan_fk = json_ajax.get('scan_fk', None)
         model_id = json_ajax.get('model_id', None)
         model_name = json_ajax.get('model_name', None)
-
         if None not in (scan_fk, model_id, model_name):
             if isinstance(scan_fk, int) and isinstance(model_id, int) and isinstance(model_name, str):
                 from page_templates.routes.find import templates_get_edit_mask_ajax

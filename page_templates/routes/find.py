@@ -10,10 +10,11 @@ from engine.users.enums import USER_SECTIONS_TYPE
 from engine.templates_mask.CSQLTemplatesQuerys import CSQLTemplatesQuerys
 from engine.templates_mask.CMask import CMask
 from engine.templates_mask.common import is_field_len
+from engine.templates_mask.enums import TableType
 
 from engine.sql.enums import CONNECT_DB_TYPE
 from engine.sql.CSQL import NotConnectToDB, ErrorSQLQuery, ErrorSQLData
-from engine.sql.sql_data import SQL_TV_MODEL_INFO_FIELDS
+from engine.sql.sql_data import SQL_TV_MODEL_INFO_FIELDS, SQL_TABLE_NAME
 from engine.tv_models.CModels import CModels
 
 from engine.users.users_log.CSQLUserLogQuerys import CSQLUserLogQuerys
@@ -41,61 +42,125 @@ def templates_save_edit_mask_ajax(pa_array, scan_fk, model_id, model_name):
         if result_connect is True:
             data = csql.is_valid_scanned_mask(scan_fk, model_id)
             if data is not False:
-                state_list = list()
-                values_list = list()
+                state_list_scans = list()
+                values_list_scans = list()
+                state_list_models = list()
+                values_list_models = list()
                 count = 0
+                print(pa_array)
+                error_fields = list()
                 for item in pa_array:
                     # print("ttttt " + str(item))
 
                     text_name, text_id, field_id, field_type, old_value, new_value = item
-                    if old_value == new_value:
+                    if old_value == new_value or old_value == -777 or old_value is None:
                         continue
+
+                    # костыль против ввода всего чего либо кроме цифр
+                    if text_id == 'platform_fk' or text_id == 'software_type':
+                        if not isinstance(new_value, str):
+                            error_fields.append(text_name)
+                            continue
+                        if not new_value.isnumeric():
+                            error_fields.append(text_name)
+                            continue
+                        new_value_double = int(new_value)
+                        if new_value_double < 1 or new_value_double > 200:
+                            error_fields.append(text_name)
+                            continue
 
                     sql_field_index = CMask.get_field_arr_index_from_text_id(text_id)
                     if sql_field_index != -1:
 
-                        if field_type.find("state") != -1:  # используется или нет
+                        table_type = CMask.get_current_table(sql_field_index)
+                        if table_type == TableType.TABLE_SCANS:
+                            if field_type.find("state") != -1:  # используется или нет
 
-                            sql_field_name = CMask.get_sql_check_label(sql_field_index)
-                            if sql_field_name:
-                                state_list.append([sql_field_name, new_value])
-                                count += 1
-                        elif field_type.find("value") != -1:  # Значение шаблона
-                            if new_value is None:
-                                new_value = ''  # NoneType ошибку даст, нужна строка
-                            if is_field_len(new_value):
-                                sql_field_name = CMask.get_sql_template_label(sql_field_index)
+                                sql_field_name = CMask.get_sql_check_label(sql_field_index)
                                 if sql_field_name:
-                                    values_list.append([sql_field_name, new_value])
+                                    state_list_scans.append([sql_field_name, new_value])
                                     count += 1
+                            elif field_type.find("value") != -1:  # Значение шаблона
+                                if new_value is None:
+                                    new_value = ''  # NoneType ошибку даст, нужна строка
+                                if is_field_len(new_value):
+                                    sql_field_name = CMask.get_sql_template_label(sql_field_index)
+                                    if sql_field_name:
+                                        values_list_scans.append([sql_field_name, new_value])
+                                        count += 1
+                        elif table_type == TableType.TABLE_MODELS:
+                            if field_type.find("state") != -1:  # используется или нет
+
+                                sql_field_name = CMask.get_sql_check_label(sql_field_index)
+                                if sql_field_name:
+                                    state_list_models.append([sql_field_name, new_value])
+                                    count += 1
+                            elif field_type.find("value") != -1:  # Значение шаблона
+                                if new_value is None:
+                                    new_value = ''  # NoneType ошибку даст, нужна строка
+                                if is_field_len(new_value):
+                                    sql_field_name = CMask.get_sql_template_label(sql_field_index)
+                                    if sql_field_name:
+                                        values_list_models.append([sql_field_name, new_value])
+                                        count += 1
 
                 if count >= len(pa_array):
                     if count > 0:
-                        if len(values_list):
+
+                        # models
+                        if len(values_list_models):
                             sql_list_fields = list()
                             sql_list_values = list()
                             count = 0
-                            for item in values_list:
+                            for item in values_list_models:
                                 sql_label = item[0]
                                 values = item[1]
                                 sql_list_fields.append(f"{sql_label} = %s")
                                 sql_list_values.append(values)
                             sql_fields_str = ','.join(sql_list_fields)
                             if sql_fields_str:
-                                csql.update_template_values(scan_fk, sql_fields_str, sql_list_values)
+                                csql.update_template_values(SQL_TABLE_NAME.tv_model_info_tv, scan_fk, sql_fields_str, sql_list_values)
                                 count += 1
 
-                        if len(state_list):
+                        if len(state_list_models):
                             sql_list_fields = list()
                             sql_list_values = list()
-                            for item in state_list:
+                            for item in state_list_models:
                                 sql_label = item[0]
                                 values = item[1]
                                 sql_list_fields.append(f"{sql_label} = %s")
                                 sql_list_values.append(values)
                             sql_fields_str = ','.join(sql_list_fields)
                             if sql_fields_str:
-                                csql.update_state_values(scan_fk, sql_fields_str, sql_list_values)
+                                csql.update_state_values(SQL_TABLE_NAME.tv_model_info_tv, scan_fk, sql_fields_str, sql_list_values)
+                                count += 1
+
+                        # scans
+                        if len(values_list_scans):
+                            sql_list_fields = list()
+                            sql_list_values = list()
+                            count = 0
+                            for item in values_list_scans:
+                                sql_label = item[0]
+                                values = item[1]
+                                sql_list_fields.append(f"{sql_label} = %s")
+                                sql_list_values.append(values)
+                            sql_fields_str = ','.join(sql_list_fields)
+                            if sql_fields_str:
+                                csql.update_template_values(SQL_TABLE_NAME.tv_scan_type, scan_fk, sql_fields_str, sql_list_values)
+                                count += 1
+
+                        if len(state_list_scans):
+                            sql_list_fields = list()
+                            sql_list_values = list()
+                            for item in state_list_scans:
+                                sql_label = item[0]
+                                values = item[1]
+                                sql_list_fields.append(f"{sql_label} = %s")
+                                sql_list_values.append(values)
+                            sql_fields_str = ','.join(sql_list_fields)
+                            if sql_fields_str:
+                                csql.update_state_values(SQL_TABLE_NAME.tv_scan_type, scan_fk, sql_fields_str, sql_list_values)
                                 count += 1
 
                         if count > 0:
@@ -124,9 +189,14 @@ def templates_save_edit_mask_ajax(pa_array, scan_fk, model_id, model_name):
                                 "error_text": f"Внетруннея ошибка вычислений номеров строк SQL'{model_name}[{model_id}]'!"})
                         response_for_client.update({"result": False})
                 else:
-                    response_for_client.update(
-                        {
-                            "error_text": f"Внетруннея ошибка вычислений номеров строк SQL'{model_name}[{model_id}]'!"})
+                    if len(error_fields) > 0:
+                        response_for_client.update(
+                            {
+                                "error_text": f"Возможно вы ошиблись в некоторых полях '{','.join(error_fields)}'!"})
+                    else:
+                        response_for_client.update(
+                            {
+                                "error_text": f"Возможно вы ошиблись в некоторых полях '{model_name}[{model_id}]'!"})
                     response_for_client.update({"result": False})
             else:
                 response_for_client.update(
@@ -297,7 +367,8 @@ def templates_get_edit_mask_ajax(scan_fk, model_id, model_name):
                         text_id = CMask.get_text_id(i)
                         field_id = CMask.get_field_id(i)
                         text_name = CMask.get_text_name(i)
-
+                        if cvalue is None:
+                            cvalue = -777
                         arr_results.append([text_id, field_id, text_name, cvalue, cstate])
                         count += 1
 
@@ -379,7 +450,7 @@ def templates_get_models_list_ajax():
                     last_update_time = item.get(SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_last_update_time, None)
                     serial_number = item.get(SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_serial_number_template, None)
 
-                    if None not in (model_name, model_id, model_scan_fk, last_update_time, serial_number):
+                    if None not in (model_name, model_id, model_scan_fk, last_update_time):
                         count += 1
                         model_name, model_type_name = CModels.get_parced_name_and_type(model_name)
 

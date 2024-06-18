@@ -121,15 +121,40 @@ class CSQLTemplatesQuerys(CSqlAgent):
 
         return True
 
-    def update_template_values(self, scan_fk: int, template_str: str, values_list: list):
+    def update_template_values(self, table_name: str, scan_fk: int, template_str: str, values_list: list):
 
-        if template_str and scan_fk and len(values_list):
-            query_string = (f"UPDATE {SQL_TABLE_NAME.tv_scan_type} SET {template_str} "
+        if template_str and scan_fk and len(values_list) and table_name:
+            target_value = str()
+            if table_name == SQL_TABLE_NAME.tv_scan_type:
+                target_value = SQL_MASK_FIELDS.mfd_scan_type_id
+            elif table_name == SQL_TABLE_NAME.tv_model_info_tv:
+                target_value = SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_scan_type_fk
+
+            query_string = (f"UPDATE {table_name} SET {template_str} "
                             f" WHERE "
-                            f"{SQL_MASK_FIELDS.mfd_scan_type_id} = %s"
+                            f"{target_value} = %s"
                             )
             result = self.sql_query_and_get_result(
                 self.get_sql_handle(), query_string, (*values_list, scan_fk, ), "_u", 1, False)  #
+
+            return result
+
+    def update_state_values(self, table_name: str, scan_fk: int, state_str: str, values_list: list):
+
+        if state_str and scan_fk and len(values_list) and table_name:
+            target_value = str()
+            if table_name == SQL_TABLE_NAME.tv_scan_type:
+                target_value = SQL_MASK_FIELDS.mfd_scan_type_id
+            elif table_name == SQL_TABLE_NAME.tv_model_info_tv:
+                target_value = SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_scan_type_fk
+
+            query_string = (f"UPDATE {table_name} SET {state_str} "
+                            f" WHERE "
+                            f"{target_value} = %s"
+                            )
+
+            result = self.sql_query_and_get_result(
+                self.get_sql_handle(), query_string, (*values_list, scan_fk,), "_u", 1, False)  #
 
             return result
 
@@ -145,17 +170,7 @@ class CSQLTemplatesQuerys(CSqlAgent):
 
             return result
 
-    def update_state_values(self, scan_fk: int, state_str: str, values_list: list):
 
-        if state_str and scan_fk and len(values_list):
-            query_string = (f"UPDATE {SQL_TABLE_NAME.tv_scan_type} SET {state_str} "
-                            f" WHERE "
-                            f"{SQL_MASK_FIELDS.mfd_scan_type_id} = %s"
-                            )
-            result = self.sql_query_and_get_result(
-                self.get_sql_handle(), query_string, (*values_list, scan_fk,), "_u", 1, False)  #
-
-            return result
 
 
     # def check_asr_data(self, asr_name: str, asr_id: int) -> dict | bool:

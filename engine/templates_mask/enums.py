@@ -9,3 +9,9 @@ class MaksArrIndex(IntEnum):
     FIELD_ID = 4,
     VALUE_CURRENT = 5,
     CHECK_STATE = 6,
+    TABLE_TYPE = 7
+
+
+class TableType(IntEnum):
+    TABLE_MODELS = 0,
+    TABLE_SCANS = 1,

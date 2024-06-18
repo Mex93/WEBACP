@@ -26,7 +26,7 @@ class TVModelsList
 
     constructor(obj)
     {
-        if(obj.modelName && obj.modelID && obj.modelTypeName && obj.lastUpdateTime && obj.serialNumber && obj.scanFK)
+        if(obj.modelName && obj.modelID && obj.modelTypeName && obj.scanFK)
         {
             this.modelName = obj.modelName;
             this.modelID = obj.modelID;
@@ -151,23 +151,41 @@ function onUserPressedMainMenuBtnEdit(mmUnit)
                             let fieldUnit = new CItemParams(element);
                             count ++;
                             let checkedStatus = String();
-                            if(cstate)checkedStatus = 'checked';
-                            else checkedStatus = '';
+                            let lockedState;
+                            let lockedValue;
+
+                            if(cstate !== null)
+                            {
+                                if(cstate)checkedStatus = 'checked';
+                                else checkedStatus = '';
+                                lockedState = ''
+                            }
+                            else
+                            {
+                                lockedState = 'disabled';
+                            }
 
                             if(cvalue === null)
                             {
                                 cvalue = ''  // что бы отключить None
+                                lockedValue = '';
                             }
+                            else if(cvalue === -777)
+                            {
+                                cvalue = ''  // что бы отключить None
+                                lockedValue = 'disabled';
+                            }
+
                             elementsCBArr.push([`input_checkbox_${text_id}`, fieldUnit]);
                             elementsInputArr.push([`input_field_${text_id}`, fieldUnit]);
 
                             let str = `<tr>
                                         <td>${text_name}</td>
                                         <td>
-                                        <input id="input_checkbox_${text_id}" type="checkbox" ${checkedStatus}></td>
-                                        <td id="old_value_${text_id}">${cvalue}</td>
+                                        <input ${lockedState} id="input_checkbox_${text_id}" type="checkbox" ${checkedStatus}></td>
+                                        <td ${lockedValue} id="old_value_${text_id}">${cvalue}</td>
                                         <td>
-                                        <input value="${cvalue}" id="input_field_${text_id}" type="text" maxlength="64" size="40"></td>
+                                        <input ${lockedValue} value="${cvalue}" id="input_field_${text_id}" type="text" maxlength="64" size="40"></td>
                                        </tr>`
                             let createElement = document.createElement("tr");
                             createElement.innerHTML = str;
@@ -584,7 +602,7 @@ function get_tv_list_ajax()
                                 let serialNumber = array['serial_number'];
                                 let scanFK = array['model_scan_fk'];
 
-                                if(!modelName || !modelID || !modelTypeName || !lastUpdateTime || !serialNumber || !scanFK)
+                                if(!modelName || !modelID || !modelTypeName || !scanFK)
                                 {
                                     continue;
                                 }
