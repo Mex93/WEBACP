@@ -31,20 +31,31 @@ class CSQLTemplatesQuerys(CSqlAgent):
             return result
         return False
 
-    def get_scanned_params(self, scan_fk: int) -> list | bool:
+    def get_scanned_params(self, scan_fk: int, model_fk: int) -> list | bool:
 
         query_string = (f"SELECT * "
                         f"FROM {SQL_TABLE_NAME.tv_scan_type} "
-                        f"WHERE {SQL_MASK_FIELDS.mfd_scan_type_id} = %s "
+                        f"JOIN {SQL_TABLE_NAME.tv_model_info_tv} ON "
+                        f"{SQL_TABLE_NAME.tv_model_info_tv}.{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_scan_type_fk} = "
+                        f"{SQL_TABLE_NAME.tv_scan_type}.{SQL_MASK_FIELDS.mfd_scan_type_id} "
+                        f"WHERE "
+                        f"{SQL_TABLE_NAME.tv_scan_type}.{SQL_MASK_FIELDS.mfd_scan_type_id} = %s AND "
+                        f"{SQL_TABLE_NAME.tv_model_info_tv}.{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_scan_type_fk} = %s AND "
+                        f"{SQL_TABLE_NAME.tv_model_info_tv}.{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_id} = %s"
                         "LIMIT 1")
 
         result = self.sql_query_and_get_result(
-            self.get_sql_handle(), query_string, (scan_fk, ), "_1", )  # Запрос типа аасоциативного массива
+            self.get_sql_handle(), query_string, (scan_fk, scan_fk, model_fk, ), "_1", )  # Запрос типа аасоциативного массива
         if result is False:  # Errorrrrrrrrrrrrr based data
             return False
-        # print(result)
+            # print(result)
 
-        return result[0]
+        par_0 = result[0].get(SQL_MASK_FIELDS.mfd_scan_type_id, None)
+        par_1 = result[0].get(SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_scan_type_fk, None)
+        par_2 = result[0].get(SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_id, None)
+        if None not in (par_0, par_1, par_2):
+            return result[0]
+        return False
 
     def is_valid_scanned_mask(self, scan_fk: int, model_fk: int) -> list | bool:
 
@@ -64,7 +75,6 @@ class CSQLTemplatesQuerys(CSqlAgent):
 
         result = self.sql_query_and_get_result(
             self.get_sql_handle(), query_string, (scan_fk, scan_fk, model_fk, ), "_1", )  # Запрос типа аасоциативного массива
-        print(result)
         if result is False:  # Errorrrrrrrrrrrrr based data
             return False
         # print(result)
@@ -110,6 +120,42 @@ class CSQLTemplatesQuerys(CSqlAgent):
             handle.commit()
 
         return True
+
+    def update_template_values(self, scan_fk: int, template_str: str, values_list: list):
+
+        if template_str and scan_fk and len(values_list):
+            query_string = (f"UPDATE {SQL_TABLE_NAME.tv_scan_type} SET {template_str} "
+                            f" WHERE "
+                            f"{SQL_MASK_FIELDS.mfd_scan_type_id} = %s"
+                            )
+            result = self.sql_query_and_get_result(
+                self.get_sql_handle(), query_string, (*values_list, scan_fk, ), "_u", 1, False)  #
+
+            return result
+
+    def update_template_edit_date(self, model_id_fk: int):
+
+        if model_id_fk:
+            query_string = (f"UPDATE {SQL_TABLE_NAME.tv_model_info_tv} SET last_updated_time = now()"
+                            f" WHERE "
+                            f"{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_id} = %s"
+                            )
+            result = self.sql_query_and_get_result(
+                self.get_sql_handle(), query_string, (model_id_fk, ), "_u", 1, False)  #
+
+            return result
+
+    def update_state_values(self, scan_fk: int, state_str: str, values_list: list):
+
+        if state_str and scan_fk and len(values_list):
+            query_string = (f"UPDATE {SQL_TABLE_NAME.tv_scan_type} SET {state_str} "
+                            f" WHERE "
+                            f"{SQL_MASK_FIELDS.mfd_scan_type_id} = %s"
+                            )
+            result = self.sql_query_and_get_result(
+                self.get_sql_handle(), query_string, (*values_list, scan_fk,), "_u", 1, False)  #
+
+            return result
 
 
     # def check_asr_data(self, asr_name: str, asr_id: int) -> dict | bool:
