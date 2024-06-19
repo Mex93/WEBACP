@@ -8,10 +8,13 @@ let acessDelete = false;
 let accessEdit = false;
 let accessCreate = false;
 let cEditTableID = undefined;
+let isEditTemplate = undefined;
 let modelLabelID = undefined;
 let editModelUnitID = undefined;
+let isCreateTemplate = false;
 let cmessBoxMainBlock = new CMessBox("error_box")
 let cmessBoxEditBlock = new CMessBox("error_box_edit")
+let cmessBoxCreateBlock = new CMessBox("error_box_create")
 
 class TVModelsList
 {
@@ -65,9 +68,6 @@ class TVModelsList
 }
 
 
-
-
-
 function onUserPressedMainMenuBtnEdit(mmUnit)
 {
     // console.log("Нажата клавиша Редактировать")
@@ -75,8 +75,12 @@ function onUserPressedMainMenuBtnEdit(mmUnit)
 
     if(query)
         return false;
-
-    if(cEditTableID)
+    if(isCreateTemplate)
+    {
+        alert('Сперва завершите создание шаблона!')
+        return
+    }
+    if(isEditTemplate)
         return false;
     query = true;
 
@@ -224,7 +228,7 @@ function onUserPressedMainMenuBtnEdit(mmUnit)
                                     })
                                 }
                             })
-
+                            isEditTemplate = true;
 
 
                             HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_RESULT_LIST, false);
@@ -251,32 +255,12 @@ function onUserPressedMainMenuBtnEdit(mmUnit)
     return false;
 }
 
-function Edit_onUserEditField(elementHTMLID, elementUnitID)
-{
-    console.log(elementHTMLID.value)
-    console.log(`${elementUnitID.getTextID()}`)
-
-    let currentValue = elementHTMLID.value;
-    if(currentValue === '')
-        currentValue = null;
-    elementUnitID.setCurrentValue(currentValue);
-
-}
-function Edit_onUserClickCB(elementHTMLID, elementUnitID)
-{
-    console.log(elementHTMLID.checked)
-    console.log(`${elementUnitID.getTextID()}`)
-
-    let currentStateChecked = elementHTMLID.checked;
-    elementUnitID.setCurrentState(currentStateChecked);
-
-}
 
 function onUserPressedSaveTemplateBtn()
 {
     console.log("Сохранить шаблон")
 
-    if(cEditTableID)
+    if(isEditTemplate)
     {
         if(query)
             return false;
@@ -441,30 +425,7 @@ function onUserPressedSaveTemplateBtn()
             cmessBoxEditBlock.sendErrorMessage("Вы ничего не изменили!");
         }
     }
-
-
-
-
-
     return false;
-}
-function onUserPressedCancelEditTemplateBtn()
-{
-    console.log("Нажата клавиша отменить редактирование")
-    destroyEditBlock();
-
-    return false;
-}
-function destroyEditBlock()
-{
-    if(cEditTableID)
-    {
-        editModelUnitID = undefined;
-        cEditTableID.remove()
-        cEditTableID = undefined;
-        CItemParams.clearUnits();
-        HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.EDIT_BLOCK, false);
-    }
 }
 
 
@@ -475,9 +436,14 @@ function onUserPressedMainMenuBtnDel(mmUnit)
     if(query)
         return false;
 
-    if(cEditTableID)
+    if(isEditTemplate)
     {
         alert('Сперва завершите редактирование шаблона!')
+        return
+    }
+    if(isCreateTemplate)
+    {
+        alert('Сперва завершите создание нового шаблона!')
         return
     }
 
@@ -545,21 +511,9 @@ function onUserPressedMainMenuBtnDel(mmUnit)
     else {
 
     }
-
-
-
     return false;
 }
 
-function onUserPressedCreateTemplateBtn()
-{
-    if(accessCreate)
-    {
-
-    }
-    console.log("Нажата клавиша создать")
-    return true;
-}
 
 
 function get_tv_list_ajax()
@@ -695,7 +649,8 @@ class HTMLBlocks
         ANIM_MODELS_LIST: 0,
         ANIM_RESULT_LIST: 1,
         MODELS_LIST: 2,
-        EDIT_BLOCK: 3
+        EDIT_BLOCK: 3,
+        CREATE_BLOCK: 4
     }
     htmlID = undefined;
     blockType = undefined;
@@ -849,6 +804,116 @@ class CItemParams
     }
 }
 
+//////////////////////////////////////
+function onUserPressedCancelEditTemplateBtn()
+{
+    console.log("Нажата клавиша отменить редактирование")
+    if(isEditTemplate)
+    {
+        destroyEditBlock();
+    }
+    return false;
+}
+//////////////////////////////////////
+function onUserPressedSaveCreateTemplateBtn()
+{
+    console.log("сохранить созданный шаблон")
+    if(isEditTemplate)
+    {
+        return
+    }
+    if(isCreateTemplate)
+    {
+        if(accessCreate)
+        {
+
+        }
+    }
+
+}
+function destroyCreateBlock()
+{
+    if(isCreateTemplate)
+    {
+        isCreateTemplate = false;
+
+        HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.CREATE_BLOCK, false);
+    }
+}
+function onUserPressedCancelCreateTemplateBtn()
+{
+    console.log("отменить созданный шаблон")
+    if(isCreateTemplate)
+    {
+        destroyCreateBlock()
+    }
+}
+function onUserPressedCreateTemplateBtn()
+{
+    console.log("Нажата клавиша создать")
+
+    if(isEditTemplate)
+    {
+        alert('Сперва завершите редактирование шаблона!')
+        return
+    }
+
+
+    if(accessCreate)
+    {
+        if(!isCreateTemplate)
+        {
+            HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.CREATE_BLOCK, true);
+            isCreateTemplate = true;
+        }
+    }
+    return true;
+}
+//////////////////////////////////////
+function Edit_onUserEditField(elementHTMLID, elementUnitID)
+{
+    console.log(elementHTMLID.value)
+    console.log(`${elementUnitID.getTextID()}`)
+
+    let currentValue = elementHTMLID.value;
+    if(currentValue === '')
+        currentValue = null;
+    else
+    {
+        if(/[а-яА-ЯЁё]/.test(currentValue))
+        {
+            elementHTMLID.value = elementUnitID.getFirstValue();
+            return;
+        }
+    }
+    elementUnitID.setCurrentValue(currentValue);
+
+}
+function Edit_onUserClickCB(elementHTMLID, elementUnitID)
+{
+    console.log(elementHTMLID.checked)
+    console.log(`${elementUnitID.getTextID()}`)
+
+    let currentStateChecked = elementHTMLID.checked;
+    elementUnitID.setCurrentState(currentStateChecked);
+
+}
+
+function destroyEditBlock()
+{
+    if(cEditTableID)
+    {
+        editModelUnitID = undefined;
+        cEditTableID.remove()
+        cEditTableID = undefined;
+        isEditTemplate = false;
+        CItemParams.clearUnits();
+        HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.EDIT_BLOCK, false);
+    }
+}
+
+
+
 // ----------------------------------------------------------------- FUNC END
 
 $(document).ready(function()
@@ -858,6 +923,7 @@ $(document).ready(function()
     units.push(new HTMLBlocks('skeleton_edit_block',    HTMLBlocks.BLOCK_TYPE.ANIM_RESULT_LIST));
     units.push(new HTMLBlocks('block_edit',             HTMLBlocks.BLOCK_TYPE.EDIT_BLOCK));
     units.push(new HTMLBlocks('res_model_list_block',   HTMLBlocks.BLOCK_TYPE.MODELS_LIST));
+    units.push(new HTMLBlocks('block_create',           HTMLBlocks.BLOCK_TYPE.CREATE_BLOCK));
 
     for(let item of units)
     {
@@ -872,6 +938,7 @@ $(document).ready(function()
     HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.MODELS_LIST, false);
     HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.EDIT_BLOCK, false);
     HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_RESULT_LIST, false);
+    HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.CREATE_BLOCK, false);
     let isValid = (numb) => (numb === 0 || numb === 1)
 
 
@@ -887,28 +954,44 @@ $(document).ready(function()
             onUserPressedCreateTemplateBtn();
         })
     }
-    let btnSaveTemplate = document.getElementById('btn_save');
+    let btnSaveTemplate = document.getElementById('btn_save_edit');
     if(btnSaveTemplate !== null)
     {
         btnSaveTemplate.addEventListener("click", function (element) {
             onUserPressedSaveTemplateBtn();
         })
     }
-    let btnCancelTemplate = document.getElementById('btn_edit_template_cancel');
+    let btnSaveCreateTemplate = document.getElementById('btn_save_create');
+    if(btnSaveCreateTemplate !== null)
+    {
+        btnSaveCreateTemplate.addEventListener("click", function (element) {
+            onUserPressedSaveCreateTemplateBtn();
+        })
+    }
+    let btnCancelTemplate = document.getElementById('btn_edit_template_cancel_edit');
     if(btnCancelTemplate !== null)
     {
         btnCancelTemplate.addEventListener("click", function (element) {
             onUserPressedCancelEditTemplateBtn();
         })
     }
+    let btnCancelCreateTemplate = document.getElementById('btn_edit_template_cancel_create');
+    if(btnCancelCreateTemplate !== null)
+    {
+        btnCancelCreateTemplate.addEventListener("click", function (element) {
+            onUserPressedCancelCreateTemplateBtn();
+        })
+    }
 
-    modelLabelID = document.getElementById('model_name_field');
+    modelLabelID = document.getElementById('model_name_field_edit');
 
     if(
         !isValid(acessDelete) ||
         !isValid(accessEdit) ||
         !isValid(accessCreate) ||
         !btnSaveTemplate ||
+        !btnCancelCreateTemplate ||
+        !btnSaveCreateTemplate ||
         !btnCreateTemplate ||
         !modelLabelID ||
         !btnCancelTemplate)
@@ -920,6 +1003,8 @@ $(document).ready(function()
         return
     }
     editModelUnitID = undefined;
+    isCreateTemplate = false;
+    isEditTemplate = false;
 
     setTimeout(get_tv_list_ajax, 3000);
 

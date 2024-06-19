@@ -10,7 +10,7 @@ class CMask:
             # 1 филд - сканировочное состояние(да нет)
             # 2 филд - значение шаблона
             ['device_sn', None, SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_serial_number_template,
-             'Серийный номер', 0, None, None, TableType.TABLE_MODELS],
+             'Серийный номер устройства', 0, None, None, TableType.TABLE_MODELS],
 
             ['vendor_code', None, SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_vendor_code,
              'Vendor Code', 1, None, None, TableType.TABLE_MODELS],

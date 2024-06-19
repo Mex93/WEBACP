@@ -9,7 +9,7 @@ from engine.users.enums import USER_SECTIONS_TYPE
 
 from engine.templates_mask.CSQLTemplatesQuerys import CSQLTemplatesQuerys
 from engine.templates_mask.CMask import CMask
-from engine.templates_mask.common import is_field_len
+from engine.templates_mask.common import is_field_len, is_cirylic
 from engine.templates_mask.enums import TableType
 
 from engine.sql.enums import CONNECT_DB_TYPE
@@ -68,6 +68,10 @@ def templates_save_edit_mask_ajax(pa_array, scan_fk, model_id, model_name):
                         if new_value_double < 1 or new_value_double > 200:
                             error_fields.append(text_name)
                             continue
+                    else:
+                        if isinstance(new_value, str):
+                            if is_cirylic(new_value):
+                                continue
 
                     sql_field_index = CMask.get_field_arr_index_from_text_id(text_id)
                     if sql_field_index != -1:
@@ -181,12 +185,12 @@ def templates_save_edit_mask_ajax(pa_array, scan_fk, model_id, model_name):
                         else:
                             response_for_client.update(
                                 {
-                                    "error_text": f"Внетруннея ошибка вычислений номеров строк SQL'{model_name}[{model_id}]'!"})
+                                    "error_text": f"Внутренняя ошибка вычислений номеров строк SQL'{model_name}[{model_id}]'!"})
                             response_for_client.update({"result": False})
                     else:
                         response_for_client.update(
                             {
-                                "error_text": f"Внетруннея ошибка вычислений номеров строк SQL'{model_name}[{model_id}]'!"})
+                                "error_text": f"Внутренняя ошибка вычислений номеров строк SQL'{model_name}[{model_id}]'!"})
                         response_for_client.update({"result": False})
                 else:
                     if len(error_fields) > 0:

@@ -30,7 +30,7 @@ page_name = cpages.get_page_template_name_from_page_id(PAGE_ID.TEMPLATES_FIND)
 
 
 @bp_page_templates.route(f'/{page_name}', methods=['POST', 'GET'])
-def asr_find():
+def template_find():
     if cuser_access.is_sessions_start() is False:
         return cpages.redirect_on_page(PAGE_ID.ACCOUNT_LOGIN)
 

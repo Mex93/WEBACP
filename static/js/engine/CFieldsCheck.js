@@ -12,11 +12,14 @@ class CFieldsCheck
     #MAX_USER_PASSWORD_LEN = 16;
     #MIN_USER_PASSWORD_LEN = 6;
 
+    #MAX_TEMPLATE_LEN = 64;
+
     #re_ASR = new RegExp(/[^A-Z0-9]/);
     #re_Password = new RegExp(/[^a-zA-Z0-9]/);
     #re_Nickname = new RegExp(/[^a-zA-Z0-9]/);
     #re_Email = new RegExp(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/);
     #re_Lastname = new RegExp(/[^а-яА-Я]/);
+    #re_Template = new RegExp(/[а-яА-ЯЁё]/);
     #re_MAC = new RegExp(/^\d{2}:\d{2}:\d{2}:\d{2}:\d{2}:\d{2}$/);  //04:06:DD:9A:48:22/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/
     // TODO придумать как написать эту ебучую регулярку на проверку asr + in python
     #re_MBSN =  null;
@@ -163,7 +166,6 @@ class CFieldsCheck
         }
         return false
     }
-
     #set_check_validator({ field, text, textPattern, maxLen, minLen, rePattern })
     {
         if (text && field && maxLen && minLen && textPattern)
