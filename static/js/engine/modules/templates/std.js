@@ -105,135 +105,129 @@ function onUserPressedMainMenuBtnEdit(mmUnit)
 
             if(data.result === true)
             {
-                if(!data.arr)
+                if(Array.isArray(data.arr))
                 {
-                    cmessBoxMainBlock.sendErrorMessage(data.error_text);
-                }
-                else
-                {
-                    if(Array.isArray(data.arr))
+
+                    console.log(data.arr)
+
+                    let count = 0;
+                    CItemParams.clearUnits();
+                    editModelUnitID = mmUnit;
+                    let elementsCBArr = [];
+                    let elementsInputArr = [];
+                    data.arr.forEach( (element, index) => {
+                      console.log(element, index)
+
+                        if(index === 0)
+                        {
+                            let table = document.createElement('table');
+                            table.id = 'edit_table';
+                            table.className = 'custom-table table-templates';
+                            cEditTableID = table;
+
+                            let tr = document.createElement('tr');
+                            let th = document.createElement('th');
+                            th.innerText = 'Параметр:'
+                            tr.append(th)
+                            th = document.createElement('th');
+                            th.innerText = 'Используется:'
+                            tr.append(th)
+                            th = document.createElement('th');
+                            th.innerText = 'Старое значение:'
+                            tr.append(th)
+                            th = document.createElement('th');
+                            th.innerText = 'Новое значение:'
+                            tr.append(th)
+                            table.append(tr)
+                        }
+
+                        let [text_id, field_id, text_name, cvalue, cstate, req_once] = element
+                        let fieldUnit = new CItemParams(element);
+                        count ++;
+                        let checkedStatus = String();
+                        let lockedState = '';
+                        let lockedValue = '';
+
+                        if(cstate !== null)
+                        {
+                            if(cstate)checkedStatus = 'checked';
+                            else checkedStatus = '';
+                            lockedState = ''
+                        }
+                        else
+                        {
+                            lockedState = 'disabled';
+                        }
+
+                        if(cvalue === '')
+                        {
+                            cvalue = ''  // что бы отключить None
+                            lockedValue = '';
+                        }
+                        else if(cvalue === null)
+                        {
+                            cvalue = ''  // что бы отключить None
+                            lockedValue = 'disabled';
+                        }
+
+                        if(req_once === true)
+                            req_once = 'required placeholder = ""'
+                        else req_once = ''
+
+
+                        elementsCBArr.push([`input_checkbox_${text_id}`, fieldUnit]);
+                        elementsInputArr.push([`input_field_${text_id}`, fieldUnit]);
+
+                        let str = `<tr>
+                                    <td>${text_name}</td>
+                                    <td>
+                                    <input name = 'field check' ${lockedState} id="input_checkbox_${text_id}" type="checkbox" ${checkedStatus}></td>
+                                    <td ${lockedValue} id="old_value_${text_id}">${cvalue}</td>
+                                    <td>
+                                    <input name = 'field input' ${req_once} ${lockedValue} value="${cvalue}" id="input_field_${text_id}" type="text" maxlength="64" size="40"></td>
+                                   </tr>`
+                        let createElement = document.createElement("tr");
+                        createElement.innerHTML = str;
+                        cEditTableID.append(createElement);
+
+                    })
+
+                    if(count > 0)
                     {
-                        if(cEditTableID)
-                        {
-                            destroyEditBlock();
-                        }
+                        modelLabelID.innerText = `Редактирование шаблона ${modelName}`;
+                        let AttachBlockID = HTMLBlocks.getHTMLID(HTMLBlocks.BLOCK_TYPE.EDIT_BLOCK);
+                        AttachBlockID.append(cEditTableID);
 
-                        console.log(data.arr)
 
-                        let count = 0;
-                        CItemParams.clearUnits();
-                        editModelUnitID = mmUnit;
-                        let elementsCBArr = [];
-                        let elementsInputArr = [];
-                        data.arr.forEach( (element, index) => {
-                          console.log(element, index)
-
-                            if(index === 0)
+                        // state elements
+                        elementsCBArr.forEach( (element) => {
+                            let htmlID = element[0];
+                            let unitID = element[1];
+                            let elementID = document.getElementById(htmlID);
+                            if(elementID !== null)
                             {
-                                let table = document.createElement('table');
-                                table.id = 'edit_table';
-                                table.className = 'custom-table table-templates';
-                                cEditTableID = table;
-
-                                let tr = document.createElement('tr');
-                                let th = document.createElement('th');
-                                th.innerText = 'Параметр:'
-                                tr.append(th)
-                                th = document.createElement('th');
-                                th.innerText = 'Используется:'
-                                tr.append(th)
-                                th = document.createElement('th');
-                                th.innerText = 'Старое значение:'
-                                tr.append(th)
-                                th = document.createElement('th');
-                                th.innerText = 'Новое значение:'
-                                tr.append(th)
-                                table.append(tr)
+                                elementID.addEventListener("click", function (element) {
+                                    Edit_onUserClickCB(elementID, unitID);
+                                })
                             }
-
-                            let [text_id, field_id, text_name, cvalue, cstate] = element
-                            let fieldUnit = new CItemParams(element);
-                            count ++;
-                            let checkedStatus = String();
-                            let lockedState;
-                            let lockedValue;
-
-                            if(cstate !== null)
-                            {
-                                if(cstate)checkedStatus = 'checked';
-                                else checkedStatus = '';
-                                lockedState = ''
-                            }
-                            else
-                            {
-                                lockedState = 'disabled';
-                            }
-
-                            if(cvalue === null)
-                            {
-                                cvalue = ''  // что бы отключить None
-                                lockedValue = '';
-                            }
-                            else if(cvalue === -777)
-                            {
-                                cvalue = ''  // что бы отключить None
-                                lockedValue = 'disabled';
-                            }
-
-                            elementsCBArr.push([`input_checkbox_${text_id}`, fieldUnit]);
-                            elementsInputArr.push([`input_field_${text_id}`, fieldUnit]);
-
-                            let str = `<tr>
-                                        <td>${text_name}</td>
-                                        <td>
-                                        <input ${lockedState} id="input_checkbox_${text_id}" type="checkbox" ${checkedStatus}></td>
-                                        <td ${lockedValue} id="old_value_${text_id}">${cvalue}</td>
-                                        <td>
-                                        <input ${lockedValue} value="${cvalue}" id="input_field_${text_id}" type="text" maxlength="64" size="40"></td>
-                                       </tr>`
-                            let createElement = document.createElement("tr");
-                            createElement.innerHTML = str;
-                            cEditTableID.append(createElement);
-
                         })
-
-                        if(count > 0)
-                        {
-                            modelLabelID.innerText = `Редактирование шаблона ${modelName}`;
-                            let AttachBlockID = HTMLBlocks.getHTMLID(HTMLBlocks.BLOCK_TYPE.EDIT_BLOCK);
-                            AttachBlockID.append(cEditTableID);
-
-
-                            // state elements
-                            elementsCBArr.forEach( (element) => {
-                                let htmlID = element[0];
-                                let unitID = element[1];
-                                let elementID = document.getElementById(htmlID);
-                                if(elementID !== null)
-                                {
-                                    elementID.addEventListener("click", function (element) {
-                                        Edit_onUserClickCB(elementID, unitID);
-                                    })
-                                }
-                            })
-                            // cvalue element
-                            elementsInputArr.forEach( (element) => {
-                                let htmlID = element[0];
-                                let unitID = element[1];
-                                let elementID = document.getElementById(htmlID);
-                                if(elementID !== null)
-                                {
-                                    elementID.addEventListener("change", function (element) {
-                                        Edit_onUserEditField(elementID, unitID);
-                                    })
-                                }
-                            })
-                            isEditTemplate = true;
+                        // cvalue element
+                        elementsInputArr.forEach( (element) => {
+                            let htmlID = element[0];
+                            let unitID = element[1];
+                            let elementID = document.getElementById(htmlID);
+                            if(elementID !== null)
+                            {
+                                elementID.addEventListener("change", function (element) {
+                                    Edit_onUserEditField(elementID, unitID);
+                                })
+                            }
+                        })
+                        isEditTemplate = true;
 
 
-                            HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_RESULT_LIST, false);
-                            HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.EDIT_BLOCK, true);
-                        }
+                        HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_RESULT_LIST, false);
+                        HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.EDIT_BLOCK, true);
                     }
                 }
                 return true;
@@ -476,7 +470,7 @@ function onUserPressedMainMenuBtnDel(mmUnit)
                 if(data.result === true)
                 {
                     cmessBoxMainBlock.sendSuccessMessage(data.error_text);
-                    if(cEditTableID)
+                    if(isEditTemplate)
                     {
                         // на всякий
                         destroyEditBlock();
@@ -648,9 +642,10 @@ class HTMLBlocks
     static BLOCK_TYPE = {
         ANIM_MODELS_LIST: 0,
         ANIM_RESULT_LIST: 1,
-        MODELS_LIST: 2,
-        EDIT_BLOCK: 3,
-        CREATE_BLOCK: 4
+        ANIM_CREATE_BLOCK: 2,
+        MODELS_LIST: 3,
+        EDIT_BLOCK: 4,
+        CREATE_BLOCK: 5
     }
     htmlID = undefined;
     blockType = undefined;
@@ -796,10 +791,7 @@ class CItemParams
     {
         if(this.units.length > 0)
         {
-            for(let item of this.units)
-            {
-                // delete item;
-            }
+            this.units = [];
         }
     }
 }
@@ -826,7 +818,104 @@ function onUserPressedSaveCreateTemplateBtn()
     {
         if(accessCreate)
         {
+            if(query)
+                return false;
 
+            let arr = CreatedTemplateMain.getUnitsArray();
+            if(Array.isArray(arr))
+            {
+                let arrayForQuery = [];
+                let countSuccess = 0;
+                for(let unitArr of arr)
+                {
+                    let [mainUnit, unitOne, unitTwo] = unitArr;
+                    let textName = mainUnit.getTextName();
+                    let textID = mainUnit.getTextID();
+
+                    let result = true;
+                    let cState = null;
+                    let cValue = null;
+                    for(let unit of [unitOne, unitTwo])
+                    {
+                        if(unit !== null)
+                        {
+                            let fType = unit.getType();
+                            let htmlID = unit.getHTMLId();
+                            if(fType ==='state')
+                            {
+                                cState = htmlID.checked;
+                            }
+                            else if(fType ==='value')
+                            {
+                                cValue = String(htmlID.value);
+                                if(/[а-яА-ЯЁё]/.test(cValue))
+                                {
+                                    htmlID.value = cValue + ' [Ошибка!]';
+                                    result = false;
+                                    break;
+                                }
+                                if(cValue.length >= 64)
+                                {
+                                    htmlID.value = cValue + ' [Ошибка!]';
+                                    result = false;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if(result)
+                    {
+                        arrayForQuery.push([textID, textName, cState, cValue])
+                        countSuccess++;
+                    }
+                }
+                if(countSuccess)
+                {
+                    query = true;
+                    let completed_json = JSON.stringify({
+                        create_parameters: arrayForQuery,
+                    }); //$.parseJSON(json_text);
+
+                    $.ajax({
+                        data : completed_json,
+                        dataType: 'json',
+                        type : 'POST',
+                        url : './templates_create_mask_add_ajax',
+                        contentType: "application/json",
+                        success: function(data) {
+                            query = false;
+
+                            if(data.result === true)
+                            {
+                                if(Array.isArray(data.arr_result))
+                                {
+                                    arr = data.arr_result;
+                                    console.log(`Созданы индексы: ${arr}`)
+                                }
+                                cmessBoxMainBlock.sendSuccessMessage(data.error_text);
+
+
+                                destroyCreateBlock();
+                                setTimeout(function (){
+                                    location.reload()
+                                },
+                                    2000)
+                            }
+                            else
+                            {
+                                cmessBoxCreateBlock.sendErrorMessage(data.error_text);
+                                return false
+                            }
+                        },
+                        error: function(error) {
+                            // responseProcess = false
+                            cmessBoxCreateBlock.sendErrorMessage("Ошибка AJAX на стороне сервера!");
+                            return false
+                        }
+                    })
+
+                }
+            }
         }
     }
 
@@ -835,8 +924,13 @@ function destroyCreateBlock()
 {
     if(isCreateTemplate)
     {
-        isCreateTemplate = false;
-
+        if(cEditTableID)
+        {
+            CreatedTemplateMain.destroyUnits();
+            isCreateTemplate = false;
+            cEditTableID.remove();
+            cEditTableID = undefined;
+        }
         HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.CREATE_BLOCK, false);
     }
 }
@@ -848,6 +942,43 @@ function onUserPressedCancelCreateTemplateBtn()
         destroyCreateBlock()
     }
 }
+class CreatedTemplateMain  // класс для создания шаблона
+{
+    textName = null;
+    textID = null;
+    static units = [];
+
+    constructor(unitOne, unitTwo)
+    {
+       this.constructor.units.push([this, unitOne, unitTwo])
+    }
+
+    setTextName = (textName) => this.textName = textName;
+    setTextID = (textID) => this.textID = textID;
+
+    getTextName = () => this.textName;
+    getTextID = () => this.textID;
+
+    static getUnitsArray = () => this.units;
+    static destroyUnits = () =>
+    {
+        this.units = [];
+    }
+}
+class CreatedTemplateUnit  // класс для создания шаблона
+{
+    htmlElementID = null;
+    elementType = null;
+
+    constructor(eType)
+    {
+        this.elementType = eType;
+    }
+    setHTMLId = (htmlID) => this.htmlElementID = htmlID;
+    getHTMLId = () => this.htmlElementID;
+
+    getType = () => this.elementType;
+}
 function onUserPressedCreateTemplateBtn()
 {
     console.log("Нажата клавиша создать")
@@ -858,17 +989,200 @@ function onUserPressedCreateTemplateBtn()
         return
     }
 
-
     if(accessCreate)
     {
         if(!isCreateTemplate)
         {
+            if(query)
+                return false;
+            query = true;
+            HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_CREATE_BLOCK, true);
             HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.CREATE_BLOCK, true);
-            isCreateTemplate = true;
+            $.ajax({
+                data : {},
+                dataType: 'json',
+                type : 'POST',
+                url : './templates_create_mask_get_elemets_ajax',
+                contentType: "application/json",
+                success: function(data) {
+                    query = false;
+                    HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_CREATE_BLOCK, false);
+
+
+                    if(data.result === true)
+                    {
+                        if(Array.isArray(data.arr))
+                        {
+                            let tableID = undefined;
+                            if(data.arr.length > 0)
+                            {
+                                let count = 0;
+                                let table = undefined;
+                                let idsInputFields = [];
+                                data.arr.forEach( (element, index) =>
+                                {
+                                    console.log(element, index)
+
+                                    if(index === 0)
+                                    {
+                                        table = document.createElement('table');
+
+                                        table.id = 'create_table';
+                                        table.className = 'custom-table table-templates';
+                                        tableID = table;
+
+                                        let tr = document.createElement('tr');
+                                        let th = document.createElement('th');
+                                        th.innerText = 'Параметр:'
+                                        tr.append(th)
+                                        th = document.createElement('th');
+                                        th.innerText = 'Используется:'
+                                        tr.append(th)
+                                        th = document.createElement('th');
+                                        th.innerText = 'Значение:'
+                                        tr.append(th)
+                                        table.append(tr)
+
+
+                                        let str = `<tr>
+                                        <td>Название устройства</td>
+                                        <td>
+                                        <input disabled type="checkbox"></td>
+                                        <td>
+                                        <input required value="" id="create_input_field_device_name" type="text" maxlength="64" size="40"></td>
+                                       </tr>`
+                                        let createElement = document.createElement("tr");
+                                        createElement.innerHTML = str;
+                                        table.append(createElement);
+
+                                        idsInputFields.push([null, 'create_input_field_device_name', 'device_name', 'Название устройства']);
+                                    }
+                                    if(table !== undefined)
+                                    {
+                                        let [text_id, field_id, text_name, cvalue, cstate, req_once] = element
+
+                                        if(cvalue === null)
+                                        {
+                                            cvalue = 'disabled'
+                                        }
+                                        if(cstate === null)
+                                        {
+                                            cstate = 'disabled'
+                                        }
+
+                                        if(req_once === true)
+                                            req_once = 'required'
+                                        else req_once = ''
+
+
+                                        let str = `<tr>
+                                        <td>${text_name}</td>
+                                        <td>
+                                        <input ${cstate} id="create_input_checkbox_${text_id}" type="checkbox"></td>
+                                        <td>
+                                        <input ${req_once} ${cvalue} value="" id="create_input_field_${text_id}" type="text" maxlength="64" size="40"></td>
+                                       </tr>`
+                                        let createElement = document.createElement("tr");
+                                        createElement.innerHTML = str;
+                                        table.append(createElement);
+
+
+                                        idsInputFields.push([
+                                            cstate === 'disabled' ? null:`create_input_checkbox_${text_id}`,
+                                            cvalue === 'disabled' ? null:`create_input_field_${text_id}`,
+                                            text_id,
+                                            text_name]);
+
+                                        count++;
+                                    }
+
+                                });
+                                if(count > 0)
+                                {
+                                    let AttachBlockID = HTMLBlocks.getHTMLID(HTMLBlocks.BLOCK_TYPE.CREATE_BLOCK);
+                                    AttachBlockID.append(tableID);
+                                    cEditTableID = tableID;
+
+                                    isCreateTemplate = true;
+                                    count = 0;
+                                    for(let item of idsInputFields)
+                                    {
+                                        let [stateCheckHTML, inputFieldHTML, textID, textName] = item;
+                                        let arrWithUnits = [];
+                                        if(stateCheckHTML !== null)
+                                        {
+                                            let stateCheckHTMLID = document.getElementById(stateCheckHTML);
+                                            if(stateCheckHTMLID == null)
+                                            {
+                                                console.log(`Внимание! Не найден HTML ID '${stateCheckHTML}'`)
+                                                destroyCreateBlock();
+                                                return false;
+                                            }
+                                            let unit = new CreatedTemplateUnit('state');
+                                            unit.setHTMLId(stateCheckHTMLID);
+                                            arrWithUnits.push(unit)
+                                        }
+                                        else arrWithUnits.push(null);
+
+                                        if(inputFieldHTML !== null)
+                                        {
+                                            let inputFieldHTMLID = document.getElementById(inputFieldHTML);
+                                            if(inputFieldHTMLID == null)
+                                            {
+                                                console.log(`Внимание! Не найден HTML ID '${inputFieldHTML}'`)
+                                                destroyCreateBlock();
+                                                return false;
+                                            }
+                                            let unit = new CreatedTemplateUnit('value');
+                                            unit.setHTMLId(inputFieldHTMLID);
+                                            arrWithUnits.push(unit)
+                                        }
+                                        else arrWithUnits.push(null);
+
+                                        if(arrWithUnits.length === 0)
+                                            continue;
+
+                                        let mainUnit = new CreatedTemplateMain(...arrWithUnits);
+                                        mainUnit.setTextName(textName);
+                                        mainUnit.setTextID(textID);
+                                        count ++;
+
+                                    }
+                                    if(!count)
+                                    {
+                                        console.log(`Внимание! Ошибка в построении таблицы параметров для создания шаблона!`)
+                                        destroyCreateBlock();
+                                        return false;
+                                    }
+                                }
+                                else
+                                {
+                                    cmessBoxMainBlock.sendErrorMessage("Не могу составить таблицу параметров!");
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        cmessBoxMainBlock.sendErrorMessage(data.error_text);
+                        return false
+                    }
+                },
+                error: function(error) {
+                    // responseProcess = false
+                    cmessBoxMainBlock.sendErrorMessage("Ошибка AJAX на стороне сервера!");
+                    HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_CREATE_BLOCK, false);
+                    HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.CREATE_BLOCK, false);
+                    return false
+                }
+            })
         }
     }
     return true;
 }
+
+
+
 //////////////////////////////////////
 function Edit_onUserEditField(elementHTMLID, elementUnitID)
 {
@@ -901,13 +1215,16 @@ function Edit_onUserClickCB(elementHTMLID, elementUnitID)
 
 function destroyEditBlock()
 {
-    if(cEditTableID)
+    if(isEditTemplate)
     {
-        editModelUnitID = undefined;
-        cEditTableID.remove()
-        cEditTableID = undefined;
-        isEditTemplate = false;
-        CItemParams.clearUnits();
+        if(cEditTableID)
+        {
+            editModelUnitID = undefined;
+            cEditTableID.remove()
+            cEditTableID = undefined;
+            isEditTemplate = false;
+            CItemParams.clearUnits();
+        }
         HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.EDIT_BLOCK, false);
     }
 }
@@ -920,6 +1237,7 @@ $(document).ready(function()
 {
     let units = [];
     units.push(new HTMLBlocks('seleketon_model_list',   HTMLBlocks.BLOCK_TYPE.ANIM_MODELS_LIST));
+    units.push(new HTMLBlocks('skeleton_create_block',  HTMLBlocks.BLOCK_TYPE.ANIM_CREATE_BLOCK));
     units.push(new HTMLBlocks('skeleton_edit_block',    HTMLBlocks.BLOCK_TYPE.ANIM_RESULT_LIST));
     units.push(new HTMLBlocks('block_edit',             HTMLBlocks.BLOCK_TYPE.EDIT_BLOCK));
     units.push(new HTMLBlocks('res_model_list_block',   HTMLBlocks.BLOCK_TYPE.MODELS_LIST));
@@ -935,6 +1253,7 @@ $(document).ready(function()
     }
 
     HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_MODELS_LIST, true);
+    HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_CREATE_BLOCK, false);
     HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.MODELS_LIST, false);
     HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.EDIT_BLOCK, false);
     HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_RESULT_LIST, false);
@@ -1007,7 +1326,6 @@ $(document).ready(function()
     isEditTemplate = false;
 
     setTimeout(get_tv_list_ajax, 3000);
-
 
     //let csrftoken = $('meta[name=csrf-token]').attr('content')
     let csrftoken = $('.container-common input[name=csrf_token]').attr('value')

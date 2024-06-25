@@ -31,7 +31,7 @@ class CSQLTemplatesQuerys(CSqlAgent):
             return result
         return False
 
-    def get_scanned_params(self, scan_fk: int, model_fk: int) -> list | bool:
+    def get_scanned_params(self, scan_fk: int, model_fk: int) -> dict | bool:
 
         query_string = (f"SELECT * "
                         f"FROM {SQL_TABLE_NAME.tv_scan_type} "
@@ -45,7 +45,8 @@ class CSQLTemplatesQuerys(CSqlAgent):
                         "LIMIT 1")
 
         result = self.sql_query_and_get_result(
-            self.get_sql_handle(), query_string, (scan_fk, scan_fk, model_fk, ), "_1", )  # Запрос типа аасоциативного массива
+            self.get_sql_handle(), query_string, (scan_fk, scan_fk, model_fk,),
+            "_1", )  # Запрос типа аасоциативного массива
         if result is False:  # Errorrrrrrrrrrrrr based data
             return False
             # print(result)
@@ -74,7 +75,8 @@ class CSQLTemplatesQuerys(CSqlAgent):
                         "LIMIT 1")
 
         result = self.sql_query_and_get_result(
-            self.get_sql_handle(), query_string, (scan_fk, scan_fk, model_fk, ), "_1", )  # Запрос типа аасоциативного массива
+            self.get_sql_handle(), query_string, (scan_fk, scan_fk, model_fk,),
+            "_1", )  # Запрос типа аасоциативного массива
         if result is False:  # Errorrrrrrrrrrrrr based data
             return False
         # print(result)
@@ -116,7 +118,7 @@ class CSQLTemplatesQuerys(CSqlAgent):
             handle.rollback()
             print(f"Ошибка трансакции удаления шаблона: '{err}'")
             return False
-        finally:
+        else:
             handle.commit()
 
         return True
@@ -135,7 +137,7 @@ class CSQLTemplatesQuerys(CSqlAgent):
                             f"{target_value} = %s"
                             )
             result = self.sql_query_and_get_result(
-                self.get_sql_handle(), query_string, (*values_list, scan_fk, ), "_u", 1, False)  #
+                self.get_sql_handle(), query_string, (*values_list, scan_fk,), "_u", 1, False)  #
 
             return result
 
@@ -166,107 +168,114 @@ class CSQLTemplatesQuerys(CSqlAgent):
                             f"{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_id} = %s"
                             )
             result = self.sql_query_and_get_result(
-                self.get_sql_handle(), query_string, (model_id_fk, ), "_u", 1, False)  #
+                self.get_sql_handle(), query_string, (model_id_fk,), "_u", 1, False)  #
 
             return result
 
+    def is_device_name_already(self, text: str) -> bool:
 
+        query_string = (f"SELECT {SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_name} "
+                        f"FROM {SQL_TABLE_NAME.tv_model_info_tv} "
+                        f"WHERE "
+                        f"{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_name} = %s"
+                        "LIMIT 1")
 
+        result = self.sql_query_and_get_result(
+            self.get_sql_handle(), query_string, (text,), "_1", )  # Запрос типа аасоциативного массива
+        if result is False:  # Errorrrrrrrrrrrrr based data
+            return False
+            # print(result)
 
-    # def check_asr_data(self, asr_name: str, asr_id: int) -> dict | bool:
-    #
-    #     query_string = (f"SELECT "
-    #                     f"{SQL_ASR_FIELDS.asr_fd_tv_asr_id}, "
-    #                     f"{SQL_ASR_FIELDS.asr_fd_tv_asr_name}, "
-    #                     f"{SQL_ASR_FIELDS.asr_fd_tv_fk}, "
-    #                     f"{SQL_ASR_FIELDS.asr_fd_mainboard_sn}, "
-    #                     f"{SQL_ASR_FIELDS.asr_fd_ethernet_mac} "
-    #                     f"FROM {SQL_TABLE_NAME.asr_tv} "
-    #                     f"WHERE "
-    #                     f"{SQL_ASR_FIELDS.asr_fd_tv_asr_name} = %s  AND "
-    #                     f"{SQL_ASR_FIELDS.asr_fd_tv_asr_id} = %s "
-    #                     "LIMIT 1")
-    #
-    #     result = self.sql_query_and_get_result(
-    #         self.get_sql_handle(), query_string, (asr_name, asr_id,), "_1", )  # Запрос типа аасоциативного массива
-    #     if result is False:  # Errorrrrrrrrrrrrr based data
-    #         return False
-    #     # print(result)
-    #
-    #     sql_result = result[0].get(SQL_ASR_FIELDS.asr_fd_tv_asr_name, None)
-    #     if sql_result is not None:
-    #         return result
-    #     return False
-    #
-    # def is_tv_one_way(self, tv_fk: int) -> bool:
-    #
-    #     query_string = (f"SELECT "
-    #                     f"{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_software_type_fk} "
-    #                     f"FROM {SQL_TABLE_NAME.tv_model_info_tv} "
-    #                     f"WHERE "
-    #                     f"{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_id} = %s "
-    #                     "LIMIT 1")
-    #
-    #     result = self.sql_query_and_get_result(
-    #         self.get_sql_handle(), query_string, (tv_fk,), "_1", )  # Запрос типа аасоциативного массива
-    #     if result is False:  # Errorrrrrrrrrrrrr based data
-    #         return False
-    #     # print(result)
-    #
-    #     sql_result = result[0].get(SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_software_type_fk, None)
-    #
-    #     if sql_result is None:
-    #         return False
-    #
-    #     if sql_result == 2:
-    #         return True
-    #     return False
-    #
-    # def check_asr_data_in_assembled_table(self, mainboard_sn: str, mac: str) -> dict | bool:
-    #
-    #     query_string = (f"SELECT "
-    #                     f"{SQL_ASSEMBLED_TV_FIELDS.fd_tv_mac}, "
-    #                     f"{SQL_ASSEMBLED_TV_FIELDS.fd_tv_mb_sn}, "
-    #                     f"{SQL_ASSEMBLED_TV_FIELDS.fd_tv_sn} "
-    #                     f"FROM {SQL_TABLE_NAME.assembled_tv} "
-    #                     f"WHERE "
-    #                     f"{SQL_ASSEMBLED_TV_FIELDS.fd_tv_mac} = %s  OR "
-    #                     f"{SQL_ASSEMBLED_TV_FIELDS.fd_tv_mb_sn} = %s "
-    #                     "LIMIT 1")
-    #
-    #     result = self.sql_query_and_get_result(
-    #         self.get_sql_handle(), query_string, (mac, mainboard_sn,), "_1", )  #
-    #     # Запрос типа аасоциативного массива
-    #     if result is False:  # Errorrrrrrrrrrrrr based data
-    #         return False
-    #     # print(result)
-    #
-    #     sql_result = result[0].get(SQL_ASSEMBLED_TV_FIELDS.fd_tv_sn, None)
-    #     if sql_result is not None:
-    #         return result
-    #     return False
-    #
-    # def delete_asr(self, asr_id: str, asr_name: str):
-    #
-    #     query_string = (f"DELETE FROM {SQL_TABLE_NAME.asr_tv}"
-    #                     f" WHERE "
-    #                     f"{SQL_ASR_FIELDS.asr_fd_tv_asr_id} = %s AND "
-    #                     f"{SQL_ASR_FIELDS.asr_fd_tv_asr_name} = %s"
-    #                     )
-    #
-    #     result = self.sql_query_and_get_result(
-    #         self.get_sql_handle(), query_string, (asr_id, asr_name, ), "_d", )  #
-    #
-    #     return result
-    #
-    # def update_asr(self, asr_id: str, asr_name: str, update_string: str, update_values: list):
-    #
-    #     query_string = (f"UPDATE {SQL_TABLE_NAME.asr_tv} SET {update_string} "
-    #                     f" WHERE "
-    #                     f"{SQL_ASR_FIELDS.asr_fd_tv_asr_id} = %s AND "
-    #                     f"{SQL_ASR_FIELDS.asr_fd_tv_asr_name} = %s"
-    #                     )
-    #     result = self.sql_query_and_get_result(
-    #         self.get_sql_handle(), query_string, (*update_values, asr_id, asr_name), "_u", )  #
-    #
-    #     return result
+        name = result[0].get(SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_name, None)
+        if name is not None:
+            return True
+        return False
+
+    def get_last_modelid_index(self) -> None | int:
+
+        query_string = (f"SELECT MAX({SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_id}) as max_value "
+                        f"FROM {SQL_TABLE_NAME.tv_model_info_tv} "
+                        "LIMIT 1")
+
+        result = self.sql_query_and_get_result(
+            self.get_sql_handle(), query_string, (), "_1", )  # Запрос типа аасоциативного массива
+        if result is False:  # Errorrrrrrrrrrrrr based data
+            return None
+            # print(result)
+
+        return result[0].get('max_value', None)
+
+    def get_last_scan_mask_index(self) -> None | int:
+
+        query_string = (f"SELECT MAX({SQL_MASK_FIELDS.mfd_scan_type_id}) as max_value "
+                        f"FROM {SQL_TABLE_NAME.tv_scan_type} "
+                        "LIMIT 1")
+
+        result = self.sql_query_and_get_result(
+            self.get_sql_handle(), query_string, (), "_1", )  # Запрос типа аасоциативного массива
+        if result is False:  # Errorrrrrrrrrrrrr based data
+            return None
+            # print(result)
+
+        return result[0].get('max_value', None)
+
+    def insert_modelid_data(self, modelid_data_list: list, modelid_index: int, scan_mask_index: int) -> bool:
+        if len(modelid_data_list) > 0 and modelid_index > 0 and scan_mask_index > 0:
+            fields = list()
+            values = list()
+            for item in modelid_data_list:
+                fields.append(item[0])
+                values.append(item[1])
+
+            len_values = len(values)
+            if (len(fields) > 0 and len_values > 0) and (len(fields) == len_values):
+
+                str_formats = list()
+                for item in range(len_values):
+                    str_formats.append("%s")
+
+                query_string = (f"INSERT INTO {SQL_TABLE_NAME.tv_model_info_tv} "
+                                f"({SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_id}, "
+                                f"{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_scan_type_fk}, "
+                                f"{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_last_update_time}, "
+                                f"{', '.join(fields)})"
+                                f"VALUES (%s, %s, now(), {','.join(str_formats)}) RETURNING "
+                                f"{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_id}")
+
+                result = self.sql_query_and_get_result(
+                    self.get_sql_handle(), query_string, (modelid_index, scan_mask_index, *values), "_i", 1, True)
+                if result:
+                    return True
+                    # print(result)
+
+        return False
+
+    def insert_scanmask_data(self, scanmask_data_list: list, scan_mask_index: int) -> bool:
+        if len(scanmask_data_list) > 0 and scan_mask_index > 0:
+            fields = list()
+            values = list()
+            for item in scanmask_data_list:
+                fields.append(item[0])
+                values.append(item[1])
+
+            len_values = len(values)
+            if (len(fields) > 0 and len_values > 0) and (len(fields) == len_values):
+
+                str_formats = list()
+                for item in range(len_values):
+                    str_formats.append("%s")
+
+                query_string = (f"INSERT INTO {SQL_TABLE_NAME.tv_scan_type} "
+                                f"({SQL_MASK_FIELDS.mfd_scan_type_id}, "
+                                f"{', '.join(fields)})"
+                                f"VALUES (%s, {','.join(str_formats)}) RETURNING "
+                                f"{SQL_MASK_FIELDS.mfd_scan_type_id}")
+                print(query_string)  # f"VALUES (%s, %s, now(), '{"','".join(values)}') RETURNING "
+
+                result = self.sql_query_and_get_result(
+                    self.get_sql_handle(), query_string, (scan_mask_index, *values), "_i", 1, True)
+                if result:
+                    return True
+                    # print(result)
+
+        return False

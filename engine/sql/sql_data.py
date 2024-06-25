@@ -92,6 +92,7 @@ class SQL_LOG_FIELDS:
 class SQL_MASK_FIELDS:
 
     mfd_scan_type_id = 'scan_type_id'
+    mfd_scan_name = 'type_name'
 
     mfd_scan_wifi_module_sn = 'scan_wifi_module_sn'
     mfd_wifi_module_sn_template = 'wifi_module_sn_template'
@@ -128,4 +129,3 @@ class SQL_MASK_FIELDS:
 
     mfd_scan_storage_sn = 'scan_storage_sn'
     mfd_storage_template = 'storage_template'
-

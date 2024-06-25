@@ -10,45 +10,53 @@ class CMask:
             # 1 филд - сканировочное состояние(да нет)
             # 2 филд - значение шаблона
             ['device_sn', None, SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_serial_number_template,
-             'Серийный номер устройства', 0, None, None, TableType.TABLE_MODELS],
+             'Серийный номер устройства', 0, None, None, TableType.TABLE_MODELS, True, str],
 
             ['vendor_code', None, SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_vendor_code,
-             'Vendor Code', 1, None, None, TableType.TABLE_MODELS],
+             'Vendor Code', 1, None, None, TableType.TABLE_MODELS, True, str],
 
             ['platform_fk', None, SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_platform_fk,
-             'Номер платформы', 2, None, None, TableType.TABLE_MODELS],
+             'Номер платформы', 2, None, None, TableType.TABLE_MODELS, True, int],
 
             ['software_type', None, SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_software_type_fk,
-             'Тип программного обеспечения', 3, None, None, TableType.TABLE_MODELS],
+             'Тип программного обеспечения', 3, None, None, TableType.TABLE_MODELS, True, int],
             ########################################################
 
             ['wifi_module', SQL_MASK_FIELDS.mfd_scan_wifi_module_sn, SQL_MASK_FIELDS.mfd_wifi_module_sn_template,
-             'WIFI модуль', 4, None, None, TableType.TABLE_SCANS],
+             'WIFI модуль', 4, None, None, TableType.TABLE_SCANS, False, str],
 
             ['bt_module', SQL_MASK_FIELDS.mfd_scan_bt_module_sn, SQL_MASK_FIELDS.mfd_bt_module_sn_template, 'BT модуль',
-             5, None, None, TableType.TABLE_SCANS],
+             5, None, None, TableType.TABLE_SCANS, False, str],
 
             ['ethernet_mac', SQL_MASK_FIELDS.mfd_scan_ethernet_mac, SQL_MASK_FIELDS.mfd_ethernet_mac_sn_template, 'MAC',
-             6, None, None, TableType.TABLE_SCANS],
+             6, None, None, TableType.TABLE_SCANS, False, str],
 
-            ['lcm_sn', SQL_MASK_FIELDS.mfd_scan_lcm_sn, SQL_MASK_FIELDS.mfd_lcm_sn_template, 'PANEL', 7, None, None, TableType.TABLE_SCANS],
+            ['lcm_sn', SQL_MASK_FIELDS.mfd_scan_lcm_sn, SQL_MASK_FIELDS.mfd_lcm_sn_template, 'PANEL', 7, None, None,
+             TableType.TABLE_SCANS, False, str],
 
-            ['oc_sn', SQL_MASK_FIELDS.mfd_scan_oc_sn, SQL_MASK_FIELDS.mfd_oc_sn_template, 'OC', 8, None, None, TableType.TABLE_SCANS],
+            ['oc_sn', SQL_MASK_FIELDS.mfd_scan_oc_sn, SQL_MASK_FIELDS.mfd_oc_sn_template, 'OC', 8, None, None,
+             TableType.TABLE_SCANS, False, str],
 
-            ['mainboard_sn', SQL_MASK_FIELDS.mfd_scan_mainboard_sn, SQL_MASK_FIELDS.mfd_mainboard_sn_template, 'MB', 9, None, None, TableType.TABLE_SCANS],
+            ['mainboard_sn', SQL_MASK_FIELDS.mfd_scan_mainboard_sn, SQL_MASK_FIELDS.mfd_mainboard_sn_template, 'MB', 9,
+             None, None, TableType.TABLE_SCANS, False, str],
 
             ['powerboard_sn', SQL_MASK_FIELDS.mfd_scan_powerboard_sn, SQL_MASK_FIELDS.mfd_powerboard_sn_template, 'PB',
-             10, None, None, TableType.TABLE_SCANS],
+             10, None, None, TableType.TABLE_SCANS, False, str],
 
-            ['tcon_sn', SQL_MASK_FIELDS.mfd_scan_tcon_sn, SQL_MASK_FIELDS.mfd_tcon_sn_template, 'PB', 11, None, None, TableType.TABLE_SCANS],
+            ['tcon_sn', SQL_MASK_FIELDS.mfd_scan_tcon_sn, SQL_MASK_FIELDS.mfd_tcon_sn_template, 'PB', 11, None, None,
+             TableType.TABLE_SCANS, False, str],
 
-            ['ops_sn', SQL_MASK_FIELDS.mfd_scan_ops_sn, SQL_MASK_FIELDS.mfd_ops_sn_template, 'OPS SN', 12, None, None, TableType.TABLE_SCANS],
+            ['ops_sn', SQL_MASK_FIELDS.mfd_scan_ops_sn, SQL_MASK_FIELDS.mfd_ops_sn_template, 'OPS SN', 12, None, None,
+             TableType.TABLE_SCANS, False, str],
 
-            ['ops_mac', SQL_MASK_FIELDS.mfd_scan_ops_mac, SQL_MASK_FIELDS.mfd_ops_mac_template, 'OPS MAC', 13, None, None, TableType.TABLE_SCANS],
+            ['ops_mac', SQL_MASK_FIELDS.mfd_scan_ops_mac, SQL_MASK_FIELDS.mfd_ops_mac_template, 'OPS MAC', 13, None,
+             None, TableType.TABLE_SCANS, False, str],
 
-            ['mac_usbc', SQL_MASK_FIELDS.mfd_scan_mac_usbc, SQL_MASK_FIELDS.mfd_mac_usbc_template, 'USB-C MAC', 14, None, None, TableType.TABLE_SCANS],
+            ['mac_usbc', SQL_MASK_FIELDS.mfd_scan_mac_usbc, SQL_MASK_FIELDS.mfd_mac_usbc_template, 'USB-C MAC', 14,
+             None, None, TableType.TABLE_SCANS, False, str],
 
-            ['storage_sn', SQL_MASK_FIELDS.mfd_scan_storage_sn, SQL_MASK_FIELDS.mfd_storage_template, 'Storage', 15, None, None, TableType.TABLE_SCANS],
+            ['storage_sn', SQL_MASK_FIELDS.mfd_scan_storage_sn, SQL_MASK_FIELDS.mfd_storage_template, 'Storage', 15,
+             None, None, TableType.TABLE_SCANS, False, str],
         )
 
     @classmethod
@@ -74,6 +82,16 @@ class CMask:
         return -1
 
     @classmethod
+    def get_field_var_type(cls, arr_index: int) -> bool:
+        if 0 <= arr_index < cls.get_len():
+            return cls.__params_list[arr_index][MaksArrIndex.VAR_TYPE]
+
+    @classmethod
+    def get_requared_field(cls, arr_index: int) -> bool:
+        if 0 <= arr_index < cls.get_len():
+            return cls.__params_list[arr_index][MaksArrIndex.REQ_FIELD]
+
+    @classmethod
     def get_field_arr_index_from_text_id(cls, text_id: str) -> int:
         if text_id:
             for index, item in enumerate(cls.__params_list, 0):
@@ -81,8 +99,6 @@ class CMask:
                     continue
                 return index
         return -1
-
-
 
     @classmethod
     def is_sql_field_check(cls, arr_index: int, text: str):
@@ -121,13 +137,13 @@ class CMask:
             return cls.__params_list[arr_index][MaksArrIndex.TABLE_TYPE]
 
     @classmethod
-    def set_value(cls, arr_index: int, cvalue: str) -> bool:
+    def set_value(cls, arr_index: int, cvalue: str | None) -> bool:
         if 0 <= arr_index < cls.get_len():
             cls.__params_list[arr_index][MaksArrIndex.VALUE_CURRENT] = cvalue
             return True
 
     @classmethod
-    def set_current_state(cls, arr_index: int, cstate: bool) -> bool:
+    def set_current_state(cls, arr_index: int, cstate: bool | None) -> bool:
         if 0 <= arr_index < cls.get_len():
             cls.__params_list[arr_index][MaksArrIndex.CHECK_STATE] = cstate
             return True
