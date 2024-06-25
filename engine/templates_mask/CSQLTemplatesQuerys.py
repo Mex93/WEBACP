@@ -18,10 +18,11 @@ class CSQLTemplatesQuerys(CSqlAgent):
                         f"{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_serial_number_template}, "
                         f"{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_last_update_time} "
                         f"FROM {SQL_TABLE_NAME.tv_model_info_tv} "
+                        f"ORDER BY {SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_id} DESC "
                         "LIMIT 100")
 
         result = self.sql_query_and_get_result(
-            self.get_sql_handle(), query_string, ( ), "_1", )  # Запрос типа аасоциативного массива
+            self.get_sql_handle(), query_string, (), "_1", )  # Запрос типа аасоциативного массива
         if result is False:  # Errorrrrrrrrrrrrr based data
             return False
         # print(result)
@@ -191,6 +192,25 @@ class CSQLTemplatesQuerys(CSqlAgent):
             return True
         return False
 
+    def is_device_vendor_code_already(self, text: str) -> bool:
+
+        query_string = (f"SELECT {SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_vendor_code} "
+                        f"FROM {SQL_TABLE_NAME.tv_model_info_tv} "
+                        f"WHERE "
+                        f"{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_vendor_code} = %s"
+                        "LIMIT 1")
+
+        result = self.sql_query_and_get_result(
+            self.get_sql_handle(), query_string, (text,), "_1", )  # Запрос типа аасоциативного массива
+        if result is False:  # Errorrrrrrrrrrrrr based data
+            return False
+            # print(result)
+
+        name = result[0].get(SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_vendor_code, None)
+        if name is not None:
+            return True
+        return False
+
     def get_last_modelid_index(self) -> None | int:
 
         query_string = (f"SELECT MAX({SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_id}) as max_value "
@@ -270,7 +290,6 @@ class CSQLTemplatesQuerys(CSqlAgent):
                                 f"{', '.join(fields)})"
                                 f"VALUES (%s, {','.join(str_formats)}) RETURNING "
                                 f"{SQL_MASK_FIELDS.mfd_scan_type_id}")
-                print(query_string)  # f"VALUES (%s, %s, now(), '{"','".join(values)}') RETURNING "
 
                 result = self.sql_query_and_get_result(
                     self.get_sql_handle(), query_string, (scan_mask_index, *values), "_i", 1, True)

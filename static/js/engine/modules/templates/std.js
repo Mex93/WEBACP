@@ -16,6 +16,7 @@ let cmessBoxMainBlock = new CMessBox("error_box")
 let cmessBoxEditBlock = new CMessBox("error_box_edit")
 let cmessBoxCreateBlock = new CMessBox("error_box_create")
 
+
 class TVModelsList
 {
     modelName = null;
@@ -44,8 +45,6 @@ class TVModelsList
     getModelName = () => this.modelName;
     getModelTypeName = () => this.modelTypeName;
     getModelID = () => this.modelID;
-    getLastUpdateDateStamp = () => this.lastUpdateTime;
-    getSN = () => this.serialNumber;
     getScanFK = () => this.scanFK;
     removeModel()
     {
@@ -54,17 +53,17 @@ class TVModelsList
 
         delete this
     }
-    static getArrIndexInItems(unitID)
-    {
-        for(let i of this.itemsList.length)
-        {
-            if(this.itemsList[i] !== unitID)continue;
-            return i;
-        }
-    }
+    // static getArrIndexInItems(unitID)
+    // {
+    //     for(let i of this.itemsList.length)
+    //     {
+    //         if(this.itemsList[i] !== unitID)continue;
+    //         return i;
+    //     }
+    // }
 
     static getItemsCount = () => this.itemsList.length;
-    static getItemsList = () => this.itemsList;
+    //static getItemsList = () => this.itemsList;
 }
 
 
@@ -108,7 +107,7 @@ function onUserPressedMainMenuBtnEdit(mmUnit)
                 if(Array.isArray(data.arr))
                 {
 
-                    console.log(data.arr)
+                    //console.log(data.arr)
 
                     let count = 0;
                     CItemParams.clearUnits();
@@ -116,7 +115,7 @@ function onUserPressedMainMenuBtnEdit(mmUnit)
                     let elementsCBArr = [];
                     let elementsInputArr = [];
                     data.arr.forEach( (element, index) => {
-                      console.log(element, index)
+                      //console.log(element, index)
 
                         if(index === 0)
                         {
@@ -145,7 +144,7 @@ function onUserPressedMainMenuBtnEdit(mmUnit)
                         let fieldUnit = new CItemParams(element);
                         count ++;
                         let checkedStatus = String();
-                        let lockedState = '';
+                        let lockedState;
                         let lockedValue = '';
 
                         if(cstate !== null)
@@ -178,8 +177,12 @@ function onUserPressedMainMenuBtnEdit(mmUnit)
                         elementsCBArr.push([`input_checkbox_${text_id}`, fieldUnit]);
                         elementsInputArr.push([`input_field_${text_id}`, fieldUnit]);
 
+                        let rulesText = getHelpText(text_id);
+
                         let str = `<tr>
-                                    <td>${text_name}</td>
+                                    <td data-tooltip="${rulesText}">${text_name} 
+                                    <img src="static/icons/help_icon.svg" alt="Информация" width="25px" height="25px">
+                                    </td>
                                     <td>
                                     <input name = 'field check' ${lockedState} id="input_checkbox_${text_id}" type="checkbox" ${checkedStatus}></td>
                                     <td ${lockedValue} id="old_value_${text_id}">${cvalue}</td>
@@ -225,9 +228,10 @@ function onUserPressedMainMenuBtnEdit(mmUnit)
                         })
                         isEditTemplate = true;
 
-
                         HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_RESULT_LIST, false);
                         HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.EDIT_BLOCK, true);
+
+                        gotoToEditBlock();
                     }
                 }
                 return true;
@@ -271,7 +275,6 @@ function onUserPressedSaveTemplateBtn()
 
             let currentState = unit.getCurrentState();
             let firstState = unit.getFirstState();
-            let isUsed = false;
             // value
             if(currentValue !== firstValue)
             {
@@ -668,11 +671,11 @@ class HTMLBlocks
         }
 
     }
-    static isValidNonUnit(blockType)
-    {
-        let unitID = this.getUnitIDFromBlockType(blockType);
-        return unitID.htmlID !== null;
-    }
+    // static isValidNonUnit(blockType)
+    // {
+    //     let unitID = this.getUnitIDFromBlockType(blockType);
+    //     return unitID.htmlID !== null;
+    // }
     isValidWithUnit()
     {
         return this.htmlID !== undefined;
@@ -706,14 +709,14 @@ class HTMLBlocks
             return true;
         }
     }
-    static getHTMLName(blockType)
-    {
-        let unitID = this.getUnitIDFromBlockType(blockType);
-        if(unitID !== null)
-        {
-            return unitID.htmlName;
-        }
-    }
+    // static getHTMLName(blockType)
+    // {
+    //     let unitID = this.getUnitIDFromBlockType(blockType);
+    //     if(unitID !== null)
+    //     {
+    //         return unitID.htmlName;
+    //     }
+    // }
     static getHTMLID(blockType)
     {
         let unitID = this.getUnitIDFromBlockType(blockType);
@@ -722,14 +725,14 @@ class HTMLBlocks
             return unitID.htmlID;
         }
     }
-    static isBlockShow(blockType)
-    {
-        let unitID = this.getUnitIDFromBlockType(blockType);
-        if(unitID !== null)
-        {
-           return unitID.showStatus;
-        }
-    }
+    // static isBlockShow(blockType)
+    // {
+    //     let unitID = this.getUnitIDFromBlockType(blockType);
+    //     if(unitID !== null)
+    //     {
+    //        return unitID.showStatus;
+    //     }
+    // }
 }
 
 
@@ -761,15 +764,15 @@ class CItemParams
         }
     }
 
-    static getUnitIDFromTextID(textID)
-    {
-        for(let item of this.units)
-        {
-            if(item.textID !== textID)
-                continue;
-            return item
-        }
-    }
+    // static getUnitIDFromTextID(textID)
+    // {
+    //     for(let item of this.units)
+    //     {
+    //         if(item.textID !== textID)
+    //             continue;
+    //         return item
+    //     }
+    // }
     getTextName = () => this.textName;
     getTextID = () => this.textID;
 
@@ -795,6 +798,24 @@ class CItemParams
         }
     }
 }
+function gotoToMainBlock()
+{
+    document.querySelector("#block_scross_main").scrollIntoView({
+        behavior: 'smooth'
+    });
+}
+function gotoToEditBlock()
+{
+    document.querySelector("#block_edit").scrollIntoView({
+        behavior: 'smooth'
+    });
+}
+function gotoToCreateBlock()
+{
+    document.querySelector("#block_create").scrollIntoView({
+        behavior: 'smooth'
+    });
+}
 
 //////////////////////////////////////
 function onUserPressedCancelEditTemplateBtn()
@@ -802,10 +823,13 @@ function onUserPressedCancelEditTemplateBtn()
     console.log("Нажата клавиша отменить редактирование")
     if(isEditTemplate)
     {
+        gotoToMainBlock();
         destroyEditBlock();
     }
     return false;
 }
+
+
 //////////////////////////////////////
 function onUserPressedSaveCreateTemplateBtn()
 {
@@ -894,8 +918,8 @@ function onUserPressedSaveCreateTemplateBtn()
                                 }
                                 cmessBoxMainBlock.sendSuccessMessage(data.error_text);
 
-
                                 destroyCreateBlock();
+                                gotoToMainBlock();
                                 setTimeout(function (){
                                     location.reload()
                                 },
@@ -939,6 +963,7 @@ function onUserPressedCancelCreateTemplateBtn()
     console.log("отменить созданный шаблон")
     if(isCreateTemplate)
     {
+        gotoToMainBlock();
         destroyCreateBlock()
     }
 }
@@ -1021,7 +1046,7 @@ function onUserPressedCreateTemplateBtn()
                                 let idsInputFields = [];
                                 data.arr.forEach( (element, index) =>
                                 {
-                                    console.log(element, index)
+                                    // console.log(element, index)
 
                                     if(index === 0)
                                     {
@@ -1045,7 +1070,13 @@ function onUserPressedCreateTemplateBtn()
 
 
                                         let str = `<tr>
-                                        <td>Название устройства</td>
+                                        <td data-tooltip="
+                                        Название устройства должно быть уникальным и состоять из латинских букв и цифр, 
+                                        в том числе возможные знаки разделения.\n
+                                        Название должно начинаться с префикса TV, MNT и так далее, \n
+                                        в зависимости от типа устройства. Например: 'TV TCL 32S65A', 'MNT IRBIS 24FILUS01MIR'">
+                                        Название устройства 
+                                        <img id="rules_device_name" src="static/icons/help_icon.svg" alt="Информация" width="25px" height="25px"> </td>
                                         <td>
                                         <input disabled type="checkbox"></td>
                                         <td>
@@ -1074,9 +1105,11 @@ function onUserPressedCreateTemplateBtn()
                                             req_once = 'required'
                                         else req_once = ''
 
+                                        let rulesText = getHelpText(text_id);
 
                                         let str = `<tr>
-                                        <td>${text_name}</td>
+                                        <td data-tooltip="${rulesText}"> ${text_name}
+                                        <img src="static/icons/help_icon.svg" alt="Информация" width="25px" height="25px"></td>
                                         <td>
                                         <input ${cstate} id="create_input_checkbox_${text_id}" type="checkbox"></td>
                                         <td>
@@ -1085,7 +1118,6 @@ function onUserPressedCreateTemplateBtn()
                                         let createElement = document.createElement("tr");
                                         createElement.innerHTML = str;
                                         table.append(createElement);
-
 
                                         idsInputFields.push([
                                             cstate === 'disabled' ? null:`create_input_checkbox_${text_id}`,
@@ -1105,6 +1137,7 @@ function onUserPressedCreateTemplateBtn()
 
                                     isCreateTemplate = true;
                                     count = 0;
+
                                     for(let item of idsInputFields)
                                     {
                                         let [stateCheckHTML, inputFieldHTML, textID, textName] = item;
@@ -1154,6 +1187,10 @@ function onUserPressedCreateTemplateBtn()
                                         destroyCreateBlock();
                                         return false;
                                     }
+                                    else
+                                    {
+                                        gotoToCreateBlock();
+                                    }
                                 }
                                 else
                                 {
@@ -1180,6 +1217,71 @@ function onUserPressedCreateTemplateBtn()
     }
     return true;
 }
+function getHelpText(textID)
+{
+    let rulesText;
+    switch(textID)
+    {
+        case 'device_name':
+        {
+            rulesText = "" +
+                "Название устройства должно быть уникальным и состоять из латинских букв и цифр, в том числе возможные знаки разделения.\n\n" +
+                "Название должно начинаться с префикса TV, MNT и так далее, в зависимости от типа устройства.\n" +
+                "Например: 'TV TCL 32S65A', 'MNT IRBIS 24FILUS01MIR'";
+            break;
+        }
+        case 'vendor_code':
+        {
+            rulesText = "" +
+                "Код производителя должен быть уникален для каждой модели устройства. " +
+                "Обычно код производителя можно получить из части названия устройства, например: 'IRBIS 24FILUS01MIR. ' -> '24FILUS01MIR'.\n" +
+                "Код должен состоять из латинских букв и цифр, а так же знаков разделения.";
+            break;
+        }
+        case 'device_sn':
+        {
+            rulesText = "" +
+                "Серийный номер устройства может состоять из лазличных диапазонов значений, которые заявляет заказчик. " +
+                "Например, может содержать дату производства, XYZ стекла, порядковый номер устройства и так далее. " +
+                "Для составления правильного шаблона нужно руководствоваться правилом повторения символов в серийном номере. " +
+                "Заменяйте знаком '*' все символы, которые не повторяются. " +
+                "В шаблоне не должно быть кириллицы. Формат шаблона должен полностью повторять оригинал серийного номера конкретного компонента. " +
+                "Количество символов должно быть одинаковым в шаблоне и серийном номере. " +
+                "Оставляйте символы серийного номера, которые всегда остаются неизменны. " +
+                "Пример: серийный номер устройства '2406BHQ213128F00001' -> вариант шаблона '24**BHQ213128F*****'.";
+            break;
+        }
+        case 'platform_fk':
+        {
+            rulesText = "" +
+                "Номер платформы указывается с помощью цифр, обычно он означает производителя, к которому принадлежит конкретная модель. " +
+                "Например: TCL, IFFALCON: 1, MNT IRBIS: 6, и так далее. Для актуализации информации обратитесь к системному администратору. ";
+            break;
+        }
+        case 'software_type':
+        {
+            rulesText = "" +
+                "Тип программного обеспечания указывается цифрой порядкового номера ОС конкретной модели устройства. " +
+                "Данный параметр важен и задействован в сканировочных программах. Например: для телевизоров на базе ОС 'OneWay': 2, Мониторы: 4, " +
+                "Интерактивные панели: 5, TCL/IFFCALCON: 1 и так далее. ";
+            break;
+        }
+        default:
+        {
+            rulesText = "" +
+                "Для составления правильного шаблона нужно руководствоваться правилом повторения символов в серийном номере. " +
+                "Заменяйте знаком '*' все символы, которые не повторяются. " +
+                "В шаблоне не должно быть кириллицы. Формат шаблона должен полностью повторять оригинал серийного номера конкретного компонента. " +
+                "Количество символов должно быть одинаковым в шаблоне и серийном номере. " +
+                "Оставляйте символы серийного номера, которые всегда остаются неизменны. " +
+                "Пример: серийный номер стекла 'A24231531505060P1AM2H' -> вариант шаблона 'A********************'.";
+            break;
+        }
+    }
+    return rulesText;
+}
+
+
 
 
 

@@ -72,6 +72,11 @@ def templates_save_edit_mask_ajax(pa_array, scan_fk, model_id, model_name):
                             if is_cirylic(new_value):
                                 continue
 
+                    if text_id == 'vendor_code':
+                        if csql.is_device_vendor_code_already(new_value):
+                            error_fields.append(text_name)
+                            continue
+
                     sql_field_index = CMask.get_field_arr_index_from_text_id(text_id)
                     if sql_field_index != -1:
 

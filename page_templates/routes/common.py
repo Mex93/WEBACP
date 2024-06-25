@@ -3,6 +3,7 @@ from flask import json
 from engine.pages.CPages import CPages
 from engine.users.CUserAccess import CUserAccess
 from engine.users.CUser import CUser
+from engine.common import convert_date_from_sql_format
 
 from engine.debug.CDebug import CDebug
 from engine.users.enums import USER_SECTIONS_TYPE
@@ -43,6 +44,8 @@ def templates_get_models_list_ajax():
                     model_id = item.get(SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_id, None)
                     model_scan_fk = item.get(SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_scan_type_fk, None)
                     last_update_time = item.get(SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_last_update_time, None)
+                    if last_update_time is not None:
+                        last_update_time = convert_date_from_sql_format(str(last_update_time))
                     serial_number = item.get(SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_serial_number_template, None)
 
                     if None not in (model_name, model_id, model_scan_fk, last_update_time):

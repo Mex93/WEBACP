@@ -13,9 +13,10 @@
     {% if access_unit.is_avalible_any_access_field(access_section.SCAN_TEMPLATES) == True %}
     <div class = 'container-common container'>
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-        <div class = "header-common">
+        <div class = "header-common" id="block_scross_main">
             <h1>Шаблоны сканировки</h1>
         </div>
+
         <span id = 'seleketon_model_list'>
                   <div class="loaded-anim container">
                       <div class="box">

@@ -16,6 +16,9 @@ from engine.sql.enums import CONNECT_DB_TYPE
 from engine.sql.CSQL import NotConnectToDB, ErrorSQLQuery, ErrorSQLData
 from engine.sql.sql_data import SQL_TV_MODEL_INFO_FIELDS, SQL_MASK_FIELDS
 
+from engine.users.users_log.CSQLUserLogQuerys import CSQLUserLogQuerys
+from engine.users.users_log.enums import LOG_TYPE, LOG_SUBTYPE, LOG_OBJECT_TYPE
+
 cdebug = CDebug()
 cdebug.debug_system_on(True)
 
@@ -121,6 +124,7 @@ def templates_create_mask_set_add_ajax(create_parameters: list):
             table_scans_list = list()
             count = 0
             model_name = None
+            vendor_code = None
 
             for item in create_parameters:
                 text_id, text_name, state_check, current_value = item
@@ -131,9 +135,29 @@ def templates_create_mask_set_add_ajax(create_parameters: list):
                         result_s = False
                         continue
                     else:
+                        if is_cirylic(current_value):
+                            is_field_requared_list.append(text_name)
+                            result_s = False
+                            continue
+
                         model_name = current_value
                         table_scans_list.append([SQL_MASK_FIELDS.mfd_scan_name, current_value])
                         table_models_list.append([SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_name, current_value])
+                        count += 1
+                        continue
+                elif text_id == 'vendor_code':
+                    if not current_value:
+                        is_field_requared_list.append(text_name)
+                        result_s = False
+                        continue
+                    else:
+                        if is_cirylic(current_value):
+                            is_field_requared_list.append(text_name)
+                            result_s = False
+                            continue
+
+                        vendor_code = current_value
+                        table_models_list.append([SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_vendor_code, current_value])
                         count += 1
                         continue
 
@@ -224,59 +248,74 @@ def templates_create_mask_set_add_ajax(create_parameters: list):
 
             if result_s and count:
                 result_s = False
-                if model_name is not None:
+                if model_name is not None and vendor_code is not None:
 
                     if not csql.is_device_name_already(model_name):
+                        if not csql.is_device_vendor_code_already(vendor_code):
 
-                        max_index_in_modelid_table = csql.get_last_modelid_index()
-                        max_index_in_scan_mask_table = csql.get_last_scan_mask_index()
-                        # print(max_index_in_modelid_table, max_index_in_scan_mask_table)
-                        if None not in (max_index_in_modelid_table, max_index_in_scan_mask_table) and (
-                                isinstance(max_index_in_modelid_table, int) and isinstance(max_index_in_scan_mask_table, int)
-                        ):
-                            max_index_in_modelid_table += 1
-                            max_index_in_scan_mask_table += 1
+                            max_index_in_modelid_table = csql.get_last_modelid_index()
+                            max_index_in_scan_mask_table = csql.get_last_scan_mask_index()
+                            # print(max_index_in_modelid_table, max_index_in_scan_mask_table)
+                            if None not in (max_index_in_modelid_table, max_index_in_scan_mask_table) and (
+                                    isinstance(max_index_in_modelid_table, int) and isinstance(max_index_in_scan_mask_table, int)
+                            ):
+                                max_index_in_modelid_table += 1
+                                max_index_in_scan_mask_table += 1
 
-                            handle = csql.get_sql_handle()
-                            try:
-                                is_success_model_table = csql.insert_modelid_data(
-                                    table_models_list,
-                                    max_index_in_modelid_table,
-                                    max_index_in_scan_mask_table)
-                                is_success_scan_table = csql.insert_scanmask_data(
-                                    table_scans_list,
-                                    max_index_in_scan_mask_table)
+                                handle = csql.get_sql_handle()
+                                try:
+                                    is_success_model_table = csql.insert_modelid_data(
+                                        table_models_list,
+                                        max_index_in_modelid_table,
+                                        max_index_in_scan_mask_table)
+                                    is_success_scan_table = csql.insert_scanmask_data(
+                                        table_scans_list,
+                                        max_index_in_scan_mask_table)
 
-                                if is_success_model_table and is_success_scan_table:
-                                    result_s = True
+                                    if is_success_model_table and is_success_scan_table:
+                                        result_s = True
+                                    else:
+                                        raise ValueError("Error in create table")
+                                except:
+                                    handle.rollback()
+                                    response_for_client.update({"error_text": "Ошибка в обработке данных таблиц!"})
                                 else:
-                                    raise ValueError("Error in create table")
-                            except:
-                                handle.rollback()
-                                response_for_client.update({"error_text": "Ошибка в обработке данных таблиц!"})
-                            else:
-                                handle.commit()
+                                    handle.commit()
 
-                            if not result_s:
-                                response_for_client.update({"result": False})
-                                response_for_client.update({"error_text": "Ошибка в обработке данных индексов создания таблиц!"})
-                                cdebug.debug_print(
-                                    f"templates_create_mask_set_add_ajax AJAX -> [Создание нового шаблона сканировки] -> [IDX:{account_idx}, {account_name}] -> "
-                                    f"[Ошибка создания]")
+                                if not result_s:
+                                    response_for_client.update({"result": False})
+                                    response_for_client.update({"error_text": "Ошибка в обработке данных индексов создания таблиц!"})
+                                    cdebug.debug_print(
+                                        f"templates_create_mask_set_add_ajax AJAX -> [Создание нового шаблона сканировки] -> [IDX:{account_idx}, {account_name}] -> "
+                                        f"[Ошибка создания]")
+                                else:
+
+                                    #################################
+                                    text = (f"Пользователь ID: [{account_name}[{account_idx}]] создал шаблон сканировки "
+                                            f"'{model_name}'[MID: {max_index_in_modelid_table}, SID: {max_index_in_scan_mask_table}]")
+                                    CSQLUserLogQuerys.send_log(
+                                        account_idx,
+                                        LOG_OBJECT_TYPE.LGOT_USER,
+                                        LOG_TYPE.LGT_SCAN_TEMPLATE,
+                                        LOG_SUBTYPE.LGST_ADD,
+                                        text)
+
+                                    response_for_client.update({"error_text": f"Шаблон сканировки '{model_name}' успешно создан!"})
+                                    response_for_client.update({"result": True})
+                                    response_for_client.update({"arr_result": [max_index_in_modelid_table,
+                                                                               max_index_in_scan_mask_table]})
+                                    cdebug.debug_print(
+                                        f"templates_create_mask_set_add_ajax AJAX -> [Создание нового шаблона сканировки] -> [IDX:{account_idx}, {account_name}] -> "
+                                        f"[Удачное создание] -> ['{model_name}' SID: {max_index_in_scan_mask_table}, MID: {max_index_in_modelid_table}]")
+
                             else:
-                                response_for_client.update({"error_text": f"Шаблон сканировки '{model_name}' успешно создан!"})
-                                response_for_client.update({"result": True})
-                                response_for_client.update({"arr_result": [max_index_in_modelid_table,
-                                                                           max_index_in_scan_mask_table]})
-                                cdebug.debug_print(
-                                    f"templates_create_mask_set_add_ajax AJAX -> [Создание нового шаблона сканировки] -> [IDX:{account_idx}, {account_name}] -> "
-                                    f"[Удачное создание] -> ['{model_name}' SID: {max_index_in_scan_mask_table}, MID: {max_index_in_modelid_table}]")
+                                response_for_client.update({"error_text": "Ошибка в обработке данных индексов!"})
                         else:
-                            response_for_client.update({"error_text": "Ошибка в обработке данных индексов!"})
+                            response_for_client.update({"error_text": f"Указанное вами название Vendor Code уже существует '{vendor_code}'!"})
                     else:
                         response_for_client.update({"error_text": f"Указанное вами название устройства уже существует '{model_name}'!"})
                 else:
-                    response_for_client.update({"error_text": "Ошибка в обработке данных!"})
+                    response_for_client.update({"error_text": "Ошибка в обработке данных Названия устройства или Кода производителя!"})
             else:
 
                 if len(is_field_requared_list) > 0:
