@@ -27,8 +27,8 @@ def template_find():
     if cuser_access.is_avalible_any_access_field(USER_SECTION_ACCESS_TYPE.SCAN_TEMPLATES) is False:
         return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
 
-    if cuser_access.is_access_for_panel(USER_SECTIONS_TYPE.ACCESS_SCAN_EDIT) is False:
-        return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
+    # if cuser_access.is_access_for_panel(USER_SECTIONS_TYPE.ACCESS_SCAN_EDIT) is False:
+    #     return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
 
     return cpages.set_render_page(PAGE_ID.TEMPLATES_FIND)
 

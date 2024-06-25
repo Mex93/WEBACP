@@ -61,9 +61,16 @@ def templates_create_mask_get_elements_ajax():
                 response_for_client.update({"error_text": "Список параметров для создания шаблона предоставлен"})
                 response_for_client.update({"result": True})
                 response_for_client.update({"arr": arr_results})
+
+                cdebug.debug_print(
+                    f"templates_create_mask_get_elements_ajax AJAX -> [Получение списка параметров создания шаблона] -> [IDX:{account_idx}, {account_name}] -> "
+                    f"[Успешно] [Список параметров для создания шаблона предоставлен]")
+
             else:
                 response_for_client.update({"error_text": "Не найден список параметров для создания шаблона!"})
-                response_for_client.update({"result": False})
+                cdebug.debug_print(
+                    f"templates_create_mask_get_elements_ajax AJAX -> [Получение списка параметров создания шаблона] -> [IDX:{account_idx}, {account_name}] -> "
+                    f"[Ошибка] [Не найден список параметров для создания шаблона!]")
         else:
             raise NotConnectToDB("Not SQL Connect!")
 
@@ -310,12 +317,24 @@ def templates_create_mask_set_add_ajax(create_parameters: list):
 
                             else:
                                 response_for_client.update({"error_text": "Ошибка в обработке данных индексов!"})
+                                cdebug.debug_print(
+                                    f"templates_create_mask_set_add_ajax AJAX -> [Создание нового шаблона сканировки] -> [IDX:{account_idx}, {account_name}] -> "
+                                    f"[Ошибка создания] -> [Ошибка в обработке данных индексов!]")
                         else:
                             response_for_client.update({"error_text": f"Указанное вами название Vendor Code уже существует '{vendor_code}'!"})
+                            cdebug.debug_print(
+                                f"templates_create_mask_set_add_ajax AJAX -> [Создание нового шаблона сканировки] -> [IDX:{account_idx}, {account_name}] -> "
+                                f"[Ошибка создания] -> [Указанное вами название Vendor Code уже существует '{vendor_code}'!]")
                     else:
                         response_for_client.update({"error_text": f"Указанное вами название устройства уже существует '{model_name}'!"})
+                        cdebug.debug_print(
+                            f"templates_create_mask_set_add_ajax AJAX -> [Создание нового шаблона сканировки] -> [IDX:{account_idx}, {account_name}] -> "
+                            f"[Ошибка создания] -> [Указанное вами название устройства уже существует '{model_name}']")
                 else:
                     response_for_client.update({"error_text": "Ошибка в обработке данных Названия устройства или Кода производителя!"})
+                    cdebug.debug_print(
+                        f"templates_create_mask_set_add_ajax AJAX -> [Создание нового шаблона сканировки] -> [IDX:{account_idx}, {account_name}] -> "
+                        f"[Ошибка создания] -> [Ошибка в обработке данных Названия устройства или Кода производителя!]")
             else:
 
                 if len(is_field_requared_list) > 0:

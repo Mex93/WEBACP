@@ -49,14 +49,22 @@ def templates_delete_mask_ajax(scan_fk, model_id, model_name):
 
                     response_for_client.update({"error_text": f"Шаблон '{model_name}' успешно удалён!"})
                     response_for_client.update({"result": True})
+                    cdebug.debug_print(
+                        f"templates_delete_mask_ajax AJAX -> [Удаление шаблона сканировки '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+                        f"[Удачно] -> [Шаблон '{model_name}' успешно удалён!] ")
                 else:
                     response_for_client.update(
                         {"error_text": f"Ошибка удаления шаблона '{model_name}[{model_id}]'!"})
-                    response_for_client.update({"result": False})
+
+                    cdebug.debug_print(
+                        f"templates_delete_mask_ajax AJAX -> [Удаление шаблона сканировки '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+                        f"[Ошибка] -> [Ошибка удаления шаблона '{model_name}[{model_id}]'] ")
             else:
                 response_for_client.update(
                     {"error_text": f"Не найдена маска сканировки для '{model_name}[{model_id}]'!"})
-                response_for_client.update({"result": False})
+                cdebug.debug_print(
+                    f"templates_delete_mask_ajax AJAX -> [Удаление шаблона сканировки '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+                    f"[Ошибка] -> [Не найдена маска сканировки для '{model_name}[{model_id}]'] ")
         else:
             raise NotConnectToDB("Not SQL Connect!")
     except NotConnectToDB as err:

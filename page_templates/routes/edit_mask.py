@@ -190,16 +190,23 @@ def templates_save_edit_mask_ajax(pa_array, scan_fk, model_id, model_name):
                             response_for_client.update(
                                 {"error_text": f"Шаблон сканировки для '{model_name}[{model_id}]' изменён!"})
                             response_for_client.update({"result": True})
+                            cdebug.debug_print(
+                                f"templates_save_edit_mask_ajax AJAX -> [Сохранение редактирования шаблона сканировки '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+                                f"[Удачно] -> [Шаблон сканировки для '{model_name}[{model_id}]' изменён!] ")
                         else:
                             response_for_client.update(
                                 {
                                     "error_text": f"Внутренняя ошибка вычислений номеров строк SQL'{model_name}[{model_id}]'!"})
-                            response_for_client.update({"result": False})
+                            cdebug.debug_print(
+                                f"templates_save_edit_mask_ajax AJAX -> [Сохранение редактирования шаблона сканировки '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+                                f"[Ошибка] -> [Внутренняя ошибка вычислений номеров строк SQL'{model_name}[{model_id}]'!] ")
                     else:
                         response_for_client.update(
                             {
                                 "error_text": f"Внутренняя ошибка вычислений номеров строк SQL'{model_name}[{model_id}]'!"})
-                        response_for_client.update({"result": False})
+                        cdebug.debug_print(
+                            f"templates_save_edit_mask_ajax AJAX -> [Сохранение редактирования шаблона сканировки '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+                            f"[Ошибка] -> [Внутренняя ошибка вычислений номеров строк SQL'{model_name}[{model_id}]'!] ")
                 else:
                     if len(error_fields) > 0:
                         response_for_client.update(
@@ -209,11 +216,15 @@ def templates_save_edit_mask_ajax(pa_array, scan_fk, model_id, model_name):
                         response_for_client.update(
                             {
                                 "error_text": f"Возможно вы ошиблись в некоторых полях '{model_name}[{model_id}]'!"})
-                    response_for_client.update({"result": False})
+                    cdebug.debug_print(
+                        f"templates_save_edit_mask_ajax AJAX -> [Сохранение редактирования шаблона сканировки '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+                        f"[Ошибка] -> [Возможно вы ошиблись в некоторых полях '{model_name}[{model_id}]'!] ")
             else:
                 response_for_client.update(
                     {"error_text": f"Не найдена маска сканировки для '{model_name}[{model_id}]'!"})
-                response_for_client.update({"result": False})
+                cdebug.debug_print(
+                    f"templates_save_edit_mask_ajax AJAX -> [Сохранение редактирования шаблона сканировки '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+                    f"[Ошибка] -> [Не найдена маска сканировки для '{model_name}[{model_id}]'!] ")
         else:
             raise NotConnectToDB("Not SQL Connect!")
     except NotConnectToDB as err:
@@ -336,20 +347,31 @@ def templates_get_edit_mask_ajax(scan_fk, model_id, model_name):
                         response_for_client.update({"error_text": "Список сканировки предоставлен"})
                         response_for_client.update({"result": True})
                         response_for_client.update({"arr": arr_results})
+
+                        cdebug.debug_print(
+                            f"templates_edit_mask_ajax AJAX -> [Получение списка сканировки '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+                            f"[Удачно] -> [Список сканировки предоставлен!] ")
+
                     else:
                         print("Ошибка 2!")
                         response_for_client.update(
                             {"error_text": f"Не найден список сканировки для '{model_name}[{model_id}]'!"})
-                        response_for_client.update({"result": False})
+                        cdebug.debug_print(
+                            f"templates_edit_mask_ajax AJAX -> [Получение списка сканировки '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+                            f"[Ошибка] -> [Не найден список сканировки для '{model_name}[{model_id}]'!] ")
                 else:
                     print("Ошибка 1!")
                     response_for_client.update(
                         {"error_text": f"Не найден список сканировки для '{model_name}[{model_id}]'!"})
-                    response_for_client.update({"result": False})
+                    cdebug.debug_print(
+                        f"templates_edit_mask_ajax AJAX -> [Получение списка сканировки '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+                        f"[Ошибка] -> [Не найден список сканировки для '{model_name}[{model_id}]'!] ")
             else:
                 response_for_client.update(
                     {"error_text": f"Не найден список сканировки для '{model_name}[{model_id}]'!"})
-                response_for_client.update({"result": False})
+                cdebug.debug_print(
+                    f"templates_edit_mask_ajax AJAX -> [Получение списка сканировки '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+                    f"[Ошибка] -> [Не найден список сканировки для '{model_name}[{model_id}]'!] ")
         else:
             raise NotConnectToDB("Not SQL Connect!")
     except NotConnectToDB as err:

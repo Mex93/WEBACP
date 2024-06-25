@@ -67,9 +67,15 @@ def templates_get_models_list_ajax():
                     response_for_client.update({"result": True})
                     response_for_client.update({"arr": result_arr})
 
+                    cdebug.debug_print(
+                        f"templates_get_models_list_ajax AJAX -> [Получение списка моделей устройств] -> [IDX:{account_idx}, {account_name}] -> "
+                        f"[Удачно] -> [Список моделей предоставлен] ")
+
             else:
                 response_for_client.update({"error_text": "Не найден список Моделей устройств!"})
-                response_for_client.update({"result": False})
+                cdebug.debug_print(
+                    f"templates_get_models_list_ajax AJAX -> [Получение списка моделей устройств] -> [IDX:{account_idx}, {account_name}] -> "
+                    f"[Ошибка] -> [Не найден список Моделей устройств!] ")
         else:
             raise NotConnectToDB("Not SQL Connect!")
     except NotConnectToDB as err:

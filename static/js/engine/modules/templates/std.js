@@ -4,7 +4,7 @@ import {CMessBox} from "/static/js/engine/CMessBox.js"
 
 let query = false;
 
-let acessDelete = false;
+let accessDelete = false;
 let accessEdit = false;
 let accessCreate = false;
 let cEditTableID = undefined;
@@ -71,7 +71,10 @@ function onUserPressedMainMenuBtnEdit(mmUnit)
 {
     // console.log("Нажата клавиша Редактировать")
     // console.log(mmUnit.getModelName())
-
+    if(!accessEdit)
+    {
+        return
+    }
     if(query)
         return false;
     if(isCreateTemplate)
@@ -258,6 +261,10 @@ function onUserPressedSaveTemplateBtn()
 {
     console.log("Сохранить шаблон")
 
+    if(!accessEdit)
+    {
+        return
+    }
     if(isEditTemplate)
     {
         if(query)
@@ -433,6 +440,10 @@ function onUserPressedMainMenuBtnDel(mmUnit)
     if(query)
         return false;
 
+    if(!accessDelete)
+    {
+        return
+    }
     if(isEditTemplate)
     {
         alert('Сперва завершите редактирование шаблона!')
@@ -443,6 +454,7 @@ function onUserPressedMainMenuBtnDel(mmUnit)
         alert('Сперва завершите создание нового шаблона!')
         return
     }
+
 
     let modelName = mmUnit.getModelName();
     let modelTypeName = mmUnit.getModelTypeName();
@@ -518,6 +530,11 @@ function get_tv_list_ajax()
     if(query)
         return false;
 
+    if(!accessEdit && !accessCreate && !accessDelete)
+    {
+        return
+    }
+
     query = true;
 
     $.ajax({
@@ -567,16 +584,22 @@ function get_tv_list_ajax()
 
                                let unit = new TVModelsList(obj);
 
-                                let btn_del = null;
-                                let btn_edit = null;
-                                let btn_del_str = null;
-                                let btn_edit_str = null;
-                                if(acessDelete)
+                                let btn_del = '';
+                                let btn_edit = '';
+                                let btn_del_str = '';
+                                let btn_edit_str = '';
+                                if(accessDelete)
+                                {
                                     btn_del_str = `btn_del_unit_${modelID}`;
                                     btn_del = `<button id = "${btn_del_str}" type="submit" name = "delete" value = "delete" class = "btm_submit-common delete">Удалить</button>`
+                                }
+
                                 if(accessEdit)
+                                {
                                     btn_edit_str = `btn_edit_unit_${modelID}`;
                                     btn_edit = `<button id = "${btn_edit_str}" type="submit" name = "edit" value = "edit" class = "btm_submit-common edit">Редактировать</button>`
+                                }
+
 
                                 str = `
                                         <td>${modelName}</td>
@@ -778,7 +801,7 @@ class CItemParams
 
     getCurrentState = () => this.currentStateChange;
     setCurrentState = (cValue) => this.currentStateChange = cValue;
-    
+
     getFirstState = () => this.firstStateChange;
     setFirstState = (cValue) => this.firstStateChange = cValue;
 
@@ -786,7 +809,7 @@ class CItemParams
 
     getCurrentValue = () => this.currentValue;
     setCurrentValue = (cValue) => this.currentValue = cValue;
-    
+
     getFirstValue = () => this.firstValue;
     setFirstValue = (cValue) => this.firstValue = cValue;
     static getUnitsArr = () => this.units;
@@ -1282,14 +1305,13 @@ function getHelpText(textID)
 }
 
 
-
-
-
 //////////////////////////////////////
 function Edit_onUserEditField(elementHTMLID, elementUnitID)
 {
-    console.log(elementHTMLID.value)
-    console.log(`${elementUnitID.getTextID()}`)
+    if(!accessEdit)
+        return
+    // console.log(elementHTMLID.value)
+    // console.log(`${elementUnitID.getTextID()}`)
 
     let currentValue = elementHTMLID.value;
     if(currentValue === '')
@@ -1307,8 +1329,10 @@ function Edit_onUserEditField(elementHTMLID, elementUnitID)
 }
 function Edit_onUserClickCB(elementHTMLID, elementUnitID)
 {
-    console.log(elementHTMLID.checked)
-    console.log(`${elementUnitID.getTextID()}`)
+    if(!accessEdit)
+        return
+    // console.log(elementHTMLID.checked)
+    // console.log(`${elementUnitID.getTextID()}`)
 
     let currentStateChecked = elementHTMLID.checked;
     elementUnitID.setCurrentState(currentStateChecked);
@@ -1337,6 +1361,64 @@ function destroyEditBlock()
 
 $(document).ready(function()
 {
+    let isValid = (numb) => (numb === 0 || numb === 1)
+
+    accessDelete = document.getElementById("access_del");
+    if(accessDelete)
+    {
+        accessDelete = +accessDelete.innerText;
+        if(!isValid(accessDelete))
+        {
+            accessDelete = false;
+        }
+    }
+    else
+        accessDelete = false;
+
+    accessEdit = document.getElementById("access_edit");
+    if(accessEdit)
+    {
+        accessEdit = +accessEdit.innerText;
+        if(!isValid(accessEdit))
+        {
+            accessEdit = false;
+        }
+    }
+
+    else
+        accessEdit = false;
+
+    let btnCreateTemplate = document.getElementById('btn_create');
+    if(btnCreateTemplate !== null)
+    {
+        btnCreateTemplate.addEventListener("click", function (element) {
+            onUserPressedCreateTemplateBtn();
+        })
+    }
+
+    accessCreate = document.getElementById("access_create");
+    if(accessCreate)
+    {
+        if(!btnCreateTemplate)
+        {
+            alert("Ошибка accessCreate!!!!")
+            return
+        }
+        accessCreate = +accessCreate.innerText;
+        if(!isValid(accessCreate))
+        {
+            accessCreate = false;
+        }
+    }
+    else
+        accessCreate = false;
+
+    if(!accessEdit && !accessCreate && !accessDelete)
+    {
+        alert("Ошибка доступа!!!!")
+        return;
+    }
+
     let units = [];
     units.push(new HTMLBlocks('seleketon_model_list',   HTMLBlocks.BLOCK_TYPE.ANIM_MODELS_LIST));
     units.push(new HTMLBlocks('skeleton_create_block',  HTMLBlocks.BLOCK_TYPE.ANIM_CREATE_BLOCK));
@@ -1360,21 +1442,8 @@ $(document).ready(function()
     HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.EDIT_BLOCK, false);
     HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_RESULT_LIST, false);
     HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.CREATE_BLOCK, false);
-    let isValid = (numb) => (numb === 0 || numb === 1)
 
 
-    acessDelete = +document.getElementById("access_del").innerText
-    accessEdit = +document.getElementById("access_edit").innerText
-    accessCreate = +document.getElementById("access_create").innerText
-
-
-    let btnCreateTemplate = document.getElementById('btn_create');
-    if(btnCreateTemplate !== null)
-    {
-        btnCreateTemplate.addEventListener("click", function (element) {
-            onUserPressedCreateTemplateBtn();
-        })
-    }
     let btnSaveTemplate = document.getElementById('btn_save_edit');
     if(btnSaveTemplate !== null)
     {
@@ -1407,22 +1476,17 @@ $(document).ready(function()
     modelLabelID = document.getElementById('model_name_field_edit');
 
     if(
-        !isValid(acessDelete) ||
-        !isValid(accessEdit) ||
-        !isValid(accessCreate) ||
         !btnSaveTemplate ||
         !btnCancelCreateTemplate ||
         !btnSaveCreateTemplate ||
-        !btnCreateTemplate ||
         !modelLabelID ||
         !btnCancelTemplate)
     {
         alert("Ошибка!!!!")
-        console.log(acessDelete)
-        console.log(accessEdit)
-        console.log(accessCreate)
         return
     }
+
+
     editModelUnitID = undefined;
     isCreateTemplate = false;
     isEditTemplate = false;
