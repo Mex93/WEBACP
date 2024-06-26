@@ -30,13 +30,16 @@ class CPages:
         self.__template_name_asr_edit = 'edit'
         self.__template_name_asr_del = 'del'
 
+        # SN
+        self.__templates_devicesn_name_sn_find = 'find'
+
         # templates path
         # templates
         self.__template_path_template_find = 'std'
+        #
+        self.__template_path_devicesn_find = 'find'
         # asr
         self.__template_path_asr_find = 'find'
-        self.__template_path_asr_del = 'del'
-        self.__template_path_asr_edit = 'edit'
         # account
         self.__template_path_account_login = f'{path_to_accounts_module}/login'
         self.__template_path_account_logout = f'{path_to_accounts_module}/logout'
@@ -48,6 +51,8 @@ class CPages:
         self.__template_path_index = 'index'
 
         # url routs
+        # templates
+        self.__route_name_devicesn_find = 'devicesn/find'
         # templates
         self.__route_name_templates_find = 'templates/std'
 
@@ -94,12 +99,11 @@ class CPages:
             case PAGE_ID.TEMPLATES_FIND:
                 name = self.__template_path_template_find
 
+            case PAGE_ID.DEVICESN_FIND:
+                name = self.__template_path_devicesn_find
+
             case PAGE_ID.ASR_FIND:
                 name = self.__template_path_asr_find
-            case PAGE_ID.ASR_DEL:
-                name = self.__template_path_asr_del
-            case PAGE_ID.ASR_EDIT:
-                name = self.__template_path_asr_edit
 
             # case PAGE_ID.PAGE_NOT_FOUND:
             #     name = self.__template_path_404
@@ -125,12 +129,11 @@ class CPages:
             case PAGE_ID.TEMPLATES_FIND:
                 name = self.__template_name_templates_find
 
+            case PAGE_ID.DEVICESN_FIND:
+                name = self.__templates_devicesn_name_sn_find
+
             case PAGE_ID.ASR_FIND:
                 name = self.__template_name_asr_find
-            case PAGE_ID.ASR_DEL:
-                name = self.__template_name_asr_del
-            case PAGE_ID.ASR_EDIT:
-                name = self.__template_name_asr_edit
 
             # case PAGE_ID.PAGE_NOT_FOUND:
             #     name = self.__template_name_404
@@ -156,12 +159,11 @@ class CPages:
             case PAGE_ID.TEMPLATES_FIND:
                 name = self.__route_name_templates_find
 
+            case PAGE_ID.DEVICESN_FIND:
+                name = self.__route_name_devicesn_find
+
             case PAGE_ID.ASR_FIND:
                 name = self.__route_name_asr_find
-            case PAGE_ID.ASR_DEL:
-                name = self.__route_name_asr_del
-            case PAGE_ID.ASR_EDIT:
-                name = self.__route_name_asr_edit
 
             # case PAGE_ID.PAGE_NOT_FOUND:
             #     name = self.__route_name_404
@@ -178,7 +180,8 @@ class CPages:
                 self.__debug_unit.debug_print(f"Найден шаблон {name}. Прогружаю!")
                 print(variables)
                 access_unit = CUserAccess()
-                return render_template(f"{name}.html", access_unit=access_unit,
+                return render_template(f"{name}.html",
+                                       access_unit=access_unit,
                                        access_section=USER_SECTION_ACCESS_TYPE,
                                        alevel=USER_ALEVEL,
                                        access_type=USER_SECTIONS_TYPE,

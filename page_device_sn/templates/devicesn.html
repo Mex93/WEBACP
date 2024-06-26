@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Собранные изделия
+{% endblock %}
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('.static', filename = 'css/snfind.css') }}">
+{% endblock %}
+
+{% block body %}
+
+{% if access_unit.is_sessions_start() == 1 %}
+    {% if access_unit.is_avalible_any_access_field(access_section.SN) == True %}
+    <div class = 'container-common container'>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <div class = "header-common" id="block_scross_main">
+            <h1>Собранные изделия</h1>
+        </div>
+
+        <span id = 'seleketon_model_list'>
+                  <div class="loaded-anim container">
+                      <div class="box">
+                          <div class="skeleton">
+                            <div class="skeleton-left">
+                                <div class="line h17 w40 m10"></div>
+                                <div class="line"></div>
+                                <div class="line h8 w50"></div>
+                                <div class="line  w75"></div>
+                            </div>
+                            <div class="skeleton-right">
+                              <div class="square"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+       </span>
+
+       <div class="block_btn">
+
+            {% if access_unit.is_access_for_panel(access_type.ACCESS_SCAN_ADD) == True %}
+                 <button id = "btn_create" type="submit" name = "create" value = "create" class = "btm_submit-common">Создать шаблон</button>
+            {% endif %}
+
+
+            <p id="access_edit" hidden="">
+                {% if access_unit.is_access_for_panel(access_type.ACCESS_SCAN_EDIT) == True %}
+                    1
+                {% else %}
+                    0
+                {% endif %}
+            </p>
+             <p id="access_del" hidden="">
+                {% if access_unit.is_access_for_panel(access_type.ACCESS_SCAN_DELETE) == True %}
+                    1
+                {% else %}
+                    0
+                {% endif %}
+            </p>
+            <p id="access_create" hidden="">
+                {% if access_unit.is_access_for_panel(access_type.ACCESS_SCAN_ADD) == True %}
+                    1
+                {% else %}
+                    0
+                {% endif %}
+            </p>
+             <div id = "error_box">
+
+            </div>
+       </div>
+
+    </div>
+    {% endif %}
+{% endif %}
+
+<!--    <tr><td>data</td><td>ip</td></tr>-->
+{% endblock %}
+{% block js %}
+<script type = "module" src="{{ url_for('static', filename = '/js/engine/modules/devicesn/devicesn.js') }}"></script>
+{% endblock %}

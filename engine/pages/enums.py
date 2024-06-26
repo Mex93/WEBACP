@@ -12,6 +12,7 @@ class PAGE_ID(IntEnum):
     ASR_EDIT = auto(),
 
     TEMPLATES_FIND = auto(),
+    DEVICESN_FIND = auto(),
 
     INDEX = auto(),
     ABOUT = auto(),
