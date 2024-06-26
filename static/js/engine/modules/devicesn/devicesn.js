@@ -10,7 +10,7 @@ import {CMessBox} from "/static/js/engine/CMessBox.js"
 import {
     CCaptha,
 } from "/static/js/engine/CCaptha.js";
-import {BUTTOM_TYPE} from "../asr/common";
+import {BUTTOM_TYPE, TABLE_TYPE} from "../asr/common";
 
 import {
     cButtons,
@@ -125,9 +125,8 @@ function destroyTableBlock()
     SuccessFindSN = null;
     HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_BLOCK, false);
     HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.RESULT_BLOCK, false);
+    cButton.setShowForAll(false);
 }
-
-
 
 
 
@@ -202,6 +201,7 @@ function getSerialNumberInfoData(snNumber)
                 isFindSuccess = true;
                 SuccessFindSN = snNumber;
                 HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.RESULT_BLOCK, true);
+                cButton.switchBTNStatus(TABLE_TYPE.TYPE_STANDART);
             }
             else
             {
