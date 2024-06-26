@@ -1,4 +1,11 @@
 
+// Морда для создания и редактирования шаблонов сканировки
+// Удаление, создание и редактирование
+// Рязанов НВ 26.06.2024
+// ООО КВАНТ
+// ЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫ
+
+
 import {CMessBox} from "/static/js/engine/CMessBox.js"
 
 
@@ -588,6 +595,7 @@ function get_tv_list_ajax()
                                 let btn_edit = '';
                                 let btn_del_str = '';
                                 let btn_edit_str = '';
+                                let btn_string = '';
                                 if(accessDelete)
                                 {
                                     btn_del_str = `btn_del_unit_${modelID}`;
@@ -599,13 +607,18 @@ function get_tv_list_ajax()
                                     btn_edit_str = `btn_edit_unit_${modelID}`;
                                     btn_edit = `<button id = "${btn_edit_str}" type="submit" name = "edit" value = "edit" class = "btm_submit-common edit">Редактировать</button>`
                                 }
-
+                                if(accessDelete || accessEdit)
+                                    btn_string = `<td>
+                                                <div class = 'inline_buttom'>
+                                                ${btn_edit} ${btn_del}
+                                                </div>
+                                                </td>`;
 
                                 str = `
                                         <td>${modelName}</td>
                                         <td>${modelTypeName}</td>
                                         <td>${lastUpdateTime}</td>
-                                        <td><div class = 'inline_buttom'>${btn_edit} ${btn_del}</div></td>
+                                        ${btn_string}
                                        `;
                                 let createElement = document.createElement("tr");
                                 createElement.innerHTML = str;
@@ -639,6 +652,16 @@ function get_tv_list_ajax()
                         }
                         if(count > 0)
                         {
+                            if(!accessDelete && !accessEdit)
+                            {
+                                let element = document.getElementById('deleted_models_buttons');
+                                if(element !== null)
+                                {
+                                    // удаление таблички с кнопками если прав нет полностью
+                                    element.remove();
+                                }
+                            }
+
                             HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_MODELS_LIST,false);
                             HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.MODELS_LIST,true);
                         }
