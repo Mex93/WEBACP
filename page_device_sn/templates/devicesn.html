@@ -11,64 +11,86 @@
 
 {% if access_unit.is_sessions_start() == 1 %}
     {% if access_unit.is_avalible_any_access_field(access_section.SN) == True %}
-    <div class = 'container-common container'>
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-        <div class = "header-common" id="block_scross_main">
-            <h1>Собранные изделия</h1>
-        </div>
+   <div class = 'container-common container'>
 
-        <span id = 'seleketon_model_list'>
-                  <div class="loaded-anim container">
-                      <div class="box">
-                          <div class="skeleton">
-                            <div class="skeleton-left">
-                                <div class="line h17 w40 m10"></div>
-                                <div class="line"></div>
-                                <div class="line h8 w50"></div>
-                                <div class="line  w75"></div>
-                            </div>
-                            <div class="skeleton-right">
-                              <div class="square"></div>
-                            </div>
+    <div class = "header-common">
+        <h1>Поиск SN готовых изделий</h1>
+    </div>
+
+       <p id="access_edit" hidden="">
+        {% if access_unit.is_access_for_panel(access_type.ACCESS_SN_EDIT) == True %}
+            1
+        {% else %}
+            0
+        {% endif %}
+    </p>
+     <p id="access_del" hidden="">
+        {% if access_unit.is_access_for_panel(access_type.ACCESS_SN_DELETE) == True %}
+            1
+        {% else %}
+            0
+        {% endif %}
+    </p>
+    <p id="access_create" hidden="">
+        {% if access_unit.is_access_for_panel(access_type.ACCESS_SN_ADD) == True %}
+            1
+        {% else %}
+            0
+        {% endif %}
+    </p>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <div class = "border-common">
+            <form id = "dsn_find" action = "#" method="post">
+                <div  id = "error_box_main">
+                </div><br>
+                <input name = "dsn_name" id = "dsn_name" type="text" required class = "form-control-common" placeholder="Введите номер SN:"><br>
+                <div class = "captha_box" id = "captha_block_id">
+                    {{ captcha_html(var_values.captcha)|safe }}
+                </div><br>
+                <button type="submit" class = "btm_submit-common">Найти</button>
+            </form>
+        </div>
+        <div id = "all_result_block">
+            <div id = "load_anim_block">
+                 <div class="loaded-anim container">
+                    <div class="box">
+                      <div class="skeleton">
+                        <div class="skeleton-left">
+                            <div class="line h17 w40 m10"></div>
+                            <div class="line"></div>
+                            <div class="line h8 w50"></div>
+                            <div class="line  w75"></div>
+                        </div>
+                        <div class="skeleton-right">
+                          <div class="square"></div>
                         </div>
                     </div>
+                  </div>
                 </div>
-       </span>
-
-       <div class="block_btn">
-
-            {% if access_unit.is_access_for_panel(access_type.ACCESS_SCAN_ADD) == True %}
-                 <button id = "btn_create" type="submit" name = "create" value = "create" class = "btm_submit-common">Создать шаблон</button>
-            {% endif %}
-
-
-            <p id="access_edit" hidden="">
-                {% if access_unit.is_access_for_panel(access_type.ACCESS_SCAN_EDIT) == True %}
-                    1
-                {% else %}
-                    0
-                {% endif %}
-            </p>
-             <p id="access_del" hidden="">
-                {% if access_unit.is_access_for_panel(access_type.ACCESS_SCAN_DELETE) == True %}
-                    1
-                {% else %}
-                    0
-                {% endif %}
-            </p>
-            <p id="access_create" hidden="">
-                {% if access_unit.is_access_for_panel(access_type.ACCESS_SCAN_ADD) == True %}
-                    1
-                {% else %}
-                    0
-                {% endif %}
-            </p>
-             <div id = "error_box">
-
             </div>
-       </div>
+            <div class = 'container-common container' id = "dsn_result_block">
+                 <div  id = "error_box_block">
+                </div><br>
+                <form id = "dsn_result" action = "#" method="post">
+                    <div class = "table-dsn" id = "table_dsn_id">
 
-    </div>
+                    </div>
+                    <div class = "inline_buttom">
+
+                            {% if access_unit.is_access_for_panel(access_type.ACCESS_SN_EDIT) == True %}
+                               <button id = "btn_edit" type="submit" name = "edit" value = "edit" class = "btm_submit-common">Редактировать</button>
+                               <button id = "btn_save" type="submit" name = "save" value = "save" class = "btm_submit-common save">Сохранить изменения</button>
+                               <button id = "btn_cancel" type="submit" name = "cancel" value = "save" class = "btm_submit-common cancel">Отмена</button>
+                            {% endif %}
+
+                            {% if access_unit.is_access_for_panel(access_type.ACCESS_SN_DELETE) == True %}
+                               <button id = "btn_del" type="submit" name = "delete" value = "delete" class = "btm_submit-common delete">Удалить</button>
+                            {% endif %}
+                    </div>
+                </form>
+            </div>
+        </div>
+</div>
     {% endif %}
 {% endif %}
 

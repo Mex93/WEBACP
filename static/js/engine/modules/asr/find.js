@@ -67,10 +67,6 @@ let antiFlood = 0; // антифлуд
 let responseProcess = false;  // отправка ajax
 
 let inputFieldASR = undefined;  // инпат с ввода аср
-let btnEdit = undefined; // кнопка редактировать в результ боксе
-let btnDel = undefined; // кнопка удалить
-let btnSave = undefined;  // кнопка сохранить
-let btnCancel = undefined;  // кнопка отмена
 let tableHTMLNameID = "result_table";
 let tableHTMLPlaceID = "table_asr_id";
 let assocArraySuccess = false;
@@ -653,18 +649,27 @@ $(document).ready(function() {
     blockID.loadAnimBlock = document.getElementById("load_anim_block");
     blockID.asrResultBlock = document.getElementById("asr_result_block");
 
-    btnEdit = document.getElementById("btn_edit");
-    btnDel = document.getElementById("btn_del");
-    btnSave = document.getElementById("btn_save");
-    btnCancel = document.getElementById("btn_cancel");
+    let btnEdit = document.getElementById("btn_edit");
+    let btnDel = document.getElementById("btn_del");
+    let btnSave = document.getElementById("btn_save");
+    let btnCancel = document.getElementById("btn_cancel");
 
     if(!blockID.resultBox || !blockID.loadAnimBlock || !blockID.asrResultBlock)
     {
         alert("Ошибка на странице!")
         return false;
     }
+    if(
+        !btnEdit ||
+        !btnDel ||
+        !btnSave ||
+        !btnCancel)
+    {
+        alert("Ошибка!!!!")
+        return;
+    }
 
-    if(btnEdit !== null)
+    if(btnEdit)
     {
         cButton.addBTN(btnEdit, "Редактировать", BUTTOM_TYPE.TYPE_EDIT);
         btnEdit.addEventListener("click", (event) =>
@@ -673,7 +678,7 @@ $(document).ready(function() {
             onUserPressedOnDeleteBtn(BUTTOM_TYPE.TYPE_EDIT);
         })
     }
-    if(btnDel !== null)
+    if(btnDel)
     {
         cButton.addBTN(btnDel, "Удалить", BUTTOM_TYPE.TYPE_DEL);
         btnDel.addEventListener("click", (event) =>
@@ -682,7 +687,7 @@ $(document).ready(function() {
             onUserPressedOnDeleteBtn(BUTTOM_TYPE.TYPE_DEL);
         })
     }
-    if(btnSave !== null)
+    if(btnSave)
     {
         cButton.addBTN(btnSave, "Сохранить", BUTTOM_TYPE.TYPE_SAVE);
         btnSave.addEventListener("click", (event) =>
@@ -691,7 +696,7 @@ $(document).ready(function() {
             onUserPressedOnDeleteBtn(BUTTOM_TYPE.TYPE_SAVE);
         })
     }
-    if(btnCancel !== null)
+    if(btnCancel)
     {
         cButton.addBTN(btnCancel, "Отменить редактирование", BUTTOM_TYPE.TYPE_CANCEL);
         btnCancel.addEventListener("click", (event) =>
@@ -720,7 +725,7 @@ $(document).ready(function() {
     clearResultBox();
     //
     inputFieldASR = document.getElementById("asr_name")
-    if(inputFieldASR !== undefined)
+    if(inputFieldASR !== null)
     {
         let c_name = new CForms(inputFieldASR);
 

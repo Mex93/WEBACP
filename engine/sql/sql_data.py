@@ -18,6 +18,22 @@ class SQL_ASSEMBLED_TV_FIELDS:
     fd_tv_mb_sn = "mainboard_sn"
     fd_completed_date = "timestamp_st100"  # Дата прохождения черезе упаковку
 
+    fd_wifi_module_sn = 'wifi_module_sn'
+    fd_bt_module_sn = 'bt_module_sn'
+    fd_panel_sn = 'lcm_sn'
+    fd_oc_sn = 'oc_sn'
+    fd_pb_sn = 'powerboard_sn'
+    fd_tcon_sn = 'tcon_sn'
+    fd_first_scanned_date = 'timestamp_st10'
+    fd_scanned_sn_date = 'timestamp_st60'
+    fd_ops_sn = 'ops_sn'
+    fd_ops_mac = 'ops_mac'
+    fd_usbc_mac = 'usbc_mac'
+    fd_storage_sn = 'storage_sn'
+
+
+
+
 
 # Название полей в конфиге настройки аккаунта юзеров
 class SQL_USERS_FIELDS:

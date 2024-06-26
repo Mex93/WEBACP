@@ -31,13 +31,13 @@ class CPages:
         self.__template_name_asr_del = 'del'
 
         # SN
-        self.__templates_devicesn_name_sn_find = 'find'
+        self.__templates_devicesn_name_sn_find = 'get'
 
         # templates path
         # templates
         self.__template_path_template_find = 'std'
         #
-        self.__template_path_devicesn_find = 'find'
+        self.__template_path_devicesn_find = 'devicesn'
         # asr
         self.__template_path_asr_find = 'find'
         # account
@@ -52,7 +52,7 @@ class CPages:
 
         # url routs
         # templates
-        self.__route_name_devicesn_find = 'devicesn/find'
+        self.__route_name_devicesn_find = 'devicesn/get'
         # templates
         self.__route_name_templates_find = 'templates/std'
 

@@ -9,28 +9,35 @@ class CSQLSNQuerys(CSqlAgent):
     def __init__(self):
         super().__init__()
 
-    # def get_tv_list(self) -> list | bool:
-    #
-    #     query_string = (f"SELECT "
-    #                     f"{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_id}, "
-    #                     f"{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_name}, "
-    #                     f"{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_scan_type_fk}, "
-    #                     f"{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_serial_number_template}, "
-    #                     f"{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_last_update_time} "
-    #                     f"FROM {SQL_TABLE_NAME.tv_model_info_tv} "
-    #                     f"ORDER BY {SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_id} DESC "
-    #                     "LIMIT 100")
-    #
-    #     result = self.sql_query_and_get_result(
-    #         self.get_sql_handle(), query_string, (), "_1", )  # Запрос типа аасоциативного массива
-    #     if result is False:  # Errorrrrrrrrrrrrr based data
-    #         return False
-    #     # print(result)
-    #
-    #     sql_result = result[0].get(SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_id, None)
-    #     if sql_result is not None:
-    #         return result
-    #     return False
+    def get_device_data(self, device_sn: str):
+
+        query_string = (f"SELECT {SQL_TABLE_NAME.assembled_tv}.*, "
+                        f"{SQL_TABLE_NAME.tv_model_info_tv}.{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_name}  "
+                        f"FROM {SQL_TABLE_NAME.assembled_tv} "
+                        f"JOIN {SQL_TABLE_NAME.tv_model_info_tv} ON "
+                        f"{SQL_TABLE_NAME.tv_model_info_tv}.{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_id} = "
+                        f"{SQL_TABLE_NAME.assembled_tv}.{SQL_ASSEMBLED_TV_FIELDS.fd_tvfk} "
+                        f"WHERE "
+                        f"{SQL_TABLE_NAME.assembled_tv}.{SQL_ASSEMBLED_TV_FIELDS.fd_tv_sn} = %s OR "
+                        f"{SQL_TABLE_NAME.assembled_tv}.{SQL_ASSEMBLED_TV_FIELDS.fd_tv_mac} = %s OR "
+                        f"{SQL_TABLE_NAME.assembled_tv}.{SQL_ASSEMBLED_TV_FIELDS.fd_tv_mb_sn} = %s"
+                        "LIMIT 1")
+
+        result = self.sql_query_and_get_result(
+            self.get_sql_handle(), query_string, (device_sn, device_sn, device_sn,),
+            "_1", )  # Запрос типа аасоциативного массива
+        if result is False:  # Errorrrrrrrrrrrrr based data
+            return False
+            # print(result)
+
+        device_sn = result[0].get(SQL_ASSEMBLED_TV_FIELDS.fd_tv_sn, None)
+
+        if device_sn is not None:
+            return result[0]
+        return False
+
+
+
     #
     # def get_scanned_params(self, scan_fk: int, model_fk: int) -> dict | bool:
     #

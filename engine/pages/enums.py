@@ -8,8 +8,6 @@ class PAGE_ID(IntEnum):
     ACCOUNT_CONFIG = auto(),
 
     ASR_FIND = auto(),
-    ASR_DEL = auto(),
-    ASR_EDIT = auto(),
 
     TEMPLATES_FIND = auto(),
     DEVICESN_FIND = auto(),

@@ -1,11 +1,13 @@
 from flask import Blueprint, request, jsonify
 
+from captha_main import SIMPLE_CAPTCHA
 from engine.debug.CDebug import CDebug
 from engine.pages.CPages import CPages
 from engine.pages.enums import PAGE_ID
 from engine.users.CUser import CUser
 from engine.users.CUserAccess import CUserAccess
 from engine.users.enums import USER_SECTIONS_TYPE, USER_SECTION_ACCESS_TYPE
+from engine.devicesn.common import is_devicesn_valid
 
 bp_page_devicesn = Blueprint('devicesn', __name__, template_folder='templates', static_folder='static')
 
@@ -27,24 +29,49 @@ def dsn_find():
     if cuser_access.is_avalible_any_access_field(USER_SECTION_ACCESS_TYPE.SN) is False:
         return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
 
+    if request.method == 'GET':
+        new_captcha_dict = SIMPLE_CAPTCHA.create()
+
+        return cpages.set_render_page(PAGE_ID.DEVICESN_FIND, captcha=new_captcha_dict)
 
     return cpages.set_render_page(PAGE_ID.DEVICESN_FIND)
 
-#
-# @bp_page_devicesn.route('/templates_get_models_list_ajax', methods=['POST', 'GET'])
-# def get_tv_models_list():
-#     if cuser_access.is_sessions_start() is False:
-#         return cpages.redirect_on_page(PAGE_ID.ACCOUNT_LOGIN)
-#
-#     if cuser_access.is_avalible_any_access_field(USER_SECTION_ACCESS_TYPE.SCAN_TEMPLATES) is False:
-#         return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
-#
-#     if request.method == "POST":
-#         from page_templates.routes.common import templates_get_models_list_ajax
-#         return templates_get_models_list_ajax()
-#
-#     response_for_client = {
-#         "error_text": "Error query Type",
-#         "result": False
-#     }
-#     return jsonify(response_for_client)
+@bp_page_devicesn.route('/dsn_find_ajax', methods=['POST', 'GET'])
+def get_device_sn_data_ajax():
+    if cuser_access.is_sessions_start() is False:
+        return cpages.redirect_on_page(PAGE_ID.ACCOUNT_LOGIN)
+
+    if cuser_access.is_avalible_any_access_field(USER_SECTION_ACCESS_TYPE.ASR) is False:
+        return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
+
+    response_for_client = {
+        "error_text": "Error query Type",
+        "result": False
+    }
+
+    if request.method == "POST":
+        json_ajax = request.get_json()
+        dsn_device = json_ajax.get('csn_device')
+
+        c_hash = json_ajax.get('captcha_hash')
+        c_text = json_ajax.get('captcha_text')
+
+        if c_hash and c_text:
+            if SIMPLE_CAPTCHA.verify(c_text, c_hash) is False:  # не забыть поправить на true
+                if dsn_device and isinstance(dsn_device, str):
+                    if is_devicesn_valid(dsn_device):
+                        from page_device_sn.routes.snfind import get_device_sn_data
+                        return get_device_sn_data(dsn_device)
+                    else:
+                        response_for_client.update({"error_text": "Вы неверно ввели серийный номер/mac/sn mb!"})
+                else:
+                    response_for_client.update({"error_text": "Вы неверно ввели серийный номер/mac/sn mb!"})
+            else:
+                response_for_client.update({"error_text": "Вы неверно ввели капчу!"})
+            new_captcha_dict = SIMPLE_CAPTCHA.create()
+            response_for_client.update({"new_captha": SIMPLE_CAPTCHA.captcha_html(new_captcha_dict)})
+        else:
+            response_for_client.update({"error_text": "Вы не ввели капчу!"})
+
+    return jsonify(response_for_client)
+

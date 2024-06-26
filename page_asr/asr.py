@@ -77,9 +77,8 @@ def asr_find_ajax():
                             response_for_client.update({"error_text": "Ошибка в названии ASR, SN МП или MAC"})
             else:
                 response_for_client.update({"error_text": "Вы неверно ввели капчу!"})
-                new_captcha_dict = SIMPLE_CAPTCHA.create()
-
-                response_for_client.update({"new_captha": SIMPLE_CAPTCHA.captcha_html(new_captcha_dict)})
+            new_captcha_dict = SIMPLE_CAPTCHA.create()
+            response_for_client.update({"new_captha": SIMPLE_CAPTCHA.captcha_html(new_captcha_dict)})
         else:
             response_for_client.update({"error_text": "Вы не ввели капчу!"})
 
