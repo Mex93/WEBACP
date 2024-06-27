@@ -9,7 +9,7 @@ class CDeviceSN:
         ['model_name', SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_name, EDIT_FIELD.NO_EDIT, str, 'Название модели'],
         ['model_type_name', None, EDIT_FIELD.NO_EDIT, str, 'Тип модели'],
         ['line_number', SQL_ASSEMBLED_TV_FIELDS.fd_linefk, EDIT_FIELD.EDITED, int, 'Номер производственной линии'],
-        ['device_sn', SQL_ASSEMBLED_TV_FIELDS.fd_tv_sn, EDIT_FIELD.EDITED, int, 'Серийный номер устройства'],
+        ['device_sn', SQL_ASSEMBLED_TV_FIELDS.fd_tv_sn, EDIT_FIELD.EDITED, str, 'Серийный номер устройства'],
         ['wifi_module_sn', SQL_ASSEMBLED_TV_FIELDS.fd_wifi_module_sn, EDIT_FIELD.EDITED, str, 'SN модуля WIFI'],
         ['bt_module_sn', SQL_ASSEMBLED_TV_FIELDS.fd_bt_module_sn, EDIT_FIELD.EDITED, str,
          'Серийный номер модуля BT'],

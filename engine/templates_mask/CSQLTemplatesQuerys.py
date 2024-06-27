@@ -1,7 +1,6 @@
 from engine.sql.CSQLAgent import CSqlAgent
-from engine.sql.sql_data import (SQL_TABLE_NAME, SQL_ASR_FIELDS,
+from engine.sql.sql_data import (SQL_TABLE_NAME,
                                  SQL_TV_MODEL_INFO_FIELDS,
-                                 SQL_ASSEMBLED_TV_FIELDS,
                                  SQL_MASK_FIELDS)
 
 

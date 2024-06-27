@@ -1,6 +1,4 @@
-
-
-
+import re
 def is_devicesn_valid(text: str):
     lenght = len(text)
     if not lenght:
@@ -10,3 +8,6 @@ def is_devicesn_valid(text: str):
         return False
 
     return True
+
+def is_cirylic(text: str):
+    return bool(re.search('[а-яА-Я]', text))

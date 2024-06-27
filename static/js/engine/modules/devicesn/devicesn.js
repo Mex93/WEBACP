@@ -25,7 +25,6 @@ let accessDelete, accessEdit, accessCreate = null;
 let isEdit = false;
 let isFindSuccess = false;
 let SuccessFindSN = null;
-let SuccessFindSQLID = null;
 let tableID = null;
 
 
@@ -129,7 +128,6 @@ function destroyTableBlock()
     {
         tableID.remove();
         tableID = null;
-        SuccessFindSQLID = null;
     }
     // HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_BLOCK, false);
     // HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.RESULT_BLOCK, false);
@@ -429,9 +427,6 @@ function getSerialNumberInfoData(snNumber)
                     }
                     if(count)
                     {
-                        SuccessFindSQLID
-
-
                         isEdit = false;
                         isFindSuccess = true;
                         SuccessFindSN = snNumber;
@@ -506,8 +501,10 @@ function onUserPressedOnBTN(btnType)
                     assy = Number(assy.getCurrentValue());
 
                     destroyTableBlock();
-
                     HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_BLOCK, true);
+
+                    if(!assy)
+                        return
 
                     let completed_json = JSON.stringify({
                         serial_number: serial,
@@ -543,15 +540,162 @@ function onUserPressedOnBTN(btnType)
                             return false
                         }
                     })
-
-
                 }
             }
         }
     }
     else if(btnType === BUTTOM_TYPE.TYPE_SAVE)
     {
+        if(accessEdit)
+        {
+            if(isFindSuccess)
+            {
+                if(isEdit)
+                {
+                    if(query)
+                        return
 
+                    let arr = CParameters.getUnits();
+                    let arr_result = [];
+                    let count = 0;
+                    let isError = false;
+                    for(let item of arr)
+                    {
+                        let textID = item.getTextID();
+                        let element = document.getElementById(`new_table_value_${textID}`);
+                        if(element)
+                        {
+                            if(!item.getIsEdit())
+                                continue
+
+                            let oldValue = item.getCurrentValue();
+                            let varType = item.getVarType();
+
+                            let currentValue = element.value;
+
+                            if(varType === 'string')
+                            {
+                                currentValue = String(currentValue);
+                            }
+                            else if(varType === 'integer')
+                            {
+                                currentValue = Number(currentValue);
+                            }
+                            else if(varType === 'date')
+                            {
+                                currentValue = String(currentValue);
+                            }
+
+                            if(currentValue === oldValue)
+                                continue
+
+                            arr_result.push([textID, oldValue, currentValue, element, varType]);
+                            count++;
+                        }
+                    }
+                    if(count)
+                    {
+                        console.log(arr_result)
+
+                        let serial = SuccessFindSN;
+                        let assy = CParameters.getUnitIDFromTextID('db_primary_key');
+                        assy = Number(assy.getCurrentValue());
+
+                        if(!assy)
+                            return
+
+                        let completed_json = JSON.stringify({
+                            serial_number: serial,
+                            assy_id: assy,
+                            arr: arr_result
+                        }); //$.parseJSON(json_text);
+                        HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_BLOCK, true);
+
+                        $.ajax({
+                            data : completed_json,
+                            dataType: 'json',
+                            type : 'POST',
+                            url : './dsn_save_edit_sn_ajax',
+                            contentType: "application/json",
+                            success: function(data) {
+                                query = false;
+
+                                HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_BLOCK, false);
+
+                                if(data.result === true)  // удалился успешно
+                                {
+                                    cmessBoxMain.sendSuccessMessage(data.error_text);
+                                    let count = 0;
+                                    for(let arr of arr_result)
+                                    {
+                                        let [textID, , currentValue, htmlID, ] = arr;
+                                        let old_element = document.getElementById(`old_table_value_${textID}`);
+
+                                        if(old_element)
+                                        {
+                                            old_element.innerText = currentValue;
+                                        }
+
+                                        htmlID.value = currentValue;
+                                        htmlID.placeholder = currentValue;
+
+                                        let unit = CParameters.getUnitIDFromTextID(textID);
+                                        if(unit)
+                                        {
+                                            unit.setCurrentValue(currentValue);
+                                        }
+                                        count++;
+                                    }
+                                    if(count !== arr_result.length || data.reload_block)
+                                    {
+                                        destroyTableBlock();
+                                        HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_BLOCK, false);
+                                        HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.RESULT_BLOCK, false);
+
+                                        document.querySelector("#dsn_find").scrollIntoView({
+                                            behavior: 'smooth'
+                                        });
+                                    }
+                                    else
+                                    {
+                                        document.querySelector("#dsn_result_block").scrollIntoView({
+                                            behavior: 'smooth'
+                                        });
+                                    }
+
+                                    if(count !== arr_result.length)
+                                        cmessBoxMain.sendErrorMessage("Возникла ошибка в обработчике!");
+                                    else if(data.reload_block)
+                                        cmessBoxMain.sendWarningMessage("Серийный номер изменён! Режим поиска сброшен!");
+                                    else
+                                        cmessBoxBlock.sendSuccessMessage('Данные успешно изменены!');
+                                }
+                                else
+                                {
+                                    document.querySelector("#dsn_result_block").scrollIntoView({
+                                        behavior: 'smooth'
+                                    });
+                                    cmessBoxBlock.sendErrorMessage(data.error_text);
+                                }
+                            },
+                            error: function(error) {
+                                // responseProcess = false
+
+                                cmessBoxMain.sendErrorMessage("Ошибка AJAX на стороне сервера!");
+                                return false
+                            }
+                        })
+                    }
+                    else
+                    {
+                        cmessBoxBlock.sendWarningMessage("Вы пока ещё не вносили изменений!");
+                        document.querySelector("#dsn_result_block").scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                }
+            }
+        }
     }
 }
 
