@@ -10,7 +10,7 @@ import {CMessBox} from "/static/js/engine/CMessBox.js"
 import {
     CCaptha,
 } from "/static/js/engine/CCaptha.js";
-import {BUTTOM_TYPE, TABLE_TYPE} from "../asr/common";
+import {BUTTOM_TYPE, TABLE_TYPE} from "/static/js/engine/modules/devicesn/common.js";
 
 import {
     cButtons,
@@ -25,6 +25,8 @@ let accessDelete, accessEdit, accessCreate = null;
 let isEdit = false;
 let isFindSuccess = false;
 let SuccessFindSN = null;
+let SuccessFindSQLID = null;
+let tableID = null;
 
 
 class HTMLBlocks
@@ -123,10 +125,212 @@ function destroyTableBlock()
     isEdit = false;
     isFindSuccess = false;
     SuccessFindSN = null;
-    HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_BLOCK, false);
-    HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.RESULT_BLOCK, false);
+    if(tableID)
+    {
+        tableID.remove();
+        tableID = null;
+        SuccessFindSQLID = null;
+    }
+    // HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_BLOCK, false);
+    // HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.RESULT_BLOCK, false);
     cButton.setShowForAll(false);
+    CParameters.removeUnits();
 }
+
+class CParameters
+{
+    textID = null;
+    textName = null;
+    varType = null;
+    currentValue = null;
+    isEdit = false;
+    static units = [];
+
+    constructor()
+    {
+        this.constructor.units.push(this);
+    }
+
+    static getUnits()
+    {
+        if(this.units.length)
+        {
+            return this.units;
+        }
+        return false;
+    }
+    static removeUnits()
+    {
+        this.units = [];
+    }
+    static getUnitIDFromTextID(textID)
+    {
+        for(let item of this.units)
+        {
+            if(item.getTextID() === textID)
+            {
+                return item;
+            }
+        }
+    }
+
+    removeUnit()
+    {
+        this.constructor.units = this.constructor.units.filter((unitID) =>
+            unitID !== this);
+        return this.constructor.units;
+    }
+    isValid()
+    {
+        for(let item of [this.textID, this.textName])
+        {
+            if(!item)
+                return false;
+        }
+        return true;
+    }
+
+
+    setTextID = (varValue) => this.textID = varValue;
+    setTextName = (varValue) => this.textName = varValue;
+    setCurrentValue = (varValue) => this.currentValue = varValue;
+    setIsEdit = (varValue) => this.isEdit = varValue;
+    setVarType = (varValue) => this.varType = varValue;
+
+    getTextID = () => this.textID;
+    getTextName = () => this.textName;
+    getCurrentValue = () => this.currentValue;
+    getIsEdit = () => this.isEdit;
+    getVarType = () => this.varType;
+}
+
+function CreateTable(tableType)
+{
+    let block = document.getElementById('table_dsn_id');
+    if(block)
+    {
+        if(isFindSuccess)
+        {
+            block.innerHTML = '';
+        }
+
+        let table = document.createElement('table');
+
+        if(table)
+        {
+            table.id = 'parameters_table';
+            table.className = 'custom-table table-devicesn';
+            tableID = table;
+            if(tableType === TABLE_TYPE.TYPE_STANDART)
+            {
+                let tr = document.createElement('tr');
+                let th = document.createElement('th');
+                th.innerText = 'Параметр:'
+                tr.append(th)
+                th = document.createElement('th');
+                th.innerText = 'Значение:'
+                tr.append(th)
+                table.append(tr)
+
+                let arr = CParameters.getUnits();
+                for(let item of arr)
+                {
+                    let currentValue = item.getCurrentValue();
+                    if(!currentValue)
+                        continue  // костыль что бы пустые столбцы не показывались(так попизже)
+                    let textID = item.getTextID();
+                    let textName = item.getTextName();
+                    let varType = item.getVarType();
+                    // is valid не нужна так как уже была проверка во время загрузки
+                    if(varType === 'string' || varType === 'integer' || varType === 'date')
+                    {
+                        if(!currentValue)
+                        {
+                            currentValue = '';
+                        }
+                    }
+
+                    let tr = document.createElement('tr');
+                    let th = document.createElement('td');
+                    th.innerText = textName;
+                    tr.append(th)
+                    th = document.createElement('td');
+                    th.innerText = currentValue;
+                    th.id = `old_table_value_${textID}`;
+                    tr.append(th);
+                    table.append(tr);
+                }
+            }
+            else if(tableType === TABLE_TYPE.TYPE_EDITTING)
+            {
+                let tr = document.createElement('tr');
+                let th = document.createElement('th');
+                th.innerText = 'Параметр:'
+                tr.append(th)
+                th = document.createElement('th');
+                th.innerText = 'Старое значение:'
+                tr.append(th)
+                th = document.createElement('th');
+                th.innerText = 'Новое значение:'
+                tr.append(th)
+                table.append(tr)
+
+
+                let arr = CParameters.getUnits();
+                for(let item of arr)
+                {
+                    let textID = item.getTextID();
+                    let textName = item.getTextName();
+                    let currentValue = item.getCurrentValue();
+                    let varType = item.getVarType();
+                    let isEdit = item.getIsEdit();
+
+                    // is valid не нужна так как уже была проверка во время загрузки
+                    if(varType === 'string' || varType === 'integer' || varType === 'date')
+                    {
+                        if(!currentValue)
+                        {
+                            currentValue = '';
+                        }
+                    }
+
+                    let tr = document.createElement('tr');
+                    let th = document.createElement('td');
+                    th.innerText = textName;
+                    tr.append(th)
+                    th = document.createElement('td');
+                    th.innerText = currentValue;
+                    th.id = `old_table_value_${textID}`;
+                    if(!isEdit)
+                    {
+                        th.disabled = true;
+                    }
+                    tr.append(th)
+
+                    th = document.createElement('td');
+                    let input = document.createElement("input");
+                    input.type = "text";
+                    input.innerText = currentValue;
+                    input.placeholder = currentValue;
+                    input.maxLength = 64;
+                    input.minLength = 0;
+                    input.value = currentValue;
+                    input.id = `new_table_value_${textID}`;
+                    if(!isEdit)
+                    {
+                        input.disabled = true;
+                    }
+                    th.append(input);
+                    tr.append(th);
+
+                    table.append(tr);
+                }
+            }
+            block.append(table);
+        }
+    }
+}
+
 
 
 
@@ -190,18 +394,52 @@ function getSerialNumberInfoData(snNumber)
 
             if(data.result === true)  // загрузка ASR
             {
-                console.log(data.arr)
-
                 if(isFindSuccess !== false)
                 {
                     destroyTableBlock()
                 }
 
-                isEdit = false;
-                isFindSuccess = true;
-                SuccessFindSN = snNumber;
-                HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.RESULT_BLOCK, true);
-                cButton.switchBTNStatus(TABLE_TYPE.TYPE_STANDART);
+                if (Array.isArray(data.arr))
+                {
+                    console.log(data.arr)
+                    let count = 0;
+                    for(let item of data.arr)
+                    {
+                        console.log(item)
+                        let textID = item.text_id;
+                        let textName = item.text_name;
+                        let isEditable = item.is_editable;
+                        let currentValue = item.current_value;
+                        let valueType = item.value_type;
+
+                        let parameter = new CParameters();
+                        parameter.setTextID(textID);
+                        parameter.setTextName(textName);
+                        parameter.setIsEdit(isEditable);
+                        parameter.setVarType(valueType);
+                        parameter.setCurrentValue(currentValue);
+
+                        if(!parameter.isValid())
+                        {
+                            parameter.removeUnit();
+                            continue
+                        }
+
+                        count++;
+                    }
+                    if(count)
+                    {
+                        SuccessFindSQLID
+
+
+                        isEdit = false;
+                        isFindSuccess = true;
+                        SuccessFindSN = snNumber;
+                        CreateTable(TABLE_TYPE.TYPE_STANDART);
+                        HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.RESULT_BLOCK, true);
+                        cButton.switchBTNStatus(TABLE_TYPE.TYPE_STANDART);
+                    }
+                }
             }
             else
             {
@@ -213,6 +451,8 @@ function getSerialNumberInfoData(snNumber)
             if(isFindSuccess !== false)
             {
                 destroyTableBlock()
+                HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_BLOCK, false);
+                HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.RESULT_BLOCK, false);
             }
             cmessBoxMain.sendErrorMessage("Ошибка AJAX на стороне сервера!");
             return false
@@ -227,15 +467,87 @@ function onUserPressedOnBTN(btnType)
 {
     if(btnType === BUTTOM_TYPE.TYPE_EDIT)
     {
-
+        if(isFindSuccess)
+        {
+            if(!isEdit)
+            {
+                CreateTable(TABLE_TYPE.TYPE_EDITTING);
+                cButton.switchBTNStatus(TABLE_TYPE.TYPE_EDITTING);
+                isEdit = true;
+            }
+        }
     }
     else if(btnType === BUTTOM_TYPE.TYPE_CANCEL)
     {
-
+        if(isFindSuccess)
+        {
+            if(isEdit)
+            {
+                CreateTable(TABLE_TYPE.TYPE_STANDART);
+                cButton.switchBTNStatus(TABLE_TYPE.TYPE_STANDART);
+                isEdit = false;
+            }
+        }
     }
     else if(btnType === BUTTOM_TYPE.TYPE_DEL)
     {
+        if(accessDelete)
+        {
+            if(isFindSuccess)
+            {
+                if (confirm(`"Вы действительно хотите удалить выбранный SN '${SuccessFindSN}' из базы готовых изделий ?
+            \nОтменить действие будет невозможно!"`)) // yes
+                {
+                    if(query)
+                        return
 
+                    let serial = SuccessFindSN;
+                    let assy = CParameters.getUnitIDFromTextID('db_primary_key');
+                    assy = Number(assy.getCurrentValue());
+
+                    destroyTableBlock();
+
+                    HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_BLOCK, true);
+
+                    let completed_json = JSON.stringify({
+                        serial_number: serial,
+                        assy_id: assy,
+                    }); //$.parseJSON(json_text);
+
+
+                    $.ajax({
+                        data : completed_json,
+                        dataType: 'json',
+                        type : 'POST',
+                        url : './dsn_delete_sn_ajax',
+                        contentType: "application/json",
+                        success: function(data) {
+                            query = false;
+
+                            HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_BLOCK, false);
+                            HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.RESULT_BLOCK, false);
+
+                            if(data.result === true)  // удалился успешно
+                            {
+                                cmessBoxMain.sendSuccessMessage(data.error_text);
+                            }
+                            else
+                            {
+                                cmessBoxMain.sendErrorMessage(data.error_text);
+                            }
+                        },
+                        error: function(error) {
+                            // responseProcess = false
+
+                            cmessBoxMain.sendErrorMessage("Ошибка AJAX на стороне сервера!");
+                            return false
+                        }
+                    })
+
+
+                }
+            }
+        }
     }
     else if(btnType === BUTTOM_TYPE.TYPE_SAVE)
     {

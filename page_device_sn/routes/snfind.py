@@ -8,6 +8,7 @@ from engine.debug.CDebug import CDebug
 from engine.users.enums import USER_SECTIONS_TYPE
 
 from engine.sql.enums import CONNECT_DB_TYPE
+from engine.sql.sql_data import SQL_TV_MODEL_INFO_FIELDS
 from engine.sql.CSQL import NotConnectToDB, ErrorSQLQuery, ErrorSQLData
 
 from engine.users.users_log.CSQLUserLogQuerys import CSQLUserLogQuerys
@@ -18,6 +19,8 @@ from engine.devicesn.CSN import CDeviceSN
 
 from engine.common import convert_date_from_sql_format
 from captha_main import SIMPLE_CAPTCHA
+
+from engine.tv_models.CModels import CModels
 
 cdebug = CDebug()
 cdebug.debug_system_on(True)
@@ -42,9 +45,8 @@ def get_device_sn_data(device_sn):
         if result_connect is True:
             data = csql.get_device_data(device_sn)
             if data is not False:
-
                 result_arr = list()
-                dkeys = data.keys()
+                dkeys: dict = data.keys()
                 count = 0
                 if len(dkeys):
                     for sql_field in dkeys:
@@ -54,6 +56,22 @@ def get_device_sn_data(device_sn):
 
                         value_type = CDeviceSN.get_value_type(arr_index)
                         current_value = data.get(sql_field, None)
+
+                        if sql_field == SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_name:
+                            if current_value:
+                                new_arr_index = CDeviceSN.get_array_index_from_text_id('model_type_name')
+                                if new_arr_index != -1:
+                                    current_value, type_name = CModels.get_parced_name_and_type(current_value)
+                                    params_dict = {
+                                        "text_id": CDeviceSN.get_text_id(new_arr_index),
+                                        "text_name": CDeviceSN.get_text_name(new_arr_index),
+                                        "is_editable": CDeviceSN.is_field_editable(new_arr_index),
+                                        "current_value": type_name,
+                                        "value_type": 'string'
+                                    }
+
+                                    result_arr.append(params_dict)
+
                         if current_value is None:
                             if value_type == str:
                                 current_value = ''
@@ -77,7 +95,15 @@ def get_device_sn_data(device_sn):
                         else:
                             value_type = 'string'
 
-                        result_arr.append([text_id, text_name, is_editable, current_value, value_type])
+                        params_dict = {
+                            "text_id": text_id,
+                            "text_name": text_name,
+                            "is_editable": is_editable,
+                            "current_value": current_value,
+                            "value_type": value_type
+                        }
+
+                        result_arr.append(params_dict)
                         count += 1
                 if count:
                     response_for_client.update({"error_text": "Список параметров предоставлен"})
@@ -144,5 +170,85 @@ def get_device_sn_data(device_sn):
     result = json.dumps(response_for_client)
     cdebug.debug_print(
         f"get_device_sn_data AJAX -> [Получение списка параметров устройства SN: '{device_sn}'] -> [IDX:{account_idx}, {account_name}] -> "
+        f"[Ответ в JS] -> [{count}]")
+    return result
+
+
+def set_delete_sn_ajax_ajax(device_sn: str, assy_id: int):
+    response_for_client = {
+        "error_text": "",
+        "result": False
+    }
+    account_name = cuser_access.get_session_var(USER_SECTIONS_TYPE.NICKNAME)
+    account_idx = cuser_access.get_session_var(USER_SECTIONS_TYPE.ACC_INDEX)
+    count = 0
+
+    csql = CSQLSNQuerys()
+    try:
+        result_connect = csql.connect_to_db(CONNECT_DB_TYPE.LINE)
+        if result_connect is True:
+            data = csql.is_devicesn_valid(device_sn, assy_id)
+            if data is not False:
+                data = csql.delete_sn(assy_id)
+                if data:
+
+                    response_for_client.update({"error_text": f"Устройство '{device_sn}' успешно удалено!"})
+                    response_for_client.update({"result": True})
+
+                    #################################
+                    text = f"Пользователь ID: [{account_name}[{account_idx}]] удалил готовое устройство из базы '{device_sn}'[{assy_id}]]"
+                    CSQLUserLogQuerys.send_log(
+                        account_idx,
+                        LOG_OBJECT_TYPE.LGOT_USER,
+                        LOG_TYPE.LGT_SN,
+                        LOG_SUBTYPE.LGST_DELETE,
+                        text)
+
+                    cdebug.debug_print(
+                        f"set_delete_sn_ajax_ajax AJAX -> [Удаление устройства SN: '{device_sn}'[{assy_id}]] -> [IDX:{account_idx}, {account_name}] -> "
+                        f"[Удачно] -> [Устройство успешно удалено '{device_sn}'[{assy_id}]] ")
+                else:
+                    response_for_client.update({"error_text": f"Не найдено устройство '{device_sn}'!"})
+                    cdebug.debug_print(
+                        f"set_delete_sn_ajax_ajax AJAX -> [Удаление устройства SN: '{device_sn}'[{assy_id}]] -> [IDX:{account_idx}, {account_name}] -> "
+                        f"[Ошибка] -> [Не найдено устройство '{device_sn}'[{assy_id}]] ")
+            else:
+                response_for_client.update({"error_text": f"Не найдено устройство '{device_sn}'!"})
+                cdebug.debug_print(
+                    f"set_delete_sn_ajax_ajax AJAX -> [Удаление устройства SN: '{device_sn}'[{assy_id}]] -> [IDX:{account_idx}, {account_name}] -> "
+                    f"[Ошибка] -> [Не найдено устройство '{device_sn}'[{assy_id}]] ")
+        else:
+            raise NotConnectToDB("Not SQL Connect!")
+    except NotConnectToDB as err:
+        response_for_client.update({"error_text": "errorcode: set_delete_sn_ajax_ajax -> [NotConnectToDB]"})
+        cdebug.debug_print(
+            f"set_delete_sn_ajax_ajax AJAX -> [Удаление устройства SN: '{device_sn}'[{assy_id}]] -> [IDX:{account_idx}, {account_name}] -> "
+            f"[Исключение] [NotConnectToDB: '{err}']")
+
+    except ErrorSQLQuery as err:
+        response_for_client.update({"error_text": "errorcode: set_delete_sn_ajax_ajax -> [ErrorSQLQuery]"})
+        cdebug.debug_print(
+             f"set_delete_sn_ajax_ajax AJAX -> [Удаление устройства SN: '{device_sn}'[{assy_id}]] -> [IDX:{account_idx}, {account_name}] -> "
+            f"[Исключение] [ErrorSQLQuery: '{err}']")
+
+    except ErrorSQLData as err:
+        response_for_client.update({"error_text": "errorcode: set_delete_sn_ajax_ajax -> [ErrorSQLData]"})
+        cdebug.debug_print(
+             f"set_delete_sn_ajax_ajax AJAX -> [Удаление устройства SN: '{device_sn}'[{assy_id}]] -> [IDX:{account_idx}, {account_name}] -> "
+            f"[Исключение] [ErrorSQLData: '{err}']")
+
+    except Exception as err:
+
+        response_for_client.update({"error_text": "errorcode: set_delete_sn_ajax_ajax -> [Error Data]"})
+        cdebug.debug_print(
+            f"set_delete_sn_ajax_ajax AJAX -> [Удаление устройства SN: '{device_sn}'[{assy_id}]] -> [IDX:{account_idx}, {account_name}] -> "
+            f"[Исключение] [Error Data: '{err}']")
+
+    finally:
+        csql.disconnect_from_db()
+
+    result = json.dumps(response_for_client)
+    cdebug.debug_print(
+        f"set_delete_sn_ajax_ajax AJAX -> [Удаление устройства SN: '{device_sn}'[{assy_id}]] -> [IDX:{account_idx}, {account_name}] -> "
         f"[Ответ в JS] -> [{count}]")
     return result

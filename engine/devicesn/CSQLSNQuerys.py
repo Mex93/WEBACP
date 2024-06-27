@@ -11,8 +11,8 @@ class CSQLSNQuerys(CSqlAgent):
 
     def get_device_data(self, device_sn: str):
 
-        query_string = (f"SELECT {SQL_TABLE_NAME.assembled_tv}.*, "
-                        f"{SQL_TABLE_NAME.tv_model_info_tv}.{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_name}  "
+        query_string = (f"SELECT {SQL_TABLE_NAME.tv_model_info_tv}.{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_name},"
+                        f"{SQL_TABLE_NAME.assembled_tv}.* "
                         f"FROM {SQL_TABLE_NAME.assembled_tv} "
                         f"JOIN {SQL_TABLE_NAME.tv_model_info_tv} ON "
                         f"{SQL_TABLE_NAME.tv_model_info_tv}.{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_id} = "
@@ -36,7 +36,38 @@ class CSQLSNQuerys(CSqlAgent):
             return result[0]
         return False
 
+    def is_devicesn_valid(self, device_sn: str, assy_id: int):
 
+        query_string = (f"SELECT {SQL_ASSEMBLED_TV_FIELDS.fd_tv_sn} "
+                        f"FROM {SQL_TABLE_NAME.assembled_tv} "
+                        f"WHERE "
+                        f"{SQL_ASSEMBLED_TV_FIELDS.fd_tv_sn} = %s AND "
+                        f"{SQL_ASSEMBLED_TV_FIELDS.fd_assy_id} = %s "
+                        "LIMIT 1")
+
+        result = self.sql_query_and_get_result(
+            self.get_sql_handle(), query_string, (device_sn, assy_id,),
+            "_1", )  # Запрос типа аасоциативного массива
+        if result is False:  # Errorrrrrrrrrrrrr based data
+            return False
+            # print(result)
+
+        new_device_sn = result[0].get(SQL_ASSEMBLED_TV_FIELDS.fd_tv_sn, None)
+        if device_sn is not None and device_sn == new_device_sn:
+            return True
+        return False
+
+    def delete_sn(self, assy_id: int):
+
+        query_string = (f"DELETE FROM {SQL_TABLE_NAME.assembled_tv} "
+                        f"WHERE "
+                        f"{SQL_ASSEMBLED_TV_FIELDS.fd_assy_id} = %s"
+                        )
+
+        result = self.sql_query_and_get_result(
+            self.get_sql_handle(), query_string, (assy_id, ), "_d", 1, False)  #
+
+        return result
 
     #
     # def get_scanned_params(self, scan_fk: int, model_fk: int) -> dict | bool:
