@@ -55,6 +55,7 @@ import {
 // ----------------------------------------------------------------- VARS
 
 let cmessBox = new CMessBox("error_box");
+let cmessBoxBlock = new CMessBox("error_box_result");
 
 let casrField = new CASRFields(); // класс asr CASRFields
 let casrArray = new CASRArray();
@@ -71,6 +72,7 @@ let tableHTMLNameID = "result_table";
 let tableHTMLPlaceID = "table_asr_id";
 let assocArraySuccess = false;
 
+let accessDelete, accessEdit, accessCreate, accessFind = null;
 // ----------------------------------------------------------------- VARS END
 // ----------------------------------------------------------------- FUNC
 
@@ -85,6 +87,8 @@ function onUserPressedOnDeleteBtn(btnType)  // если нажата кнопк�
     {
         case BUTTOM_TYPE.TYPE_EDIT:
         {
+            if(!accessEdit)
+                return
             if(cTable.getCurrentType() === TABLE_TYPE.TYPE_STANDART)
             {
                 cTable.destroyTable();
@@ -93,22 +97,27 @@ function onUserPressedOnDeleteBtn(btnType)  // если нажата кнопк�
             }
             else
             {
-                cmessBox.sendErrorMessage("Ошибка определения типа таблицы!");
+                cmessBoxBlock.sendErrorMessage("Ошибка определения типа таблицы!");
+                gotoToASRBlock();
             }
             break;
         }
         case BUTTOM_TYPE.TYPE_SAVE:
         {
+            if(!accessEdit)
+                return
             if(responseProcess === true)
             {
-                cmessBox.sendErrorMessage("Ответ от сервера ещё не пришёл!");
+                cmessBoxBlock.sendErrorMessage("Ответ от сервера ещё не пришёл!");
+                gotoToASRBlock();
                 return false;  //(false - не отправляем форму на сервер)
             }
 
 
             if(antiFlood > getTimestampInSeconds())
             {
-                cmessBox.sendErrorMessage("Не флудите!");
+                cmessBoxBlock.sendErrorMessage("Не флудите!");
+                gotoToASRBlock();
                 return false;  //(false - не отправляем форму на сервер)
             }
             antiFlood = getTimestampInSeconds() + 1;
@@ -146,11 +155,13 @@ function onUserPressedOnDeleteBtn(btnType)  // если нажата кнопк�
 
             if(resultArray === false)
             {
-                cmessBox.sendErrorMessage("Ошибка определения значений таблицы! Перезагрузите страницу...");
+                cmessBoxBlock.sendErrorMessage("Ошибка определения значений таблицы! Перезагрузите страницу...");
+                gotoToASRBlock();
             }
             else if(resultArray === null)
             {
-                cmessBox.sendErrorMessage("Вы не вносили никаких изменений.");
+                cmessBoxBlock.sendErrorMessage("Вы не вносили никаких изменений.");
+                gotoToASRBlock();
             }
             else
             {
@@ -173,7 +184,8 @@ function onUserPressedOnDeleteBtn(btnType)  // если нажата кнопк�
                                 //console.log(`name ${name}`)
                                 if(name)
                                 {
-                                    cmessBox.sendErrorMessage(`Оставлять поле '${name}' пустым запрещено!`);
+                                    cmessBoxBlock.sendErrorMessage(`Оставлять поле '${name}' пустым запрещено!`);
+                                    gotoToASRBlock();
                                 }
                                 return false;
                             }
@@ -185,7 +197,8 @@ function onUserPressedOnDeleteBtn(btnType)  // если нажата кнопк�
                         {
                             if(currentValue !== cOldValues.getValue(labelHTMLName))
                             {
-                                cmessBox.sendErrorMessage(`Редактирование поля '${name}' запрещено!`);
+                                cmessBoxBlock.sendErrorMessage(`Редактирование поля '${name}' запрещено!`);
+                                gotoToASRBlock();
                                 return false;
                             }
                         }
@@ -205,7 +218,8 @@ function onUserPressedOnDeleteBtn(btnType)  // если нажата кнопк�
                                     {
                                         if(name)
                                         {
-                                            cmessBox.sendErrorMessage(`Ошибка в поле '${name}'! Некорректная дата!`);
+                                            cmessBoxBlock.sendErrorMessage(`Ошибка в поле '${name}'! Некорректная дата!`);
+                                            gotoToASRBlock();
                                         }
                                         return false;
                                     }
@@ -215,7 +229,8 @@ function onUserPressedOnDeleteBtn(btnType)  // если нажата кнопк�
                             {
                                 if(name)
                                 {
-                                    cmessBox.sendErrorMessage(`Ошибка в поле '${name}'!`);
+                                    cmessBoxBlock.sendErrorMessage(`Ошибка в поле '${name}'!`);
+                                    gotoToASRBlock();
                                 }
                                 return false;
                             }
@@ -261,28 +276,36 @@ function onUserPressedOnDeleteBtn(btnType)  // если нажата кнопк�
                                     }
                                     else
                                     {
-                                        cmessBox.sendErrorMessage("Ошибка обработки филдов из массива изменений!");
+                                        cmessBoxBlock.sendErrorMessage("Ошибка обработки филдов из массива изменений!");
+                                        gotoToASRBlock();
                                         return 1;
                                     }
                                 })
 
 
-                                cmessBox.sendSuccessMessage(`ASR: '${successAsrID}' успешно отредактирован!`);
+                                cmessBoxBlock.sendSuccessMessage(`ASR: '${successAsrID}' успешно отредактирован!`);
+                                gotoToASRBlock();
                                 cTable.destroyTable()
                                 showTable(TABLE_TYPE.TYPE_EDITTING);
                             }
                             else
                             {
-                                cmessBox.sendErrorMessage(data.error_text, "", 15000);
+                                cmessBoxBlock.sendErrorMessage(data.error_text, "", 15000);
+                                gotoToASRBlock();
                             }
                         },
                         error: function(error) {
                             // responseProcess = false
-                            cmessBox.sendErrorMessage("Ошибка AJAX на стороне сервера!");
+                            cmessBoxBlock.sendErrorMessage("Ошибка AJAX на стороне сервера!");
+                            gotoToASRBlock();
                         }
                     })
                 }
-                else cmessBox.sendErrorMessage("Ошибка определения SQL ID.");
+                else
+                {
+                    cmessBoxBlock.sendErrorMessage("Ошибка определения SQL ID.");
+                    gotoToASRBlock();
+                }
 
 
             }
@@ -305,12 +328,15 @@ function onUserPressedOnDeleteBtn(btnType)  // если нажата кнопк�
             }
             else
             {
-                cmessBox.sendErrorMessage("Ошибка определения типа таблицы!");
+                cmessBoxBlock.sendErrorMessage("Ошибка определения типа таблицы!");
+                gotoToASRBlock();
             }
             break;
         }
         case BUTTOM_TYPE.TYPE_DEL:
         {
+            if(!accessDelete)
+                return
             // TODO Заменить на модальное окно с Да и Нет потом
             if (confirm(`"Вы действительно хотите удалить выбранную ASR '${successAsrID}' ?
             \nОтменить действие будет невозможно!"`)) // yes
@@ -353,6 +379,7 @@ function onUserPressedOnDeleteBtn(btnType)  // если нажата кнопк�
                                     cresultBox.showAnimBox(false);
                                     cresultBox.showResultTable(false)
                                     cmessBox.sendSuccessMessage(`ASR: '${successAsrID}' успешно удалён!`);
+                                    gotoToMainBlock();
                                     successAsrID = null;
                                     clearResultBox();
                                     cTable.destroyTable()
@@ -361,11 +388,13 @@ function onUserPressedOnDeleteBtn(btnType)  // если нажата кнопк�
                                 else
                                 {
                                     cmessBox.sendErrorMessage(data.error_text, "", 15000);
+                                    gotoToMainBlock();
                                 }
                             },
                             error: function(error) {
                                 // responseProcess = false
                                 cmessBox.sendErrorMessage("Ошибка AJAX на стороне сервера!");
+                                gotoToMainBlock();
                             }
                         })
                     }
@@ -411,6 +440,9 @@ function getASRData(inputData) // получение инфы о аср
     {
         return false;
     }
+    if(!accessFind)
+        return false;
+
     if(responseProcess === true)
     {
         cmessBox.sendErrorMessage("Ответ от сервера ещё не пришёл!");
@@ -581,8 +613,17 @@ function showTable(tableType)
                                 //console.log(htmlName)
                                 let isNonEdit = casrArray.isTypeNonEditting(htmlName);
 
+                                let cValue = casrField.getValue(fieldIndex);
+                                if(cTable.getCurrentType() === TABLE_TYPE.TYPE_STANDART)
+                                {
+                                    if(cValue == null || cValue === '')
+                                    {
+                                        continue;
+                                    }
+                                }
+
                                 if(cTable.addBody(htmlName,`${casrArray.getValueName(assocArrayIndex)}:`,
-                                    casrField.getValue(fieldIndex), isNonEdit))
+                                    cValue, isNonEdit))
                                 {
                                     count++;
                                 }
@@ -606,11 +647,24 @@ function showTable(tableType)
 
     return false;
 }
-
+function gotoToASRBlock()
+{
+    document.querySelector("#asr_result_block").scrollIntoView({
+        behavior: 'smooth'
+    });
+}
+function gotoToMainBlock()
+{
+    document.querySelector("#asr_find").scrollIntoView({
+        behavior: 'smooth'
+    });
+}
 ///////////////////////
 
 function LoadAssocArray()
 {
+    if(!accessFind)
+        return
     responseProcess = true;
     antiFlood = getTimestampInSeconds() + 1;
 
@@ -643,6 +697,66 @@ function LoadAssocArray()
 // ----------------------------------------------------------------- FUNC END
 
 $(document).ready(function() {
+
+    let isValid = (numb) => (numb === 0 || numb === 1)
+
+    accessDelete = document.getElementById("access_del");
+    if(accessDelete)
+    {
+        accessDelete = +accessDelete.innerText;
+        if(!isValid(accessDelete))
+        {
+            accessDelete = false;
+        }
+    }
+    else
+        accessDelete = false;
+
+    accessEdit = document.getElementById("access_edit");
+    if(accessEdit)
+    {
+        accessEdit = +accessEdit.innerText;
+        if(!isValid(accessEdit))
+        {
+            accessEdit = false;
+        }
+    }
+
+    else
+        accessEdit = false;
+
+    accessFind = document.getElementById("access_find");
+    if(accessFind)
+    {
+        accessFind = +accessFind.innerText;
+        if(!isValid(accessFind))
+        {
+            accessFind = false;
+        }
+    }
+    else
+        accessFind = false;
+
+
+    accessCreate = document.getElementById("access_create");
+    if(accessCreate)
+    {
+        accessCreate = +accessCreate.innerText;
+        if(!isValid(accessCreate))
+        {
+            accessCreate = false;
+        }
+    }
+    else
+        accessCreate = false;
+
+    if(!accessEdit && !accessCreate && !accessDelete && !accessFind)
+    {
+        alert("Ошибка доступа 2!!!!")
+        return;
+    }
+
+
     let blockID = {};
     assocArraySuccess = false;
     blockID.resultBox = document.getElementById("all_result_block");
@@ -659,15 +773,34 @@ $(document).ready(function() {
         alert("Ошибка на странице!")
         return false;
     }
-    if(
-        !btnEdit ||
-        !btnDel ||
-        !btnSave ||
-        !btnCancel)
+
+    if(accessEdit)
     {
-        alert("Ошибка!!!!")
-        return;
+        if(
+            !btnEdit ||
+            !btnSave)
+        {
+            alert("Ошибка 2!!!!")
+            return;
+        }
     }
+    if(accessDelete)
+    {
+        if(!btnDel)
+        {
+            alert("Ошибка 3!!!!")
+            return;
+        }
+    }
+    if(accessFind)
+    {
+        if(!btnCancel)
+        {
+            alert("Ошибка 4!!!!")
+            return;
+        }
+    }
+
 
     if(btnEdit)
     {

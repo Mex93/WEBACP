@@ -17,7 +17,7 @@
      <form id = "settings_form_checkbox" action = "#" method="post">
         <div  id = "error_box_checkbox">
         </div>
-        <div class = "border-common">
+        <div class = "">
             <div class = "checkbox">
               <label class="checkbox style-g">
                   <input {% if access_unit.get_session_var(access_type.ACCOUNT_TIMEOUT_EXIT) == 1 %}
@@ -50,7 +50,7 @@
 
          </span>
          </div><br>
-          <div class = "border-common">
+          <div class = "" id="repass_block">
              <form id = "settings_change_pass" action = "#" method="post">
                 <div id = "error_box_fields">
                 </div>

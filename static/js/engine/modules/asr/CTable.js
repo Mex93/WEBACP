@@ -145,6 +145,8 @@ class CTable
                 // input.name = `table_element_new_value|${htmlName}`;  // обработчик формы
                 input.type = "text";
                 input.className = "value_new";
+                if(currentValue == null)
+                    currentValue = ''
                 input.placeholder = currentValue;
                 input.maxLength = 30;
                 input.minLength = 1;

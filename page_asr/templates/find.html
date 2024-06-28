@@ -13,12 +13,42 @@ ASR - Поиск
 {% if access_unit.is_avalible_any_access_field(access_section.ASR) == True %}
 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 <div class = 'container-common container'>
+    <p id="access_edit" hidden="">
+        {% if access_unit.is_access_for_panel(access_type.ACCESS_ASR_EDIT) == True %}
+            1
+        {% else %}
+            0
+        {% endif %}
+    </p>
+     <p id="access_del" hidden="">
+        {% if access_unit.is_access_for_panel(access_type.ACCESS_ASR_DELETE) == True %}
+            1
+        {% else %}
+            0
+        {% endif %}
+    </p>
+    <p id="access_create" hidden="">
+        {% if access_unit.is_access_for_panel(access_type.ACCESS_ASR_ADD) == True %}
+            1
+        {% else %}
+            0
+        {% endif %}
+    </p>
+    <p id="access_find" hidden="">
+        {% if access_unit.is_access_for_panel(access_type.ACCESS_ASR_FIND) == True %}
+            1
+        {% else %}
+            0
+        {% endif %}
+    </p>
+
+
 
     <div class = "header-common">
         <h1>Поиск ASR</h1>
     </div>
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-        <div class = "border-common">
+        <div class = "">
             <form id = "asr_find" action = "#" method="post">
                 <div  id = "error_box">
                 </div><br>
@@ -29,7 +59,7 @@ ASR - Поиск
                 <button type="submit" class = "btm_submit-common">Найти</button>
             </form>
         </div>
-        <div id = "all_result_block" class = "border-common">
+        <div id = "all_result_block" class = "">
             <div id = "load_anim_block">
                  <div class="loaded-anim container">
                     <div class="box">
@@ -47,8 +77,11 @@ ASR - Поиск
                   </div>
                 </div>
             </div>
-            <div class = 'container-common container' id = "asr_result_block">
+            <div class = '' id = "asr_result_block">
                 <form id = "asr_result" action = "#" method="post">
+
+                    <div  id = "error_box_result">
+                    </div><br>
                     <div class = "table-asr" id = "table_asr_id">
 
                     </div>
@@ -57,7 +90,9 @@ ASR - Поиск
                             {% if access_unit.is_access_for_panel(access_type.ACCESS_ASR_EDIT) == True %}
                                <button id = "btn_edit" type="submit" name = "edit" value = "edit" class = "btm_submit-common">Редактировать</button>
                                <button id = "btn_save" type="submit" name = "save" value = "save" class = "btm_submit-common save">Сохранить изменения</button>
-                               <button id = "btn_cancel" type="submit" name = "cancel" value = "save" class = "btm_submit-common cancel">Отмена</button>
+                            {% endif %}
+                            {% if access_unit.is_access_for_panel(access_type.ACCESS_ASR_FIND) == True %}
+                                <button id = "btn_cancel" type="submit" name = "cancel" value = "save" class = "btm_submit-common cancel">Отмена</button>
                             {% endif %}
 
                             {% if access_unit.is_access_for_panel(access_type.ACCESS_ASR_DELETE) == True %}

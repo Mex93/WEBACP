@@ -37,6 +37,9 @@ def asr_find():
     if cuser_access.is_avalible_any_access_field(USER_SECTION_ACCESS_TYPE.ASR) is False:
         return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
 
+    if cuser_access.is_access_for_panel(USER_SECTIONS_TYPE.ACCESS_ASR_FIND) is False:
+        return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
+
     if request.method == 'GET':
         new_captcha_dict = SIMPLE_CAPTCHA.create()
 
@@ -52,6 +55,9 @@ def asr_find_ajax():
         return cpages.redirect_on_page(PAGE_ID.ACCOUNT_LOGIN)
 
     if cuser_access.is_avalible_any_access_field(USER_SECTION_ACCESS_TYPE.ASR) is False:
+        return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
+
+    if cuser_access.is_access_for_panel(USER_SECTIONS_TYPE.ACCESS_ASR_FIND) is False:
         return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
 
     response_for_client = {
@@ -122,6 +128,9 @@ def asr_load_assoc_ajax():
         return cpages.redirect_on_page(PAGE_ID.ACCOUNT_LOGIN)
 
     if cuser_access.is_avalible_any_access_field(USER_SECTION_ACCESS_TYPE.ASR) is False:
+        return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
+
+    if cuser_access.is_access_for_panel(USER_SECTIONS_TYPE.ACCESS_ASR_FIND) is False:
         return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
 
     response_for_client = {

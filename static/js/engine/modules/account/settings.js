@@ -239,7 +239,7 @@ $(document).ready(function() {
     let btn_repass = document.getElementById("btn_change_pass");
     if(btn_repass !== null)
     {
-        let form_repass = document.querySelector("#field_setting_container .setting_repass .border-common");
+        let form_repass = document.querySelector("#field_setting_container .setting_repass #repass_block");
         if(form_repass !== null)
         {
             form_repass.style.display = "none";
