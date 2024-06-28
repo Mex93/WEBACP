@@ -65,6 +65,13 @@
                     0
                 {% endif %}
             </p>
+            <p id="access_find" hidden="">
+                {% if access_unit.is_access_for_panel(access_type.ACCESS_SCAN_FIND) == True %}
+                    1
+                {% else %}
+                    0
+                {% endif %}
+            </p>
              <div id = "error_box">
 
             </div>

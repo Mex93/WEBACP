@@ -14,6 +14,7 @@ let query = false;
 let accessDelete = false;
 let accessEdit = false;
 let accessCreate = false;
+let accessFind = false;
 let cEditTableID = undefined;
 let isEditTemplate = undefined;
 let modelLabelID = undefined;
@@ -78,7 +79,7 @@ function onUserPressedMainMenuBtnEdit(mmUnit)
 {
     // console.log("Нажата клавиша Редактировать")
     // console.log(mmUnit.getModelName())
-    if(!accessEdit)
+    if(!accessEdit && !accessFind)
     {
         return
     }
@@ -141,16 +142,29 @@ function onUserPressedMainMenuBtnEdit(mmUnit)
                             th = document.createElement('th');
                             th.innerText = 'Используется:'
                             tr.append(th)
-                            th = document.createElement('th');
-                            th.innerText = 'Старое значение:'
-                            tr.append(th)
-                            th = document.createElement('th');
-                            th.innerText = 'Новое значение:'
-                            tr.append(th)
+                            if(accessEdit)
+                            {
+                                th = document.createElement('th');
+                                th.innerText = 'Старое значение:'
+                                tr.append(th)
+                            }
+                           else if(accessFind)
+                            {
+                                th = document.createElement('th');
+                                th.innerText = 'Текущее значение:'
+                                tr.append(th)
+                            }
+                            if(accessEdit)
+                            {
+                                th = document.createElement('th');
+                                th.innerText = 'Новое значение:'
+                                tr.append(th)
+                            }
+
                             table.append(tr)
                         }
 
-                        let [text_id, field_id, text_name, cvalue, cstate, req_once] = element
+                        let [text_id, , text_name, cvalue, cstate, req_once] = element
                         let fieldUnit = new CItemParams(element);
                         count ++;
                         let checkedStatus = String();
@@ -183,13 +197,23 @@ function onUserPressedMainMenuBtnEdit(mmUnit)
                             req_once = 'required placeholder = ""'
                         else req_once = ''
 
+                        if(accessEdit)
+                        {
+                            elementsCBArr.push([`input_checkbox_${text_id}`, fieldUnit]);
+                            elementsInputArr.push([`input_field_${text_id}`, fieldUnit]);
+                        }
+                        if(!accessEdit)
+                        {
+                            lockedState = 'disabled';
+                        }
 
-                        elementsCBArr.push([`input_checkbox_${text_id}`, fieldUnit]);
-                        elementsInputArr.push([`input_field_${text_id}`, fieldUnit]);
 
                         let rulesText = getHelpText(text_id);
+                        let str = null;
 
-                        let str = `<tr>
+                        if(accessEdit)
+                        {
+                            str = `<tr>
                                     <td data-tooltip="${rulesText}">${text_name} 
                                     <img src="static/icons/help_icon.svg" alt="Информация" width="25px" height="25px">
                                     </td>
@@ -199,6 +223,19 @@ function onUserPressedMainMenuBtnEdit(mmUnit)
                                     <td>
                                     <input name = 'field input' ${req_once} ${lockedValue} value="${cvalue}" id="input_field_${text_id}" type="text" maxlength="64" size="40"></td>
                                    </tr>`
+                        }
+                        else if(accessFind)
+                        {
+                            str = `<tr>
+                                    <td data-tooltip="${rulesText}">${text_name} 
+                                    <img src="static/icons/help_icon.svg" alt="Информация" width="25px" height="25px">
+                                    </td>
+                                    <td>
+                                    <input name = 'field check' ${lockedState} id="input_checkbox_${text_id}" type="checkbox" ${checkedStatus}></td>
+                                    <td ${lockedValue} id="old_value_${text_id}">${cvalue}</td>
+                                   </tr>`
+                        }
+
                         let createElement = document.createElement("tr");
                         createElement.innerHTML = str;
                         cEditTableID.append(createElement);
@@ -211,31 +248,34 @@ function onUserPressedMainMenuBtnEdit(mmUnit)
                         let AttachBlockID = HTMLBlocks.getHTMLID(HTMLBlocks.BLOCK_TYPE.EDIT_BLOCK);
                         AttachBlockID.append(cEditTableID);
 
+                        if(accessEdit)
+                        {
+                            // state elements
+                            elementsCBArr.forEach( (element) => {
+                                let htmlID = element[0];
+                                let unitID = element[1];
+                                let elementID = document.getElementById(htmlID);
+                                if(elementID !== null)
+                                {
+                                    elementID.addEventListener("click", function (element) {
+                                        Edit_onUserClickCB(elementID, unitID);
+                                    })
+                                }
+                            })
+                            // cvalue element
+                            elementsInputArr.forEach( (element) => {
+                                let htmlID = element[0];
+                                let unitID = element[1];
+                                let elementID = document.getElementById(htmlID);
+                                if(elementID !== null)
+                                {
+                                    elementID.addEventListener("change", function (element) {
+                                        Edit_onUserEditField(elementID, unitID);
+                                    })
+                                }
+                            })
+                        }
 
-                        // state elements
-                        elementsCBArr.forEach( (element) => {
-                            let htmlID = element[0];
-                            let unitID = element[1];
-                            let elementID = document.getElementById(htmlID);
-                            if(elementID !== null)
-                            {
-                                elementID.addEventListener("click", function (element) {
-                                    Edit_onUserClickCB(elementID, unitID);
-                                })
-                            }
-                        })
-                        // cvalue element
-                        elementsInputArr.forEach( (element) => {
-                            let htmlID = element[0];
-                            let unitID = element[1];
-                            let elementID = document.getElementById(htmlID);
-                            if(elementID !== null)
-                            {
-                                elementID.addEventListener("change", function (element) {
-                                    Edit_onUserEditField(elementID, unitID);
-                                })
-                            }
-                        })
                         isEditTemplate = true;
 
                         HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_RESULT_LIST, false);
@@ -453,7 +493,7 @@ function onUserPressedMainMenuBtnDel(mmUnit)
     }
     if(isEditTemplate)
     {
-        alert('Сперва завершите редактирование шаблона!')
+        alert('Сперва завершите редактирование или просмотр шаблона!')
         return
     }
     if(isCreateTemplate)
@@ -537,7 +577,7 @@ function get_tv_list_ajax()
     if(query)
         return false;
 
-    if(!accessEdit && !accessCreate && !accessDelete)
+    if(!accessEdit && !accessCreate && !accessDelete && !accessFind)
     {
         return
     }
@@ -607,12 +647,29 @@ function get_tv_list_ajax()
                                     btn_edit_str = `btn_edit_unit_${modelID}`;
                                     btn_edit = `<button id = "${btn_edit_str}" type="submit" name = "edit" value = "edit" class = "btm_submit-common edit">Редактировать</button>`
                                 }
+                                else if(accessFind)
+                                {
+                                    btn_edit_str = `btn_edit_unit_${modelID}`;
+                                    btn_edit = `<button id = "${btn_edit_str}" type="submit" name = "edit" value = "edit" class = "btm_submit-common edit">Просмотр</button>`
+                                }
+
                                 if(accessDelete || accessEdit)
+                                {
                                     btn_string = `<td>
                                                 <div class = 'inline_buttom'>
                                                 ${btn_edit} ${btn_del}
                                                 </div>
                                                 </td>`;
+                                }
+                                else
+                                {
+                                    btn_string = `<td>
+                                                <div class = 'inline_buttom'>
+                                                Нет доступа!
+                                                </div>
+                                                </td>`;
+                                }
+
 
                                 str = `
                                         <td>${modelName}</td>
@@ -1056,7 +1113,7 @@ function onUserPressedCreateTemplateBtn()
 
     if(isEditTemplate)
     {
-        alert('Сперва завершите редактирование шаблона!')
+        alert('Сперва завершите редактирование или просмотр шаблона!')
         return
     }
 
@@ -1337,16 +1394,13 @@ function Edit_onUserEditField(elementHTMLID, elementUnitID)
     // console.log(`${elementUnitID.getTextID()}`)
 
     let currentValue = elementHTMLID.value;
-    if(currentValue === '')
-        currentValue = null;
-    else
+
+    if(/[а-яА-ЯЁё]/.test(currentValue))
     {
-        if(/[а-яА-ЯЁё]/.test(currentValue))
-        {
-            elementHTMLID.value = elementUnitID.getFirstValue();
-            return;
-        }
+        elementHTMLID.value = elementUnitID.getFirstValue();
+        return;
     }
+
     elementUnitID.setCurrentValue(currentValue);
 
 }
@@ -1422,21 +1476,36 @@ $(document).ready(function()
     accessCreate = document.getElementById("access_create");
     if(accessCreate)
     {
-        if(!btnCreateTemplate)
-        {
-            alert("Ошибка accessCreate!!!!")
-            return
-        }
         accessCreate = +accessCreate.innerText;
         if(!isValid(accessCreate))
         {
             accessCreate = false;
         }
+        if(accessCreate)
+        {
+            if(!btnCreateTemplate)
+            {
+                alert("Ошибка accessCreate!!!!")
+                return
+            }
+        }
     }
     else
         accessCreate = false;
 
-    if(!accessEdit && !accessCreate && !accessDelete)
+    accessFind = document.getElementById("access_find");
+    if(accessFind)
+    {
+        accessFind = +accessFind.innerText;
+        if(!isValid(accessFind))
+        {
+            accessFind = false;
+        }
+    }
+    else
+        accessFind = false;
+
+    if(!accessEdit && !accessCreate && !accessDelete && !accessFind)
     {
         alert("Ошибка доступа!!!!")
         return;
@@ -1509,6 +1578,10 @@ $(document).ready(function()
         return
     }
 
+    if(!accessEdit && accessFind)
+    {
+        btnSaveTemplate.remove()
+    }
 
     editModelUnitID = undefined;
     isCreateTemplate = false;

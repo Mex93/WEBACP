@@ -27,8 +27,8 @@ def template_find():
     if cuser_access.is_avalible_any_access_field(USER_SECTION_ACCESS_TYPE.SCAN_TEMPLATES) is False:
         return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
 
-    # if cuser_access.is_access_for_panel(USER_SECTIONS_TYPE.ACCESS_SCAN_EDIT) is False:
-    #     return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
+    if cuser_access.is_access_for_panel(USER_SECTIONS_TYPE.ACCESS_SCAN_FIND) is False:
+        return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
 
     return cpages.set_render_page(PAGE_ID.TEMPLATES_FIND)
 
@@ -39,6 +39,9 @@ def get_tv_models_list():
         return cpages.redirect_on_page(PAGE_ID.ACCOUNT_LOGIN)
 
     if cuser_access.is_avalible_any_access_field(USER_SECTION_ACCESS_TYPE.SCAN_TEMPLATES) is False:
+        return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
+
+    if cuser_access.is_access_for_panel(USER_SECTIONS_TYPE.ACCESS_SCAN_FIND) is False:
         return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
 
     if request.method == "POST":
@@ -60,7 +63,8 @@ def get_scan_model_params():
     if cuser_access.is_avalible_any_access_field(USER_SECTION_ACCESS_TYPE.SCAN_TEMPLATES) is False:
         return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
 
-    if cuser_access.is_access_for_panel(USER_SECTIONS_TYPE.ACCESS_SCAN_EDIT) is False:
+    if (cuser_access.is_access_for_panel(USER_SECTIONS_TYPE.ACCESS_SCAN_EDIT) is False and
+            cuser_access.is_access_for_panel(USER_SECTIONS_TYPE.ACCESS_SCAN_FIND) is False):
         return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
 
     if request.method == "POST":
