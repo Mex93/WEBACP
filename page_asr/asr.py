@@ -73,7 +73,7 @@ def asr_find_ajax():
         c_text = json_ajax.get('captcha_text')
 
         if c_hash and c_text:
-            if SIMPLE_CAPTCHA.verify(c_text, c_hash) is False:  # не забыть поправить на true
+            if SIMPLE_CAPTCHA.verify(c_text, c_hash) is True:  # не забыть поправить на true
                 if asr_name:
                     if isinstance(asr_name, str):
                         if CASR.check_asr_text(asr_name):
