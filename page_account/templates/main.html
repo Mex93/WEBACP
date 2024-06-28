@@ -75,7 +75,7 @@
                    <span class = "noaccess"> недоступно</span>
                    {% endif %}
                </td></tr>
-                <tr><td><b>Добавление/Поиск</b></td><td>
+                <tr><td><b>Добавление</b></td><td>
                    {% if access_unit.get_session_var(access_type.ACCESS_ASR_ADD) %}
                    <span class = "success"> доступно</span>
                    {% else %}
@@ -89,6 +89,25 @@
                    {% endif %}
                </td><td>
                    {% if access_unit.get_session_var(access_type.ACCESS_SCAN_ADD) %}
+                   <span class = "success"> доступно</span>
+                   {% else %}
+                   <span class = "noaccess"> недоступно</span>
+                   {% endif %}
+               </td></tr>
+                <tr><td><b>Поиск</b></td><td>
+                   {% if access_unit.get_session_var(access_type.ACCESS_ASR_FIND) %}
+                   <span class = "success"> доступно</span>
+                   {% else %}
+                   <span class = "noaccess"> недоступно</span>
+                   {% endif %}
+               </td><td>
+                   {% if access_unit.get_session_var(access_type.ACCESS_SN_FIND) %}
+                   <span class = "success"> доступно</span>
+                   {% else %}
+                   <span class = "noaccess"> недоступно</span>
+                   {% endif %}
+               </td><td>
+                   {% if access_unit.get_session_var(access_type.ACCESS_SCAN_FIND) %}
                    <span class = "success"> доступно</span>
                    {% else %}
                    <span class = "noaccess"> недоступно</span>

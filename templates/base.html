@@ -69,7 +69,7 @@
                                 <div class="row">
                                   <header>ASR</header>
                                   <ul class="mega-links">
-                                      {% if access_unit.is_avalible_any_access_field(access_section.ASR) == True %}
+                                      {% if access_unit.is_access_for_panel(access_type.ACCESS_ASR_FIND) == True %}
                                     <li><a href="/asr/find">Найти</a></li>
                                       {% endif %}
                                       {% if access_unit.is_access_for_panel(access_type.ACCESS_ASR_DELETE) == True %}
@@ -78,6 +78,9 @@
                                       {% if access_unit.is_access_for_panel(access_type.ACCESS_ASR_EDIT) == True %}
                                     <li><a href="/asr/find">Редактировать</a></li>
                                       {% endif %}
+                                      {% if access_unit.is_access_for_panel(access_type.ACCESS_ASR_ADD) == True %}
+                                    <li><a href="/asr/find">Создать</a></li>
+                                      {% endif %}
                                   </ul>
                                 </div>
                               {% endif %}
@@ -85,7 +88,7 @@
                                 <div class="row">
                                   <header>SN собранных единиц</header>
                                   <ul class="mega-links">
-                                      {% if access_unit.is_avalible_any_access_field(access_section.SN) == True %}
+                                      {% if access_unit.is_access_for_panel(access_type.ACCESS_SN_FIND) == True %}
                                     <li><a href="/devicesn/get">Найти</a></li>
                                       {% endif %}
                                        {% if access_unit.is_access_for_panel(access_type.ACCESS_SN_EDIT) == True %}
@@ -94,6 +97,9 @@
                                       {% if access_unit.is_access_for_panel(access_type.ACCESS_SN_DELETE) == True %}
                                     <li><a href="/devicesn/get">Удалить</a></li>
                                       {% endif %}
+                                      {% if access_unit.is_access_for_panel(access_type.ACCESS_SN_ADD) == True %}
+                                    <li><a href="/devicesn/get">Создать</a></li>
+                                      {% endif %}
                                   </ul>
                                 </div>
                               {% endif %}
@@ -101,7 +107,7 @@
                                 <div class="row">
                                   <header>Шаблоны сканировки</header>
                                   <ul class="mega-links">
-                                      {% if access_unit.is_avalible_any_access_field(access_section.SCAN_TEMPLATES) == True %}
+                                      {% if access_unit.is_access_for_panel(access_type.ACCESS_SCAN_FIND) == True %}
                                     <li><a href="/templates/std">Найти</a></li>
                                       {% endif %}
                                       {% if access_unit.is_access_for_panel(access_type.ACCESS_SCAN_ADD) == True %}
@@ -113,6 +119,7 @@
                                       {% if access_unit.is_access_for_panel(access_type.ACCESS_SCAN_EDIT) == True %}
                                     <li><a href="/templates/std">Редактировать</a></li>
                                       {% endif %}
+
                                   </ul>
                                 </div>
                               {% endif %}

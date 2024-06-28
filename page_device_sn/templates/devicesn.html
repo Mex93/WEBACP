@@ -38,6 +38,13 @@
             0
         {% endif %}
     </p>
+       <p id="access_find" hidden="">
+        {% if access_unit.is_access_for_panel(access_type.ACCESS_SN_FIND) == True %}
+            1
+        {% else %}
+            0
+        {% endif %}
+    </p>
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <div class = "border-common">
             <form id = "dsn_find" action = "#" method="post">

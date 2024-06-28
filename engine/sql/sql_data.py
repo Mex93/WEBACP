@@ -53,14 +53,17 @@ class SQL_USERS_FIELDS:
     ufd_user_access_scan_edit = "user_access_scan_edit"
     ufd_user_access_scan_delete = "user_access_scan_delete"
     ufd_user_access_scan_add = "user_access_scan_add"
+    ufd_user_access_scan_find = "user_access_scan_find"
 
     ufd_user_access_sn_edit = "user_access_sn_edit"
     ufd_user_access_sn_delete = "user_access_sn_delete"
     ufd_user_access_sn_add = "user_access_sn_add"
+    ufd_user_access_sn_find = "user_access_sn_find"
 
     ufd_user_access_asr_edit = "user_access_asr_edit"
     ufd_user_access_asr_delete = "user_access_asr_delete"
     ufd_user_access_asr_add = "user_access_asr_add"
+    ufd_user_access_asr_find = "user_access_asr_find"
 
 
 class SQL_ASR_FIELDS:

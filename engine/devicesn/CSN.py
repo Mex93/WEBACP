@@ -5,7 +5,7 @@ from engine.devicesn.enums import EDIT_FIELD, PARAMS_ARRAY
 class CDeviceSN:
     __cparams = [
         ['db_primary_key', SQL_ASSEMBLED_TV_FIELDS.fd_assy_id, EDIT_FIELD.NO_EDIT, int, 'Порядковый номер в БД'],
-        ['model_id', SQL_ASSEMBLED_TV_FIELDS.fd_tvfk, EDIT_FIELD.NO_EDIT, int, 'Номер модели в БД'],
+        ['model_id', SQL_ASSEMBLED_TV_FIELDS.fd_tvfk, EDIT_FIELD.EDITED, int, 'Номер модели в БД'],
         ['model_name', SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_name, EDIT_FIELD.NO_EDIT, str, 'Название модели'],
         ['model_type_name', None, EDIT_FIELD.NO_EDIT, str, 'Тип модели'],
         ['line_number', SQL_ASSEMBLED_TV_FIELDS.fd_linefk, EDIT_FIELD.EDITED, int, 'Номер производственной линии'],

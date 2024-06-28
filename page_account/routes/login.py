@@ -131,45 +131,55 @@ def ulogin(password, email, savemy):
                             access_config_serial_del = query_data.get(SQL_USERS_FIELDS.ufd_user_access_sn_delete, None)
                             #
                             access_config_serial_add = query_data.get(SQL_USERS_FIELDS.ufd_user_access_sn_add, None)
+                            #
+                            access_config_serial_find = query_data.get(SQL_USERS_FIELDS.ufd_user_access_sn_find, None)
 
-                            if (access_config_serial_edit is not None
-                                    and access_config_serial_del is not None
-                                    and access_config_serial_add is not None):
+                            if None not in (access_config_serial_edit,
+                                            access_config_serial_del,
+                                            access_config_serial_find,
+                                            access_config_serial_add):
                                 cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_SN_EDIT,
                                                              access_config_serial_edit)
                                 cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_SN_DELETE,
                                                              access_config_serial_del)
                                 cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_SN_ADD,
                                                              access_config_serial_add)
+                                cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_SN_FIND,
+                                                             access_config_serial_find)
                                 cdebug.debug_print(
                                     f"ulogin AJAX -> [{email}] -> [Получение прав доступа аккаунта] -> [SN]"
                                     f"[{access_config_serial_edit}, "
                                     f"{access_config_serial_del}, "
+                                    f"{access_config_serial_find}, "
                                     f"{access_config_serial_add}]")
 
                             #  ----------------------------------------------------------------------------------------
                             access_config_scan_add = query_data.get(SQL_USERS_FIELDS.ufd_user_access_scan_add, None)
                             #
-                            access_config_scan_delete = query_data.get(SQL_USERS_FIELDS.ufd_user_access_scan_delete,
-                                                                       None)
+                            access_config_scan_delete = query_data.get(SQL_USERS_FIELDS.ufd_user_access_scan_delete, None)
                             #
                             access_config_scan_edit = query_data.get(SQL_USERS_FIELDS.ufd_user_access_scan_edit, None)
+                            #
+                            access_config_scan_find = query_data.get(SQL_USERS_FIELDS.ufd_user_access_scan_find, None)
 
-                            if (access_config_scan_add is not None
-                                    and access_config_scan_delete is not None
-                                    and access_config_scan_edit is not None
-                                    ):
+                            if None not in (access_config_scan_add,
+                                            access_config_scan_delete,
+                                            access_config_scan_edit,
+                                            access_config_scan_find):
                                 cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_SCAN_ADD,
                                                              access_config_scan_add)
                                 cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_SCAN_DELETE,
                                                              access_config_scan_delete)
                                 cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_SCAN_EDIT,
                                                              access_config_scan_edit)
+                                cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_SCAN_FIND,
+                                                             access_config_scan_find)
 
                                 cdebug.debug_print(
                                     f"ulogin AJAX -> [{email}] -> [Получение прав доступа аккаунта] -> [STEMPLATE]"
                                     f"[{access_config_scan_add}, "
                                     f"{access_config_scan_delete}, "
+                                    f"{access_config_scan_find}, "
                                     f"{access_config_scan_edit}]")
 
                             #  ----------------------------------------------------------------------------------------
@@ -178,21 +188,26 @@ def ulogin(password, email, savemy):
                             access_config_asr_edit = query_data.get(SQL_USERS_FIELDS.ufd_user_access_asr_edit, None)
                             #
                             access_config_asr_add = query_data.get(SQL_USERS_FIELDS.ufd_user_access_asr_add, None)
+                            #
+                            access_config_asr_find = query_data.get(SQL_USERS_FIELDS.ufd_user_access_asr_find, None)
 
-                            if (access_config_asr_delete is not None
-                                    and access_config_asr_edit is not None
-                                    and access_config_asr_add
-                                    is not None):
+                            if None not in (access_config_asr_delete,
+                                            access_config_asr_edit,
+                                            access_config_asr_add,
+                                            access_config_asr_find):
                                 cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_ASR_DELETE,
                                                              access_config_asr_delete)
                                 cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_ASR_EDIT,
                                                              access_config_asr_edit)
                                 cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_ASR_ADD,
                                                              access_config_asr_add)
+                                cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_ASR_FIND,
+                                                             access_config_asr_find)
                                 cdebug.debug_print(
                                     f"ulogin AJAX -> [{email}] -> [Получение прав доступа аккаунта] -> [ASR]"
                                     f"[{access_config_asr_delete}, "
                                     f"{access_config_asr_edit}, "
+                                    f"{access_config_asr_find}, "
                                     f"{access_config_asr_add}]")
 
                             #  ----------------------------------------------------------------------------------------

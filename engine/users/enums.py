@@ -22,14 +22,17 @@ class USER_SECTIONS_TYPE(IntEnum):
     ACCESS_SCAN_EDIT = auto(),
     ACCESS_SCAN_DELETE = auto(),
     ACCESS_SCAN_ADD = auto(),
+    ACCESS_SCAN_FIND = auto(),
 
     ACCESS_SN_EDIT = auto(),
     ACCESS_SN_DELETE = auto(),
     ACCESS_SN_ADD = auto(),
+    ACCESS_SN_FIND = auto(),
 
     ACCESS_ASR_EDIT = auto(),
     ACCESS_ASR_DELETE = auto(),
     ACCESS_ASR_ADD = auto(),
+    ACCESS_ASR_FIND = auto(),
 
 
 class USER_SECTION_ACCESS_TYPE(IntEnum):

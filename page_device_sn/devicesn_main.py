@@ -37,6 +37,7 @@ def dsn_find():
 
     return cpages.set_render_page(PAGE_ID.DEVICESN_FIND)
 
+
 @bp_page_devicesn.route('/dsn_find_ajax', methods=['POST', 'GET'])
 def get_device_sn_data_ajax():
     if cuser_access.is_sessions_start() is False:
@@ -45,7 +46,7 @@ def get_device_sn_data_ajax():
     if cuser_access.is_avalible_any_access_field(USER_SECTION_ACCESS_TYPE.SN) is False:
         return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
 
-    if cuser_access.is_access_for_panel(USER_SECTIONS_TYPE.ACCESS_SN_EDIT) is False:
+    if cuser_access.is_access_for_panel(USER_SECTIONS_TYPE.ACCESS_SN_FIND) is False:
         return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
 
     response_for_client = {
@@ -61,10 +62,10 @@ def get_device_sn_data_ajax():
         c_text = json_ajax.get('captcha_text')
 
         if c_hash and c_text:
-            if SIMPLE_CAPTCHA.verify(c_text, c_hash) is False:  # не забыть поправить на true
+            if SIMPLE_CAPTCHA.verify(c_text, c_hash) is True:  # не забыть поправить на true
                 if dsn_device and isinstance(dsn_device, str):
                     if is_devicesn_valid(dsn_device) and not is_cirylic(dsn_device):
-                        from page_device_sn.routes.snfind import get_device_sn_data
+                        from page_device_sn.routes.snfind_common import get_device_sn_data
                         return get_device_sn_data(dsn_device)
                     else:
                         response_for_client.update({"error_text": "Вы неверно ввели серийный номер/mac/sn mb!"})
@@ -102,7 +103,7 @@ def delete_sn_ajax_ajax():
         dassy_id = json_ajax.get('assy_id')
         if dsn_device and isinstance(dsn_device, str) and isinstance(dassy_id, int) and dassy_id > 0:
             if is_devicesn_valid(dsn_device):
-                from page_device_sn.routes.snfind import set_delete_sn_ajax_ajax
+                from page_device_sn.routes.snfind_del import set_delete_sn_ajax_ajax
                 return set_delete_sn_ajax_ajax(dsn_device, dassy_id)
             else:
                 response_for_client.update({"error_text": "Вы неверно ввели серийный номер/mac/sn mb!"})
@@ -136,9 +137,9 @@ def save_edit_sn_ajax():
 
         if (dsn_device and isinstance(dsn_device, str) and
                 isinstance(dassy_id, int) and dassy_id > 0 and
-                isinstance(arr, list) and arr):
+                arr and isinstance(arr, list)):
             if is_devicesn_valid(dsn_device):
-                from page_device_sn.routes.snfind import set_save_edit_sn_ajax
+                from page_device_sn.routes.snfind_edit import set_save_edit_sn_ajax
                 return set_save_edit_sn_ajax(dsn_device, dassy_id, arr)
             else:
                 response_for_client.update({"error_text": "Вы неверно ввели серийный номер/mac/sn mb!"})
@@ -146,4 +147,3 @@ def save_edit_sn_ajax():
             response_for_client.update({"error_text": "Вы неверно ввели серийный номер/mac/sn mb!"})
 
     return jsonify(response_for_client)
-

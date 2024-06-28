@@ -24,14 +24,17 @@ class CUserAccess(CUserSessions):
             case USER_SECTION_ACCESS_TYPE.SN:
                 li = (self.get_session_var(USER_SECTIONS_TYPE.ACCESS_SN_ADD),
                       self.get_session_var(USER_SECTIONS_TYPE.ACCESS_SN_EDIT),
+                      self.get_session_var(USER_SECTIONS_TYPE.ACCESS_SN_FIND),
                       self.get_session_var(USER_SECTIONS_TYPE.ACCESS_SN_DELETE))
             case USER_SECTION_ACCESS_TYPE.SCAN_TEMPLATES:
                 li = (self.get_session_var(USER_SECTIONS_TYPE.ACCESS_SCAN_ADD),
                       self.get_session_var(USER_SECTIONS_TYPE.ACCESS_SCAN_EDIT),
+                      self.get_session_var(USER_SECTIONS_TYPE.ACCESS_SCAN_FIND),
                       self.get_session_var(USER_SECTIONS_TYPE.ACCESS_SCAN_DELETE))
             case USER_SECTION_ACCESS_TYPE.ASR:
                 li = (self.get_session_var(USER_SECTIONS_TYPE.ACCESS_ASR_ADD),
                       self.get_session_var(USER_SECTIONS_TYPE.ACCESS_ASR_EDIT),
+                      self.get_session_var(USER_SECTIONS_TYPE.ACCESS_ASR_FIND),
                       self.get_session_var(USER_SECTIONS_TYPE.ACCESS_ASR_DELETE))
 
         if len(li) > 0:

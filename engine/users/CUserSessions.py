@@ -27,14 +27,17 @@ class CUserSessions:
         self.__sname_access_scan_edit = "access_scan_edit"
         self.__sname_access_scan_add = "access_scan_add"
         self.__sname_access_scan_delete = "access_scan_delete"
+        self.__sname_access_scan_find = "access_scan_find"
 
         self.__sname_access_sn_edit = "access_sn_edit"
         self.__sname_access_sn_add = "access_sn_add"
         self.__sname_access_sn_delete = "access_sn_delete"
+        self.__sname_access_sn_find = "access_sn_find"
 
         self.__sname_access_asr_edit = "access_asr_edit"
         self.__sname_access_asr_add = "access_asr_add"
         self.__sname_access_asr_delete = "access_asr_delete"
+        self.__sname_access_asr_find = "access_asr_find"
 
         self.__session_start_text = "session_start"
 
@@ -75,6 +78,8 @@ class CUserSessions:
                 return self.__sname_access_scan_delete
             case USER_SECTIONS_TYPE.ACCESS_SCAN_ADD:
                 return self.__sname_access_scan_add
+            case USER_SECTIONS_TYPE.ACCESS_SCAN_FIND:
+                return self.__sname_access_scan_find
 
             case USER_SECTIONS_TYPE.ACCESS_SN_EDIT:
                 return self.__sname_access_sn_edit
@@ -82,6 +87,8 @@ class CUserSessions:
                 return self.__sname_access_sn_delete
             case USER_SECTIONS_TYPE.ACCESS_SN_ADD:
                 return self.__sname_access_sn_add
+            case USER_SECTIONS_TYPE.ACCESS_SN_FIND:
+                return self.__sname_access_sn_find
 
             case USER_SECTIONS_TYPE.ACCESS_ASR_EDIT:
                 return self.__sname_access_asr_edit
@@ -89,6 +96,9 @@ class CUserSessions:
                 return self.__sname_access_asr_delete
             case USER_SECTIONS_TYPE.ACCESS_ASR_ADD:
                 return self.__sname_access_asr_add
+            case USER_SECTIONS_TYPE.ACCESS_ASR_FIND:
+                return self.__sname_access_asr_find
+
 
         return False
 

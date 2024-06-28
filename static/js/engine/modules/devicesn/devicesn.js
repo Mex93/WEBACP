@@ -21,7 +21,7 @@ let query = false;
 let cmessBoxMain = new CMessBox("error_box_main");
 let cmessBoxBlock = new CMessBox("error_box_block");
 let cButton = new cButtons(); // класс управления кнопками
-let accessDelete, accessEdit, accessCreate = null;
+let accessDelete, accessEdit, accessCreate, accessFind = null;
 let isEdit = false;
 let isFindSuccess = false;
 let SuccessFindSN = null;
@@ -335,7 +335,7 @@ function CreateTable(tableType)
 function getSerialNumberInfoData(snNumber)
 {
     console.log(snNumber)
-    if(!accessEdit)
+    if(!accessFind)
     {
         return;
     }
@@ -349,7 +349,21 @@ function getSerialNumberInfoData(snNumber)
         cmessBoxMain.sendErrorMessage("Запрос от сервера ещё не пришёл!")
         return;
     }
-
+    if(isFindSuccess)
+    {
+        if(SuccessFindSN !== null)
+        {
+            if(snNumber === SuccessFindSN)
+            {
+                cmessBoxMain.sendErrorMessage("Вы уже запросили этот серийный номер!")
+                return
+            }
+        }
+    }
+    if(isFindSuccess !== false)
+    {
+        destroyTableBlock()
+    }
     // класс должен быть объявлен тут для капчи, иначе значение блока не будед перезаписываться
     let cCaptha = new CCaptha('div input[name=captcha-hash]', "captcha-text");
     let cresult = cCaptha.validate(cmessBoxMain);
@@ -392,11 +406,6 @@ function getSerialNumberInfoData(snNumber)
 
             if(data.result === true)  // загрузка ASR
             {
-                if(isFindSuccess !== false)
-                {
-                    destroyTableBlock()
-                }
-
                 if (Array.isArray(data.arr))
                 {
                     console.log(data.arr)
@@ -450,7 +459,6 @@ function getSerialNumberInfoData(snNumber)
                 HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.RESULT_BLOCK, false);
             }
             cmessBoxMain.sendErrorMessage("Ошибка AJAX на стороне сервера!");
-            return false
         }
     })
 
@@ -462,13 +470,16 @@ function onUserPressedOnBTN(btnType)
 {
     if(btnType === BUTTOM_TYPE.TYPE_EDIT)
     {
-        if(isFindSuccess)
+        if(accessEdit)
         {
-            if(!isEdit)
+            if(isFindSuccess)
             {
-                CreateTable(TABLE_TYPE.TYPE_EDITTING);
-                cButton.switchBTNStatus(TABLE_TYPE.TYPE_EDITTING);
-                isEdit = true;
+                if(!isEdit)
+                {
+                    CreateTable(TABLE_TYPE.TYPE_EDITTING);
+                    cButton.switchBTNStatus(TABLE_TYPE.TYPE_EDITTING);
+                    isEdit = true;
+                }
             }
         }
     }
@@ -624,7 +635,7 @@ function onUserPressedOnBTN(btnType)
 
                                 if(data.result === true)  // удалился успешно
                                 {
-                                    cmessBoxMain.sendSuccessMessage(data.error_text);
+                                    // cmessBoxMain.sendSuccessMessage(data.error_text);
                                     let count = 0;
                                     for(let arr of arr_result)
                                     {
@@ -666,7 +677,7 @@ function onUserPressedOnBTN(btnType)
                                     if(count !== arr_result.length)
                                         cmessBoxMain.sendErrorMessage("Возникла ошибка в обработчике!");
                                     else if(data.reload_block)
-                                        cmessBoxMain.sendWarningMessage("Серийный номер изменён! Режим поиска сброшен!");
+                                        cmessBoxMain.sendWarningMessage("Ключевое поле изменено! Режим поиска сброшен!");
                                     else
                                         cmessBoxBlock.sendSuccessMessage('Данные успешно изменены!');
                                 }
@@ -730,6 +741,18 @@ $(document).ready(function()
     else
         accessEdit = false;
 
+    accessFind = document.getElementById("access_find");
+    if(accessFind)
+    {
+        accessFind = +accessFind.innerText;
+        if(!isValid(accessFind))
+        {
+            accessFind = false;
+        }
+    }
+    else
+        accessFind = false;
+
 
     accessCreate = document.getElementById("access_create");
     if(accessCreate)
@@ -743,9 +766,9 @@ $(document).ready(function()
     else
         accessCreate = false;
 
-    if(!accessEdit && !accessCreate && !accessDelete)
+    if(!accessEdit && !accessCreate && !accessDelete && !accessFind)
     {
-        alert("Ошибка доступа!!!!")
+        alert("Ошибка доступа 2!!!!")
         return;
     }
 
@@ -761,7 +784,7 @@ $(document).ready(function()
     }
     else
     {
-        alert("Ошибка!!!!")
+        alert("Ошибка 3!!!!")
         return;
     }
 
@@ -774,7 +797,7 @@ $(document).ready(function()
     {
         if(!item.isValidWithUnit())
         {
-            alert("Ошибка!!!!")
+            alert("Ошибка 4!!!!")
             return;
         }
     }
@@ -783,15 +806,35 @@ $(document).ready(function()
     let btnSave = document.getElementById("btn_save");
     let btnCancel = document.getElementById("btn_cancel");
 
-    if(
-        !btnEdit ||
-    !btnDel ||
-    !btnSave ||
-    !btnCancel)
+    if(accessEdit)
     {
-        alert("Ошибка!!!!")
-        return;
+        if(
+            !btnEdit ||
+            !btnSave ||
+            !btnCancel)
+        {
+            alert("Ошибка 5!!!!")
+            return;
+        }
     }
+    if(accessDelete)
+    {
+        if(!btnDel)
+        {
+            alert("Ошибка 5!!!!")
+            return;
+        }
+    }
+
+    // if(
+    //     !btnEdit ||
+    // !btnDel ||
+    // !btnSave ||
+    // !btnCancel)
+    // {
+    //     alert("Ошибка 5!!!!")
+    //     return;
+    // }
 
     if(btnEdit)
     {
