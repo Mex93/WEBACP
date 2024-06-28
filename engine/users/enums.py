@@ -1,46 +1,46 @@
-from enum import IntEnum, auto
+from enum import IntEnum
 
 
 class USER_SECTIONS_TYPE(IntEnum):
-    ACC_INDEX = auto(),
-    NICKNAME = auto(),
-    FIRSTNAME = auto(),
-    LASTNAME = auto(),
-    LAST_LOGIN_DATE = auto(),
-    ALEVEL = auto(),
+    ACC_INDEX = 1,
+    NICKNAME = 2,
+    FIRSTNAME = 3,
+    LASTNAME = 4,
+    LAST_LOGIN_DATE = 5,
+    ALEVEL = 6,
 
-    ACCOUNT_TIMEOUT_EXIT = auto(),
-    ACCOUNT_TIMEOUT_EXIT_TIME = auto(),
-    ACCOUNT_CHECKER_ACC_FIND_TIME = auto(),
-    ACCOUNT_SAVE_ME_START_TIME = auto(),
-    ACCOUNT_CHECK_SESSIONS = auto(),
+    ACCOUNT_TIMEOUT_EXIT = 7,
+    ACCOUNT_TIMEOUT_EXIT_TIME = 8,
+    ACCOUNT_CHECKER_ACC_FIND_TIME = 9,
+    ACCOUNT_SAVE_ME_START_TIME = 10,
+    ACCOUNT_CHECK_SESSIONS = 11,
 
-    ACCOUNT_DISABLED = auto(),
-    ACCOUNT_DIS_AINDEX = auto(),
-    ACCOUNT_DIS_DATE = auto(),
+    ACCOUNT_DISABLED = 12,
+    ACCOUNT_DIS_AINDEX = 13,
+    ACCOUNT_DIS_DATE = 14,
 
-    ACCESS_SCAN_EDIT = auto(),
-    ACCESS_SCAN_DELETE = auto(),
-    ACCESS_SCAN_ADD = auto(),
-    ACCESS_SCAN_FIND = auto(),
+    ACCESS_SCAN_EDIT = 15,
+    ACCESS_SCAN_DELETE = 16,
+    ACCESS_SCAN_ADD = 17,
+    ACCESS_SCAN_FIND = 18,
 
-    ACCESS_SN_EDIT = auto(),
-    ACCESS_SN_DELETE = auto(),
-    ACCESS_SN_ADD = auto(),
-    ACCESS_SN_FIND = auto(),
+    ACCESS_SN_EDIT = 19,
+    ACCESS_SN_DELETE = 20,
+    ACCESS_SN_ADD = 21,
+    ACCESS_SN_FIND = 22,
 
-    ACCESS_ASR_EDIT = auto(),
-    ACCESS_ASR_DELETE = auto(),
-    ACCESS_ASR_ADD = auto(),
-    ACCESS_ASR_FIND = auto(),
+    ACCESS_ASR_EDIT = 23,
+    ACCESS_ASR_DELETE = 24,
+    ACCESS_ASR_ADD = 25,
+    ACCESS_ASR_FIND = 26,
 
 
 class USER_SECTION_ACCESS_TYPE(IntEnum):
-    NONE = auto(),
-    ACCOUNT = auto(),
-    ASR = auto(),
-    SCAN_TEMPLATES = auto(),
-    SN = auto(),
+    NONE = 0,
+    ACCOUNT = 1,
+    ASR = 2,
+    SCAN_TEMPLATES = 3
+    SN = 4,
 
 
 class USER_ALEVEL(IntEnum):

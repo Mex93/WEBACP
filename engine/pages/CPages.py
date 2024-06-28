@@ -5,6 +5,8 @@ from engine.users.CUserAccess import CUserAccess
 from engine.users.enums import USER_SECTIONS_TYPE, USER_SECTION_ACCESS_TYPE
 from engine.users.enums import USER_ALEVEL
 
+from captha_main import SIMPLE_CAPTCHA
+
 class CPages:
     def __init__(self, cdebug):
         # templates
@@ -184,6 +186,7 @@ class CPages:
                                        access_unit=access_unit,
                                        access_section=USER_SECTION_ACCESS_TYPE,
                                        alevel=USER_ALEVEL,
+                                       captcha_html=SIMPLE_CAPTCHA.captcha_html,
                                        access_type=USER_SECTIONS_TYPE,
                                        var_values=variables)
         self.__debug_unit.debug_print(f"Не найден шаблон {name}. Прогружаю 404!")
