@@ -57,6 +57,26 @@ class CSQLSNQuerys(CSqlAgent):
             return True
         return False
 
+    def get_device_sn_from_parameters(self, sql_label: str, find_value: str):
+
+        query_string = (f"SELECT {SQL_ASSEMBLED_TV_FIELDS.fd_tv_sn} "
+                        f"FROM {SQL_TABLE_NAME.assembled_tv} "
+                        f"WHERE "
+                        f"{sql_label} = %s "
+                        "LIMIT 1")
+
+        result = self.sql_query_and_get_result(
+            self.get_sql_handle(), query_string, (find_value,),
+            "_1", )  # Запрос типа аасоциативного массива
+        if result is False:  # Errorrrrrrrrrrrrr based data
+            return None
+            # print(result)
+
+        new_device_sn = result[0].get(SQL_ASSEMBLED_TV_FIELDS.fd_tv_sn, None)
+        if new_device_sn is not None:
+            return new_device_sn
+        return None
+
     def delete_sn(self, assy_id: int):
 
         query_string = (f"DELETE FROM {SQL_TABLE_NAME.assembled_tv} "

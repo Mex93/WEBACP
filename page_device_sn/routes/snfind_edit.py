@@ -46,6 +46,7 @@ def set_save_edit_sn_ajax(device_sn: str, assy_id: int, arr: list):
                     vars_for_update_sql_labels = list()
                     vars_for_update_values = list()
                     errors_field = list()
+                    repeat_fields = list()
                     success_fields = list()
                     for item in arr:
                         text_id, _, current_value, _, var_type = item
@@ -56,11 +57,13 @@ def set_save_edit_sn_ajax(device_sn: str, assy_id: int, arr: list):
 
                         text_name = CDeviceSN.get_text_name(arr_index)
 
+                        # Если кириллица
                         if isinstance(current_value, str):
                             if is_cirylic(current_value):
                                 errors_field.append(text_name)
                                 continue
 
+                        # Проверка типа строк и приходящих значений
                         text_var_type = CDeviceSN.get_value_type(arr_index)
                         if var_type == 'string' and text_var_type == str:
                             if isinstance(current_value, str):
@@ -84,11 +87,25 @@ def set_save_edit_sn_ajax(device_sn: str, assy_id: int, arr: list):
                             errors_field.append(text_name)
                             continue
 
+                        # Проверка на повторение компонентов
+                        # чекает конкретный компонент с другими устройствами.
+                        # Не все поля а только то что проверяется
+                        if var_type == 'string':
+                            if CDeviceSN.is_component_check(arr_index):
+                                if len(current_value) > 2:
+                                    if len(sql_label):
+                                        result_repeat = csql.get_device_sn_from_parameters(sql_label, current_value)
+                                        if result_repeat is not None:
+                                            print(result_repeat)
+                                            repeat_fields.append(f"{text_name}: '{result_repeat}'")
+                                            break
+
                         vars_for_update_sql_labels.append(sql_label)
                         vars_for_update_values.append(current_value)
                         success_fields.append(text_name)
                         count += 1
 
+                    # Проверка на то что все поля из приходящего джейсона должны совпадать с обработанными
                     if count == len(arr):
                         handle = csql.get_sql_handle()
 
@@ -102,6 +119,7 @@ def set_save_edit_sn_ajax(device_sn: str, assy_id: int, arr: list):
                             response_for_client.update({"error_text": f"Устройство '{device_sn}' успешно изменено!"})
                             response_for_client.update({"result": True})
 
+                            # Перезагрузка редактора если затронуты определённые поля
                             for find_text_id in ('device_sn', 'model_id'):
 
                                 index = CDeviceSN.get_array_index_from_text_id(find_text_id)
@@ -133,12 +151,26 @@ def set_save_edit_sn_ajax(device_sn: str, assy_id: int, arr: list):
                             response_for_client.update(
                                 {"error_text": f"Ошибка обработчика SQL!"})
                     else:
-                        if len(errors_field):
+                        if len(repeat_fields):
+                            repeat_fields = map(lambda x: str(x), repeat_fields)
                             response_for_client.update(
-                                {"error_text": f"Найдены ошибки в полях: [{','.join(errors_field)}]!"})
+                                {"error_text": f"Найдены повторения в полях других SN: [{','.join(repeat_fields)}]"})
+                            cdebug.debug_print(
+                                f"set_save_edit_sn_ajax AJAX -> [Изменение полей готового устройства SN: '{device_sn}'[{assy_id}]] -> [IDX:{account_idx}, {account_name}] -> "
+                                f"[Ошибка] -> [Найдены повторения в полях других SN: [{','.join(repeat_fields)}]]")
+
+                        elif len(errors_field):
+                            response_for_client.update(
+                                {"error_text": f"Найдены ошибки в полях: [{','.join(errors_field)}]"})
+                            cdebug.debug_print(
+                                f"set_save_edit_sn_ajax AJAX -> [Изменение полей готового устройства SN: '{device_sn}'[{assy_id}]] -> [IDX:{account_idx}, {account_name}] -> "
+                                f"[Ошибка] -> [Найдены ошибки в полях: {','.join(errors_field)}] ")
                         else:
                             response_for_client.update(
                                 {"error_text": f"Найдены ошибки в заполняемых полях!"})
+                            cdebug.debug_print(
+                                f"set_save_edit_sn_ajax AJAX -> [Изменение полей готового устройства SN: '{device_sn}'[{assy_id}]] -> [IDX:{account_idx}, {account_name}] -> "
+                                f"[Ошибка] -> [Найдены ошибки в заполняемых полях] ")
             else:
                 response_for_client.update({"error_text": f"Не найдено устройство '{device_sn}'!"})
                 cdebug.debug_print(
