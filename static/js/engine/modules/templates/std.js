@@ -207,6 +207,12 @@ function onUserPressedMainMenuBtnEdit(mmUnit)
                             lockedState = 'disabled';
                         }
 
+                        if(text_id === 'model_fk')
+                        {
+                            lockedValue = 'disabled';
+                            lockedState = 'disabled';
+                        }
+
 
                         let rulesText = getHelpText(text_id);
                         let str = null;
@@ -1195,6 +1201,9 @@ function onUserPressedCreateTemplateBtn()
                                     {
                                         let [text_id, field_id, text_name, cvalue, cstate, req_once] = element
 
+                                        if(text_id === 'model_fk')
+                                            return false;
+
                                         if(cvalue === null)
                                         {
                                             cvalue = 'disabled'
@@ -1367,6 +1376,12 @@ function getHelpText(textID)
                 "Тип программного обеспечания указывается цифрой порядкового номера ОС конкретной модели устройства. " +
                 "Данный параметр важен и задействован в сканировочных программах. Например: для телевизоров на базе ОС 'OneWay': 2, Мониторы: 4, " +
                 "Интерактивные панели: 5, TCL/IFFCALCON: 1 и так далее. ";
+            break;
+        }
+        case 'model_fk':
+        {
+            rulesText = "" +
+                "Это поле устанавливается автоматически и не требует редактирования.";
             break;
         }
         default:

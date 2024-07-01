@@ -55,6 +55,10 @@ def templates_save_edit_mask_ajax(pa_array, scan_fk, model_id, model_name):
                     if old_value == new_value or old_value == -777 or old_value is None:
                         continue
 
+                    if text_id == 'model_fk':  # запрет на ввод
+                        error_fields.append(text_name)
+                        continue
+
                     # костыль против ввода всего чего либо кроме цифр
                     if text_id == 'platform_fk' or text_id == 'software_type':
                         if not isinstance(new_value, str):

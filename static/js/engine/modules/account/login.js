@@ -73,7 +73,6 @@ function get_login({ email, password, savemy }) {
     }
     //
     responseProcess = true;
-
     let completed_json = JSON.stringify({
         captcha_hash: cresult.captcha_hash,
         captcha_text: cresult.captcha_text,

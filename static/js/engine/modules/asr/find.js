@@ -37,7 +37,7 @@ import {
 
 import {
     cButtons,
-} from "/static/js/engine/modules/asr/cButtons.js";
+} from "/static/js/engine/modules/asr/CButtons.js";
 
 import {
     BUTTOM_TYPE,
@@ -357,6 +357,7 @@ function onUserPressedOnDeleteBtn(btnType)  // если нажата кнопк�
                     {
                         asrSqlValue = casrField.getValue(asrSqlID);
                     }
+
                     if(asrSqlValue !== null)
                     {
                         let completed_json = JSON.stringify({
@@ -527,6 +528,7 @@ function getASRData(inputData) // получение инфы о аср
             if(data.result === true)  // загрузка ASR
             {
                 successAsrID = data.asr_name;
+                // console.log(successAsrID)
 
                 if(data.asr_data)
                 {
@@ -540,6 +542,7 @@ function getASRData(inputData) // получение инфы о аср
                             //console.log(`${key}: ${value}`)
                             let fieldType = casrArray.getFieldTypeFromKeyName(key);
                             let assocArrayIndex = casrArray.getArrIDFromHTMLFieldType(key);
+
                             if(fieldType !== null && assocArrayIndex !== null)
                             {
                                 //console.log(`${key}: ${value}`)

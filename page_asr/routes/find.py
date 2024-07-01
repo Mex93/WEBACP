@@ -180,8 +180,7 @@ def asr_replace_ajax(asr_name, asr_id, replace_list):
 
                                             log_string = str()
                                             for item in replace_list:
-                                                log_string += (f"{item[0].replace("tv_field_", "")}:"
-                                                               f" ({item[1]})->({item[2]}) ")
+                                                log_string += f"{str(item[0]).replace('tv_field_', '')}: ({item[1]})->({item[2]})"
 
                                             text = (f"Пользователь ID: [{account_name}[{acc_index}]] изменил ASR '{asr_name}' ID "
                                                     f"'{asr_id}': ({log_string})")

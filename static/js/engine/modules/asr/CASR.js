@@ -370,7 +370,7 @@ class CASRFields
 
     addField(fieldType, keyName, currentValue)
     {
-        if(fieldType && keyName)
+        if(fieldType !== null && keyName)
         {
             if(this.getArrIDFromFieldType(fieldType) === null)
             {
@@ -386,7 +386,8 @@ class CASRFields
         {
             if(value)
             {
-                if(value[this.FIELD_POD_TYPE.FIELD_TYPE] !== fieldType)continue;
+                if(value[this.FIELD_POD_TYPE.FIELD_TYPE] !== fieldType)
+                    continue;
                 return index;
             }
         }

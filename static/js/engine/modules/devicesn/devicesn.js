@@ -14,7 +14,7 @@ import {BUTTOM_TYPE, TABLE_TYPE} from "/static/js/engine/modules/devicesn/common
 
 import {
     cButtons,
-} from "/static/js/engine/modules/asr/cButtons.js";
+} from "/static/js/engine/modules/asr/CButtons.js";
 
 
 let query = false;

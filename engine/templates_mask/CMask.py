@@ -15,47 +15,50 @@ class CMask:
             ['vendor_code', None, SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_vendor_code,
              'Vendor Code', 1, None, None, TableType.TABLE_MODELS, True, str],
 
+            ['model_fk', None, SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_id,
+             'Номер модели', 2, None, None, TableType.TABLE_MODELS, False, int],
+
             ['platform_fk', None, SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_platform_fk,
-             'Номер платформы', 2, None, None, TableType.TABLE_MODELS, True, int],
+             'Номер платформы', 3, None, None, TableType.TABLE_MODELS, True, int],
 
             ['software_type', None, SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_software_type_fk,
-             'Тип программного обеспечения', 3, None, None, TableType.TABLE_MODELS, True, int],
+             'Тип программного обеспечения', 4, None, None, TableType.TABLE_MODELS, True, int],
             ########################################################
 
             ['wifi_module', SQL_MASK_FIELDS.mfd_scan_wifi_module_sn, SQL_MASK_FIELDS.mfd_wifi_module_sn_template,
-             'WIFI модуль', 4, None, None, TableType.TABLE_SCANS, False, str],
+             'WIFI модуль', 5, None, None, TableType.TABLE_SCANS, False, str],
 
             ['bt_module', SQL_MASK_FIELDS.mfd_scan_bt_module_sn, SQL_MASK_FIELDS.mfd_bt_module_sn_template, 'BT модуль',
-             5, None, None, TableType.TABLE_SCANS, False, str],
-
-            ['ethernet_mac', SQL_MASK_FIELDS.mfd_scan_ethernet_mac, SQL_MASK_FIELDS.mfd_ethernet_mac_sn_template, 'MAC-адрес МП',
              6, None, None, TableType.TABLE_SCANS, False, str],
 
-            ['lcm_sn', SQL_MASK_FIELDS.mfd_scan_lcm_sn, SQL_MASK_FIELDS.mfd_lcm_sn_template, 'Panel SN', 7, None, None,
+            ['ethernet_mac', SQL_MASK_FIELDS.mfd_scan_ethernet_mac, SQL_MASK_FIELDS.mfd_ethernet_mac_sn_template, 'MAC-адрес МП',
+             7, None, None, TableType.TABLE_SCANS, False, str],
+
+            ['lcm_sn', SQL_MASK_FIELDS.mfd_scan_lcm_sn, SQL_MASK_FIELDS.mfd_lcm_sn_template, 'Panel SN', 8, None, None,
              TableType.TABLE_SCANS, False, str],
 
-            ['oc_sn', SQL_MASK_FIELDS.mfd_scan_oc_sn, SQL_MASK_FIELDS.mfd_oc_sn_template, 'Open Cell', 8, None, None,
+            ['oc_sn', SQL_MASK_FIELDS.mfd_scan_oc_sn, SQL_MASK_FIELDS.mfd_oc_sn_template, 'Open Cell', 9, None, None,
              TableType.TABLE_SCANS, False, str],
 
-            ['mainboard_sn', SQL_MASK_FIELDS.mfd_scan_mainboard_sn, SQL_MASK_FIELDS.mfd_mainboard_sn_template, 'Материнская плата', 9,
+            ['mainboard_sn', SQL_MASK_FIELDS.mfd_scan_mainboard_sn, SQL_MASK_FIELDS.mfd_mainboard_sn_template, 'Материнская плата', 10,
              None, None, TableType.TABLE_SCANS, False, str],
 
             ['powerboard_sn', SQL_MASK_FIELDS.mfd_scan_powerboard_sn, SQL_MASK_FIELDS.mfd_powerboard_sn_template, 'Блок питания',
-             10, None, None, TableType.TABLE_SCANS, False, str],
+             11, None, None, TableType.TABLE_SCANS, False, str],
 
-            ['tcon_sn', SQL_MASK_FIELDS.mfd_scan_tcon_sn, SQL_MASK_FIELDS.mfd_tcon_sn_template, 'TCON', 11, None, None,
+            ['tcon_sn', SQL_MASK_FIELDS.mfd_scan_tcon_sn, SQL_MASK_FIELDS.mfd_tcon_sn_template, 'TCON', 12, None, None,
              TableType.TABLE_SCANS, False, str],
 
-            ['ops_sn', SQL_MASK_FIELDS.mfd_scan_ops_sn, SQL_MASK_FIELDS.mfd_ops_sn_template, 'OPS SN', 12, None, None,
+            ['ops_sn', SQL_MASK_FIELDS.mfd_scan_ops_sn, SQL_MASK_FIELDS.mfd_ops_sn_template, 'OPS SN', 13, None, None,
              TableType.TABLE_SCANS, False, str],
 
-            ['ops_mac', SQL_MASK_FIELDS.mfd_scan_ops_mac, SQL_MASK_FIELDS.mfd_ops_mac_template, 'OPS MAC', 13, None,
+            ['ops_mac', SQL_MASK_FIELDS.mfd_scan_ops_mac, SQL_MASK_FIELDS.mfd_ops_mac_template, 'OPS MAC', 14, None,
              None, TableType.TABLE_SCANS, False, str],
 
-            ['mac_usbc', SQL_MASK_FIELDS.mfd_scan_mac_usbc, SQL_MASK_FIELDS.mfd_mac_usbc_template, 'USB-C MAC', 14,
+            ['mac_usbc', SQL_MASK_FIELDS.mfd_scan_mac_usbc, SQL_MASK_FIELDS.mfd_mac_usbc_template, 'USB-C MAC', 15,
              None, None, TableType.TABLE_SCANS, False, str],
 
-            ['storage_sn', SQL_MASK_FIELDS.mfd_scan_storage_sn, SQL_MASK_FIELDS.mfd_storage_template, 'Storage', 15,
+            ['storage_sn', SQL_MASK_FIELDS.mfd_scan_storage_sn, SQL_MASK_FIELDS.mfd_storage_template, 'Storage', 16,
              None, None, TableType.TABLE_SCANS, False, str],
         )
 

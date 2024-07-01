@@ -19,7 +19,4 @@ MAX_USER_SESSION_LIFE_TIME = 60 * 600  # Время сброса времени 
 # если не выбрано сохранить меня
 
 
-def get_inet_ipaddress():
-    return request.remote_addr
-
 
