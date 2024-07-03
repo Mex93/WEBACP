@@ -9,6 +9,31 @@ class CSQLSNQuerys(CSqlAgent):
     def __init__(self):
         super().__init__()
 
+    def get_device_data_log(self, device_sn: str) -> str | bool:
+
+        query_string = (f"SELECT * "
+                        f"FROM {SQL_TABLE_NAME.assembled_tv} "
+                        f"WHERE "
+                        f"{SQL_ASSEMBLED_TV_FIELDS.fd_tv_sn} = %s "
+                        "LIMIT 1")
+
+        result = self.sql_query_and_get_result(
+            self.get_sql_handle(), query_string, (device_sn, ), "_1", )  # Запрос типа аасоциативного массива
+        if result is False:  # Errorrrrrrrrrrrrr based data
+            return False
+        # print(result)
+
+        sql_result = result[0].get(SQL_ASSEMBLED_TV_FIELDS.fd_tv_sn, None)
+        if sql_result is not None:
+            asr_str = str()
+            keys = result[0].keys()
+            for key in keys:
+                value = result[0].get(key, None)
+                asr_str += f'{key}: {value} '
+            return asr_str
+
+        return False
+
     def get_device_data(self, device_sn: str):
 
         query_string = (f"SELECT {SQL_TABLE_NAME.tv_model_info_tv}.{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_name},"

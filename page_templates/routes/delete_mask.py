@@ -38,7 +38,14 @@ def templates_delete_mask_ajax(scan_fk, model_id, model_name):
             if data is not False:
                 if not csql.is_any_model_used_on_devices(model_id):
 
+                    scan_data = csql.get_model_data_log(scan_fk, model_id)
+
                     if csql.delete_template(scan_fk, model_id) is True:
+
+                        if scan_data:
+                            cdebug.debug_sql_print(f'{account_name}[{account_idx}]',
+                                                   'Удаление модели устройства',
+                                                   scan_data)
 
                         #################################
                         text = f"Пользователь ID: [{account_name}[{account_idx}]] удалил модель устройства '{model_name}'[MID: {model_id}, SID: {scan_fk}]"

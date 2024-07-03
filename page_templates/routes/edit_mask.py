@@ -182,6 +182,12 @@ def templates_save_edit_mask_ajax(pa_array, scan_fk, model_id, model_name):
                         if count > 0:
                             csql.update_template_edit_date(model_id)
 
+                            scan_data = csql.get_model_data_log(scan_fk, model_id)
+                            if scan_data:
+                                cdebug.debug_sql_print(f'{account_name}[{account_idx}]',
+                                                       'Изменение модели устройства',
+                                                       scan_data)
+
                             #################################
                             text = f"Пользователь ID: [{account_name}[{account_idx}]] изменил модель устройства '{model_name}'[MID: {model_id}, SID: {scan_fk}]"
                             CSQLUserLogQuerys.send_log(

@@ -7,6 +7,7 @@ from engine.users.CSQLUserQuerys import CSQLUserQuerys
 from engine.users.users_log.enums import LOG_TYPE, LOG_OBJECT_TYPE, LOG_SUBTYPE
 from engine.sql.enums import CONNECT_DB_TYPE
 
+from engine.debug.CExcelLog import CExcelLog
 
 class CSQLUserLogQuerys:
 

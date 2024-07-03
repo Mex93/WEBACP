@@ -184,6 +184,11 @@ def asr_replace_ajax(asr_name, asr_id, replace_list):
 
                                             text = (f"Пользователь ID: [{account_name}[{acc_index}]] изменил ASR '{asr_name}' ID "
                                                     f"'{asr_id}': ({log_string})")
+
+                                            asr_data = line_csql.get_asr_data_log(asr_name)
+                                            if asr_data:
+                                                cdebug.debug_sql_print(f'{account_name}[{acc_index}]', 'Замена параметров в ASR', asr_data)
+
                                             CSQLUserLogQuerys.send_log(
                                                 acc_index,
                                                 LOG_OBJECT_TYPE.LGOT_USER,
@@ -294,9 +299,14 @@ def asr_del_ajax(asr_name, asr_id):
 
                         #  ----------------------------------------------------------------------------------------
                         if start_next is True:
+                            asr_data = line_csql.get_asr_data_log(asr_name)
                             result_delete = line_csql.delete_asr(asr_id, asr_name)
                             if result_delete:
                                 # print("ASR " + str(asr_id), str(asr_name))
+
+                                if asr_data:
+                                    cdebug.debug_sql_print(f'{nickname}[{acc_index}]', 'Удаление ASR',
+                                                           asr_data)
 
                                 #################################
                                 text = f"Пользователь ID: [{nickname}[{acc_index}]] удалил ASR '{asr_name}' ID:'{asr_id}'"
@@ -409,6 +419,10 @@ def asr_find_ajax(asr_name):
                         #  ----------------------------------------------------------------------------------------
 
                         #################################
+
+                        asr_data = line_csql.get_asr_data_log(asr_find_name)
+                        if asr_data:
+                            cdebug.debug_sql_print(f'{nickname}[{acc_index}]', 'Запрос инфы ASR', asr_data)
 
                         text = f"Пользователь ID:  [{nickname}[{acc_index}]] запросил информацию ASR '{asr_find_name}'"
                         CSQLUserLogQuerys.send_log(

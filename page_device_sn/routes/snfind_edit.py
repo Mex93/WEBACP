@@ -132,6 +132,11 @@ def set_save_edit_sn_ajax(device_sn: str, assy_id: int, arr: list):
 
                             vars_for_update_values = map(lambda x: str(x), vars_for_update_values)
 
+                            device_data = csql.get_device_data_log(device_sn)
+                            if device_data:
+                                cdebug.debug_sql_print(f'{account_name}[{account_idx}]', 'Изменение параметров SN устройства',
+                                                       device_data)
+
                             #################################
                             text = (f"Пользователь ID: [{account_name}[{account_idx}]] изменил значение полей"
                                     f"({','.join(success_fields)}) -> ({','.join(vars_for_update_values)}) готового изделия '{device_sn}'[{assy_id}]")

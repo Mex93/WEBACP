@@ -110,6 +110,10 @@ def get_device_sn_data(device_sn):
                     response_for_client.update({"result": True})
                     response_for_client.update({"arr": result_arr})
 
+                    device_data = csql.get_device_data_log(device_sn)
+                    if device_data:
+                        cdebug.debug_sql_print(f'{account_name}[{account_idx}]', 'Запрос SN устройства', device_data)
+
                     #################################
                     text = f"Пользователь ID: [{account_name}[{account_idx}]] произвёл поиск SN устройства '{device_sn}']"
                     CSQLUserLogQuerys.send_log(

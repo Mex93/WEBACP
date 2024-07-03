@@ -305,7 +305,12 @@ def templates_create_mask_set_add_ajax(create_parameters: list):
                                         f"[Ошибка создания]")
                                 else:
 
-                                    #################################
+                                    scan_data = csql.get_model_data_log(max_index_in_scan_mask_table, max_index_in_modelid_table)
+                                    if scan_data:
+                                        cdebug.debug_sql_print(f'{account_name}[{account_idx}]',
+                                                               'Создание новой модели',
+                                                               scan_data)
+                                #################################
                                     text = (f"Пользователь ID: [{account_name}[{account_idx}]] создал новую модель "
                                             f"'{model_name}'[MID: {max_index_in_modelid_table}, SID: {max_index_in_scan_mask_table}]")
                                     CSQLUserLogQuerys.send_log(

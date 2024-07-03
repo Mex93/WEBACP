@@ -37,11 +37,14 @@ def set_delete_sn_ajax_ajax(device_sn: str, assy_id: int):
         if result_connect is True:
             data = csql.is_devicesn_valid(device_sn, assy_id)
             if data is not False:
+                device_data = csql.get_device_data_log(device_sn)
                 data = csql.delete_sn(assy_id)
                 if data:
-
                     response_for_client.update({"error_text": f"Устройство '{device_sn}' успешно удалено!"})
                     response_for_client.update({"result": True})
+
+                    if device_data:
+                        cdebug.debug_sql_print(f'{account_name}[{account_idx}]', 'Удаление SN устройства', device_data)
 
                     #################################
                     text = f"Пользователь ID: [{account_name}[{account_idx}]] удалил готовое устройство из базы '{device_sn}'[{assy_id}]]"

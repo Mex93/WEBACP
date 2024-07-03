@@ -38,6 +38,31 @@ class CSQLASRQuerys(CSqlAgent):
             return result
         return False
 
+    def get_asr_data_log(self, asr_name: any) -> str | bool:
+
+        query_string = (f"SELECT * "
+                        f"FROM {SQL_TABLE_NAME.asr_tv} "
+                        f"WHERE "
+                        f"{SQL_ASR_FIELDS.asr_fd_tv_asr_name} = %s "
+                        "LIMIT 1")
+
+        result = self.sql_query_and_get_result(
+            self.get_sql_handle(), query_string, (asr_name, ), "_1", )  # Запрос типа аасоциативного массива
+        if result is False:  # Errorrrrrrrrrrrrr based data
+            return False
+        # print(result)
+
+        sql_result = result[0].get(SQL_ASR_FIELDS.asr_fd_tv_asr_name, None)
+        if sql_result is not None:
+            asr_str = str()
+            keys = result[0].keys()
+            for key in keys:
+                value = result[0].get(key, None)
+                asr_str += f'{key}: {value} '
+            return asr_str
+
+        return False
+
     def check_asr_data(self, asr_name: str, asr_id: int) -> dict | bool:
 
         query_string = (f"SELECT "
