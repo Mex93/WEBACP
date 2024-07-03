@@ -1,7 +1,8 @@
 from engine.sql.CSQLAgent import CSqlAgent
 from engine.sql.sql_data import (SQL_TABLE_NAME,
                                  SQL_TV_MODEL_INFO_FIELDS,
-                                 SQL_MASK_FIELDS)
+                                 SQL_MASK_FIELDS,
+                                 SQL_ASSEMBLED_TV_FIELDS)
 
 
 class CSQLTemplatesQuerys(CSqlAgent):
@@ -29,6 +30,26 @@ class CSQLTemplatesQuerys(CSqlAgent):
         sql_result = result[0].get(SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_id, None)
         if sql_result is not None:
             return result
+        return False
+
+    def is_any_model_used_on_devices(self, model_id: int) -> list | bool:
+
+        query_string = (f"SELECT COUNT(*) as cout_of_tv "
+                        f"FROM {SQL_TABLE_NAME.assembled_tv} "
+                        f"WHERE {SQL_ASSEMBLED_TV_FIELDS.fd_tvfk} = %s "
+                        "LIMIT 1")
+
+        result = self.sql_query_and_get_result(
+            self.get_sql_handle(), query_string, (model_id, ), "_1", )  # Запрос типа аасоциативного массива
+        if result is False:  # Errorrrrrrrrrrrrr based data
+            return False
+        # print(result)
+
+        sql_result = result[0].get('cout_of_tv', None)
+
+        if isinstance(sql_result, int):
+            if sql_result > 0:
+                return True
         return False
 
     def get_scanned_params(self, scan_fk: int, model_fk: int) -> dict | bool:

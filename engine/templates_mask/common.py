@@ -11,3 +11,4 @@ def is_field_len(field_text: str) -> bool:
 
 def is_cirylic(text: str):
     return bool(re.search('[а-яА-Я]', text))
+

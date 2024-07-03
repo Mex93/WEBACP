@@ -19,6 +19,9 @@ from engine.sql.sql_data import SQL_TV_MODEL_INFO_FIELDS, SQL_MASK_FIELDS
 from engine.users.users_log.CSQLUserLogQuerys import CSQLUserLogQuerys
 from engine.users.users_log.enums import LOG_TYPE, LOG_SUBTYPE, LOG_OBJECT_TYPE
 
+from engine.tv_models.CModels import CModels
+from engine.tv_models.enums import MODELS_TYPE
+
 cdebug = CDebug()
 cdebug.debug_system_on(True)
 
@@ -143,6 +146,11 @@ def templates_create_mask_set_add_ajax(create_parameters: list):
                         continue
                     else:
                         if is_cirylic(current_value):
+                            is_field_requared_list.append(text_name)
+                            result_s = False
+                            continue
+
+                        if CModels.get_model_type_from_model_name(current_value) == MODELS_TYPE.NONE:
                             is_field_requared_list.append(text_name)
                             result_s = False
                             continue
