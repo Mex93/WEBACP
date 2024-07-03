@@ -22,7 +22,7 @@ class CUser:
 
     @staticmethod
     def is_email_valid(text: str) -> bool:
-        if re.search(r'([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)', text):
+        if re.search(r'/[^a-zA-Z0-9-_@.]/', text):
             return False
         return True
 

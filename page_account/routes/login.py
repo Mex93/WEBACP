@@ -284,7 +284,7 @@ def ulogin(password, email, savemy):
             csql.disconnect_from_db()
     else:
         if len(result_login_check_fields) > 0:
-            response_for_client.update({"error_text": result_login_check_fields})
+            response_for_client.update({"error_text": "Ошибка авторизации. Возможно ошибка в Email или пароле!"})
             response_for_client.update({"result": False})
             cdebug.debug_print(f"ulogin AJAX -> [{email}] -> "
                                f"[Проверка введённых данных не пройдена] ->[{result_login_check_fields}]")

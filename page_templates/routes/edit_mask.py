@@ -183,7 +183,7 @@ def templates_save_edit_mask_ajax(pa_array, scan_fk, model_id, model_name):
                             csql.update_template_edit_date(model_id)
 
                             #################################
-                            text = f"Пользователь ID: [{account_name}[{account_idx}]] изменил шаблон сканировки '{model_name}'[MID: {model_id}, SID: {scan_fk}]"
+                            text = f"Пользователь ID: [{account_name}[{account_idx}]] изменил модель устройства '{model_name}'[MID: {model_id}, SID: {scan_fk}]"
                             CSQLUserLogQuerys.send_log(
                                 account_idx,
                                 LOG_OBJECT_TYPE.LGOT_USER,
@@ -192,24 +192,24 @@ def templates_save_edit_mask_ajax(pa_array, scan_fk, model_id, model_name):
                                 text)
 
                             response_for_client.update(
-                                {"error_text": f"Шаблон сканировки для '{model_name}[{model_id}]' изменён!"})
+                                {"error_text": f"Модель устройства '{model_name}[{model_id}]' изменена!"})
                             response_for_client.update({"result": True})
                             cdebug.debug_print(
-                                f"templates_save_edit_mask_ajax AJAX -> [Сохранение редактирования шаблона сканировки '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
-                                f"[Удачно] -> [Шаблон сканировки для '{model_name}[{model_id}]' изменён!] ")
+                                f"templates_save_edit_mask_ajax AJAX -> [Сохранение редактирования модели устройства '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+                                f"[Удачно] -> [Модель устройства для '{model_name}[{model_id}]' изменена!] ")
                         else:
                             response_for_client.update(
                                 {
                                     "error_text": f"Внутренняя ошибка вычислений номеров строк SQL'{model_name}[{model_id}]'!"})
                             cdebug.debug_print(
-                                f"templates_save_edit_mask_ajax AJAX -> [Сохранение редактирования шаблона сканировки '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+                                f"templates_save_edit_mask_ajax AJAX -> [Сохранение редактирования модели устройства '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
                                 f"[Ошибка] -> [Внутренняя ошибка вычислений номеров строк SQL'{model_name}[{model_id}]'!] ")
                     else:
                         response_for_client.update(
                             {
                                 "error_text": f"Внутренняя ошибка вычислений номеров строк SQL'{model_name}[{model_id}]'!"})
                         cdebug.debug_print(
-                            f"templates_save_edit_mask_ajax AJAX -> [Сохранение редактирования шаблона сканировки '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+                            f"templates_save_edit_mask_ajax AJAX -> [Сохранение редактирования модели устройства '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
                             f"[Ошибка] -> [Внутренняя ошибка вычислений номеров строк SQL'{model_name}[{model_id}]'!] ")
                 else:
                     if len(error_fields) > 0:
@@ -221,39 +221,39 @@ def templates_save_edit_mask_ajax(pa_array, scan_fk, model_id, model_name):
                             {
                                 "error_text": f"Возможно вы ошиблись в некоторых полях '{model_name}[{model_id}]'!"})
                     cdebug.debug_print(
-                        f"templates_save_edit_mask_ajax AJAX -> [Сохранение редактирования шаблона сканировки '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+                        f"templates_save_edit_mask_ajax AJAX -> [Сохранение редактирования модели устройства '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
                         f"[Ошибка] -> [Возможно вы ошиблись в некоторых полях '{model_name}[{model_id}]'!] ")
             else:
                 response_for_client.update(
                     {"error_text": f"Не найдена маска сканировки для '{model_name}[{model_id}]'!"})
                 cdebug.debug_print(
-                    f"templates_save_edit_mask_ajax AJAX -> [Сохранение редактирования шаблона сканировки '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+                    f"templates_save_edit_mask_ajax AJAX -> [Сохранение редактирования модели устройства '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
                     f"[Ошибка] -> [Не найдена маска сканировки для '{model_name}[{model_id}]'!] ")
         else:
             raise NotConnectToDB("Not SQL Connect!")
     except NotConnectToDB as err:
         response_for_client.update({"error_text": "errorcode: templates_save_edit_mask_ajax -> [NotConnectToDB]"})
         cdebug.debug_print(
-            f"templates_save_edit_mask_ajax AJAX -> [Сохранение редактирования шаблона сканировки '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+            f"templates_save_edit_mask_ajax AJAX -> [Сохранение редактирования модели устройства '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
             f"[Исключение] [NotConnectToDB: '{err}']")
 
     except ErrorSQLQuery as err:
         response_for_client.update({"error_text": "errorcode: templates_save_edit_mask_ajax -> [ErrorSQLQuery]"})
         cdebug.debug_print(
-            f"templates_save_edit_mask_ajax AJAX -> [Сохранение редактирования шаблона сканировки '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+            f"templates_save_edit_mask_ajax AJAX -> [Сохранение редактирования модели устройства '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
             f"[Исключение] [ErrorSQLQuery: '{err}']")
 
     except ErrorSQLData as err:
         response_for_client.update({"error_text": "errorcode: templates_save_edit_mask_ajax -> [ErrorSQLData]"})
         cdebug.debug_print(
-            f"templates_save_edit_mask_ajax AJAX -> [Сохранение редактирования шаблона сканировки '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+            f"templates_save_edit_mask_ajax AJAX -> [Сохранение редактирования модели устройства '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
             f"[Исключение] [ErrorSQLData: '{err}']")
 
     except Exception as err:
 
         response_for_client.update({"error_text": "errorcode: templates_save_edit_mask_ajax -> [Error Data]"})
         cdebug.debug_print(
-            f"templates_save_edit_mask_ajax AJAX -> [Сохранение редактирования шаблона сканировки '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+            f"templates_save_edit_mask_ajax AJAX -> [Сохранение редактирования модели устройства '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
             f"[Исключение] [Error Data: '{err}']")
 
     finally:
@@ -261,7 +261,7 @@ def templates_save_edit_mask_ajax(pa_array, scan_fk, model_id, model_name):
 
     result = json.dumps(response_for_client)
     cdebug.debug_print(
-        f"templates_save_edit_mask_ajax AJAX -> [Сохранение редактирования шаблона сканировки '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+        f"templates_save_edit_mask_ajax AJAX -> [Сохранение редактирования модели устройства '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
         f"[Ответ в JS] -> [{count}]")
     return result
 
@@ -348,59 +348,59 @@ def templates_get_edit_mask_ajax(scan_fk, model_id, model_name):
                         count += 1
 
                     if count:
-                        response_for_client.update({"error_text": "Список сканировки предоставлен"})
+                        response_for_client.update({"error_text": "Список параметров модели устройства предоставлен"})
                         response_for_client.update({"result": True})
                         response_for_client.update({"arr": arr_results})
 
                         cdebug.debug_print(
-                            f"templates_edit_mask_ajax AJAX -> [Получение списка сканировки '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
-                            f"[Удачно] -> [Список сканировки предоставлен!] ")
+                            f"templates_edit_mask_ajax AJAX -> [Получение списка параметров модели устройства '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+                            f"[Удачно] -> [Список предоставлен!] ")
 
                     else:
                         print("Ошибка 2!")
                         response_for_client.update(
-                            {"error_text": f"Не найден список сканировки для '{model_name}[{model_id}]'!"})
+                            {"error_text": f"Не найден список параметров модели устройства для '{model_name}[{model_id}]'!"})
                         cdebug.debug_print(
-                            f"templates_edit_mask_ajax AJAX -> [Получение списка сканировки '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
-                            f"[Ошибка] -> [Не найден список сканировки для '{model_name}[{model_id}]'!] ")
+                            f"templates_edit_mask_ajax AJAX -> [Получение списка параметров модели устройства '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+                            f"[Ошибка] -> [Не найден список параметров модели устройства для '{model_name}[{model_id}]'!] ")
                 else:
                     print("Ошибка 1!")
                     response_for_client.update(
                         {"error_text": f"Не найден список сканировки для '{model_name}[{model_id}]'!"})
                     cdebug.debug_print(
-                        f"templates_edit_mask_ajax AJAX -> [Получение списка сканировки '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
-                        f"[Ошибка] -> [Не найден список сканировки для '{model_name}[{model_id}]'!] ")
+                        f"templates_edit_mask_ajax AJAX -> [Получение списка параметров модели устройства '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+                        f"[Ошибка] -> [Не найден список параметров модели устройства для '{model_name}[{model_id}]'!] ")
             else:
                 response_for_client.update(
-                    {"error_text": f"Не найден список сканировки для '{model_name}[{model_id}]'!"})
+                    {"error_text": f"Не найден список параметров модели устройства для '{model_name}[{model_id}]'!"})
                 cdebug.debug_print(
-                    f"templates_edit_mask_ajax AJAX -> [Получение списка сканировки '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
-                    f"[Ошибка] -> [Не найден список сканировки для '{model_name}[{model_id}]'!] ")
+                    f"templates_edit_mask_ajax AJAX -> [Получение списка параметров модели устройства '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+                    f"[Ошибка] -> [Не найден список параметров модели устройства для '{model_name}[{model_id}]'!] ")
         else:
             raise NotConnectToDB("Not SQL Connect!")
     except NotConnectToDB as err:
         response_for_client.update({"error_text": "errorcode: templates_edit_mask_ajax -> [NotConnectToDB]"})
         cdebug.debug_print(
-            f"templates_edit_mask_ajax AJAX -> [Получение списка сканировки '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+            f"templates_edit_mask_ajax AJAX -> [Получение списка параметров модели устройства '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
             f"[Исключение] [NotConnectToDB: '{err}']")
 
     except ErrorSQLQuery as err:
         response_for_client.update({"error_text": "errorcode: templates_edit_mask_ajax -> [ErrorSQLQuery]"})
         cdebug.debug_print(
-            f"templates_edit_mask_ajax AJAX -> [Получение списка сканировки '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+            f"templates_edit_mask_ajax AJAX -> [Получение списка параметров модели устройства '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
             f"[Исключение] [ErrorSQLQuery: '{err}']")
 
     except ErrorSQLData as err:
         response_for_client.update({"error_text": "errorcode: templates_edit_mask_ajax -> [ErrorSQLData]"})
         cdebug.debug_print(
-            f"templates_edit_mask_ajax AJAX -> [Получение списка сканировки '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+            f"templates_edit_mask_ajax AJAX -> [Получение списка параметров модели устройства '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
             f"[Исключение] [ErrorSQLData: '{err}']")
 
     except Exception as err:
 
         response_for_client.update({"error_text": "errorcode: templates_edit_mask_ajax -> [Error Data]"})
         cdebug.debug_print(
-            f"templates_edit_mask_ajax AJAX -> [Получение списка сканировки '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+            f"templates_edit_mask_ajax AJAX -> [Получение списка параметров модели устройства '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
             f"[Исключение] [Error Data: '{err}']")
 
     finally:
@@ -408,6 +408,6 @@ def templates_get_edit_mask_ajax(scan_fk, model_id, model_name):
 
     result = json.dumps(response_for_client)
     cdebug.debug_print(
-        f"templates_edit_mask_ajax AJAX -> [Получение списка сканировки '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+        f"templates_edit_mask_ajax AJAX -> [Получение списка параметров модели устройства '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
         f"[Ответ в JS] -> [{count}]")
     return result

@@ -14,7 +14,7 @@
     <div class = 'container-common container'>
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <div class = "header-common" id="block_scross_main">
-            <h1>Шаблоны сканировки</h1>
+            <h1>Модели устройств</h1>
         </div>
 
         <span id = 'seleketon_model_list'>
@@ -40,7 +40,7 @@
             <div class="block_btn">
 
             {% if access_unit.is_access_for_panel(access_type.ACCESS_SCAN_ADD) == True %}
-                 <button id = "btn_create" type="submit" name = "create" value = "create" class = "btm_submit-common">Создать шаблон</button>
+                 <button id = "btn_create" type="submit" name = "create" value = "create" class = "btm_submit-common">Создать модель</button>
             {% endif %}
 
             </div>
@@ -138,7 +138,7 @@
                 </div>
             </span>
             <div class = "header-common">
-                <h1>Создание нового шаблона</h1>
+                <h1>Создание новой модели</h1>
             </div>
             <div class="block_btn inline_buttom">
                 <button id = "btn_save_create" type="submit" name = "save" value = "save" class = "btm_submit-common">Сохранить</button>

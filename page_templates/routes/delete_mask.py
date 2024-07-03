@@ -39,7 +39,7 @@ def templates_delete_mask_ajax(scan_fk, model_id, model_name):
                 if csql.delete_template(scan_fk, model_id) is True:
 
                     #################################
-                    text = f"Пользователь ID: [{account_name}[{account_idx}]] удалил шаблон сканировки '{model_name}'[MID: {model_id}, SID: {scan_fk}]"
+                    text = f"Пользователь ID: [{account_name}[{account_idx}]] удалил модель устройства '{model_name}'[MID: {model_id}, SID: {scan_fk}]"
                     CSQLUserLogQuerys.send_log(
                         account_idx,
                         LOG_OBJECT_TYPE.LGOT_USER,
@@ -50,46 +50,46 @@ def templates_delete_mask_ajax(scan_fk, model_id, model_name):
                     response_for_client.update({"error_text": f"Шаблон '{model_name}' успешно удалён!"})
                     response_for_client.update({"result": True})
                     cdebug.debug_print(
-                        f"templates_delete_mask_ajax AJAX -> [Удаление шаблона сканировки '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+                        f"templates_delete_mask_ajax AJAX -> [Удаление модели устройства '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
                         f"[Удачно] -> [Шаблон '{model_name}' успешно удалён!] ")
                 else:
                     response_for_client.update(
-                        {"error_text": f"Ошибка удаления шаблона '{model_name}[{model_id}]'!"})
+                        {"error_text": f"Ошибка удаления модели устройства '{model_name}[{model_id}]'!"})
 
                     cdebug.debug_print(
-                        f"templates_delete_mask_ajax AJAX -> [Удаление шаблона сканировки '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
-                        f"[Ошибка] -> [Ошибка удаления шаблона '{model_name}[{model_id}]'] ")
+                        f"templates_delete_mask_ajax AJAX -> [Удаление модели устройства '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+                        f"[Ошибка] -> [Ошибка удаления модели устройства '{model_name}[{model_id}]'] ")
             else:
                 response_for_client.update(
                     {"error_text": f"Не найдена маска сканировки для '{model_name}[{model_id}]'!"})
                 cdebug.debug_print(
-                    f"templates_delete_mask_ajax AJAX -> [Удаление шаблона сканировки '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+                    f"templates_delete_mask_ajax AJAX -> [Удаление модели устройства '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
                     f"[Ошибка] -> [Не найдена маска сканировки для '{model_name}[{model_id}]'] ")
         else:
             raise NotConnectToDB("Not SQL Connect!")
     except NotConnectToDB as err:
         response_for_client.update({"error_text": "errorcode: templates_delete_mask_ajax -> [NotConnectToDB]"})
         cdebug.debug_print(
-            f"templates_delete_mask_ajax AJAX -> [Удаление шаблона сканировки '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+            f"templates_delete_mask_ajax AJAX -> [Удаление модели устройства '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
             f"[Исключение] [NotConnectToDB: '{err}']")
 
     except ErrorSQLQuery as err:
         response_for_client.update({"error_text": "errorcode: templates_delete_mask_ajax -> [ErrorSQLQuery]"})
         cdebug.debug_print(
-            f"templates_delete_mask_ajax AJAX -> [Удаление шаблона сканировки '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+            f"templates_delete_mask_ajax AJAX -> [Удаление модели устройства '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
             f"[Исключение] [ErrorSQLQuery: '{err}']")
 
     except ErrorSQLData as err:
         response_for_client.update({"error_text": "errorcode: templates_delete_mask_ajax -> [ErrorSQLData]"})
         cdebug.debug_print(
-            f"templates_delete_mask_ajax AJAX -> [Удаление шаблона сканировки '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+            f"templates_delete_mask_ajax AJAX -> [Удаление модели устройства '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
             f"[Исключение] [ErrorSQLData: '{err}']")
 
     except Exception as err:
 
         response_for_client.update({"error_text": "errorcode: templates_delete_mask_ajax -> [Error Data]"})
         cdebug.debug_print(
-            f"templates_delete_mask_ajax AJAX -> [Удаление шаблона сканировки '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+            f"templates_delete_mask_ajax AJAX -> [Удаление модели устройства '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
             f"[Исключение] [Error Data: '{err}']")
 
     finally:
@@ -97,6 +97,6 @@ def templates_delete_mask_ajax(scan_fk, model_id, model_name):
 
     result = json.dumps(response_for_client)
     cdebug.debug_print(
-        f"templates_delete_mask_ajax AJAX -> [Удаление шаблона сканировки '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+        f"templates_delete_mask_ajax AJAX -> [Удаление модели устройства '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
         f"[Ответ в JS] -> [{count}]")
     return result

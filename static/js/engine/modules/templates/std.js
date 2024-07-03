@@ -1,5 +1,5 @@
 
-// Морда для создания и редактирования шаблонов сканировки
+// Морда для создания и редактирования модели устройства сканировки
 // Удаление, создание и редактирование
 // Рязанов НВ 26.06.2024
 // ООО КВАНТ
@@ -87,7 +87,7 @@ function onUserPressedMainMenuBtnEdit(mmUnit)
         return false;
     if(isCreateTemplate)
     {
-        alert('Сперва завершите создание шаблона!')
+        alert('Сперва завершите создание модели!')
         return
     }
     if(isEditTemplate)
@@ -250,7 +250,7 @@ function onUserPressedMainMenuBtnEdit(mmUnit)
 
                     if(count > 0)
                     {
-                        modelLabelID.innerText = `Редактирование шаблона ${modelName}`;
+                        modelLabelID.innerText = `Редактирование модели ${modelName}`;
                         let AttachBlockID = HTMLBlocks.getHTMLID(HTMLBlocks.BLOCK_TYPE.EDIT_BLOCK);
                         AttachBlockID.append(cEditTableID);
 
@@ -312,7 +312,7 @@ function onUserPressedMainMenuBtnEdit(mmUnit)
 
 function onUserPressedSaveTemplateBtn()
 {
-    console.log("Сохранить шаблон")
+    console.log("Сохранить модель")
 
     if(!accessEdit)
     {
@@ -499,19 +499,19 @@ function onUserPressedMainMenuBtnDel(mmUnit)
     }
     if(isEditTemplate)
     {
-        alert('Сперва завершите редактирование или просмотр шаблона!')
+        alert('Сперва завершите редактирование или просмотр модели!')
         return
     }
     if(isCreateTemplate)
     {
-        alert('Сперва завершите создание нового шаблона!')
+        alert('Сперва завершите создание новой модели!')
         return
     }
 
 
     let modelName = mmUnit.getModelName();
     let modelTypeName = mmUnit.getModelTypeName();
-    if (confirm(`"Вы действительно хотите удалить выбранный шаблон '${modelTypeName}' '${modelName}' ?
+    if (confirm(`"Вы действительно хотите удалить выбранную модель '${modelTypeName}' '${modelName}' ?
             \nОтменить действие будет невозможно!"`)) // yes
     {
 
@@ -942,7 +942,7 @@ function onUserPressedCancelEditTemplateBtn()
 //////////////////////////////////////
 function onUserPressedSaveCreateTemplateBtn()
 {
-    console.log("сохранить созданный шаблон")
+    console.log("сохранить созданную модель")
     if(isEditTemplate)
     {
         return
@@ -1069,7 +1069,7 @@ function destroyCreateBlock()
 }
 function onUserPressedCancelCreateTemplateBtn()
 {
-    console.log("отменить созданный шаблон")
+    console.log("отменить созданный модель")
     if(isCreateTemplate)
     {
         gotoToMainBlock();
@@ -1119,7 +1119,7 @@ function onUserPressedCreateTemplateBtn()
 
     if(isEditTemplate)
     {
-        alert('Сперва завершите редактирование или просмотр шаблона!')
+        alert('Сперва завершите редактирование или просмотр модели!')
         return
     }
 
@@ -1295,7 +1295,7 @@ function onUserPressedCreateTemplateBtn()
                                     }
                                     if(!count)
                                     {
-                                        console.log(`Внимание! Ошибка в построении таблицы параметров для создания шаблона!`)
+                                        console.log(`Внимание! Ошибка в построении таблицы параметров для создания модели!`)
                                         destroyCreateBlock();
                                         return false;
                                     }
@@ -1387,7 +1387,7 @@ function getHelpText(textID)
         default:
         {
             rulesText = "" +
-                "Для составления правильного шаблона нужно руководствоваться правилом повторения символов в серийном номере. " +
+                "Для составления правильного шаблона нужно руководствоваться правилом повторения символов в серийном номере компонента или устройства. " +
                 "Заменяйте знаком '*' все символы, которые не повторяются. " +
                 "В шаблоне не должно быть кириллицы. Формат шаблона должен полностью повторять оригинал серийного номера конкретного компонента. " +
                 "Количество символов должно быть одинаковым в шаблоне и серийном номере. " +

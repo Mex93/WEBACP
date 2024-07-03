@@ -58,19 +58,19 @@ def templates_create_mask_get_elements_ajax():
                 count += 1
 
             if count:
-                response_for_client.update({"error_text": "Список параметров для создания шаблона предоставлен"})
+                response_for_client.update({"error_text": "Список параметров для создания модели предоставлен"})
                 response_for_client.update({"result": True})
                 response_for_client.update({"arr": arr_results})
 
                 cdebug.debug_print(
-                    f"templates_create_mask_get_elements_ajax AJAX -> [Получение списка параметров создания шаблона] -> [IDX:{account_idx}, {account_name}] -> "
-                    f"[Успешно] [Список параметров для создания шаблона предоставлен]")
+                    f"templates_create_mask_get_elements_ajax AJAX -> [Получение списка параметров создания модели] -> [IDX:{account_idx}, {account_name}] -> "
+                    f"[Успешно] [Список параметров для создания модели предоставлен]")
 
             else:
-                response_for_client.update({"error_text": "Не найден список параметров для создания шаблона!"})
+                response_for_client.update({"error_text": "Не найден список параметров для создания модели!"})
                 cdebug.debug_print(
-                    f"templates_create_mask_get_elements_ajax AJAX -> [Получение списка параметров создания шаблона] -> [IDX:{account_idx}, {account_name}] -> "
-                    f"[Ошибка] [Не найден список параметров для создания шаблона!]")
+                    f"templates_create_mask_get_elements_ajax AJAX -> [Получение списка параметров создания модели] -> [IDX:{account_idx}, {account_name}] -> "
+                    f"[Ошибка] [Не найден список параметров для создания модели!]")
         else:
             raise NotConnectToDB("Not SQL Connect!")
 
@@ -78,28 +78,28 @@ def templates_create_mask_get_elements_ajax():
         response_for_client.update(
             {"error_text": "errorcode: templates_create_mask_get_elements_ajax -> [NotConnectToDB]"})
         cdebug.debug_print(
-            f"templates_create_mask_get_elements_ajax AJAX -> [Получение списка параметров создания шаблона] -> [IDX:{account_idx}, {account_name}] -> "
+            f"templates_create_mask_get_elements_ajax AJAX -> [Получение списка параметров создания модели] -> [IDX:{account_idx}, {account_name}] -> "
             f"[Исключение] [NotConnectToDB: '{err}']")
 
     except ErrorSQLQuery as err:
         response_for_client.update(
             {"error_text": "errorcode: templates_create_mask_get_elements_ajax -> [ErrorSQLQuery]"})
         cdebug.debug_print(
-            f"templates_create_mask_get_elements_ajax AJAX -> [Получение списка параметров создания шаблона] -> [IDX:{account_idx}, {account_name}] -> "
+            f"templates_create_mask_get_elements_ajax AJAX -> [Получение списка параметров создания модели] -> [IDX:{account_idx}, {account_name}] -> "
             f"[Исключение] [ErrorSQLQuery: '{err}']")
 
     except ErrorSQLData as err:
         response_for_client.update(
             {"error_text": "errorcode: templates_create_mask_get_elements_ajax -> [ErrorSQLData]"})
         cdebug.debug_print(
-            f"templates_create_mask_get_elements_ajax AJAX -> [Получение списка параметров создания шаблона] -> [IDX:{account_idx}, {account_name}] -> "
+            f"templates_create_mask_get_elements_ajax AJAX -> [Получение списка параметров создания модели] -> [IDX:{account_idx}, {account_name}] -> "
             f"[Исключение] [ErrorSQLData: '{err}']")
 
     except Exception as err:
 
         response_for_client.update({"error_text": "errorcode: templates_create_mask_get_elements_ajax -> [Error Data]"})
         cdebug.debug_print(
-            f"templates_create_mask_get_elements_ajax AJAX -> [Получение списка параметров создания шаблона] -> [IDX:{account_idx}, {account_name}] -> "
+            f"templates_create_mask_get_elements_ajax AJAX -> [Получение списка параметров создания модели] -> [IDX:{account_idx}, {account_name}] -> "
             f"[Исключение] [Error Data: '{err}']")
 
     finally:
@@ -107,7 +107,7 @@ def templates_create_mask_get_elements_ajax():
 
     result = json.dumps(response_for_client)
     cdebug.debug_print(
-        f"templates_create_mask_get_elements_ajax AJAX -> [Получение списка параметров создания шаблона] -> [IDX:{account_idx}, {account_name}] -> "
+        f"templates_create_mask_get_elements_ajax AJAX -> [Получение списка параметров создания модели] -> [IDX:{account_idx}, {account_name}] -> "
         f"[Ответ в JS] -> [{count}]")
     return result
 
@@ -293,12 +293,12 @@ def templates_create_mask_set_add_ajax(create_parameters: list):
                                     response_for_client.update({"result": False})
                                     response_for_client.update({"error_text": "Ошибка в обработке данных индексов создания таблиц!"})
                                     cdebug.debug_print(
-                                        f"templates_create_mask_set_add_ajax AJAX -> [Создание нового шаблона сканировки] -> [IDX:{account_idx}, {account_name}] -> "
+                                        f"templates_create_mask_set_add_ajax AJAX -> [Создание новой модели сканировки] -> [IDX:{account_idx}, {account_name}] -> "
                                         f"[Ошибка создания]")
                                 else:
 
                                     #################################
-                                    text = (f"Пользователь ID: [{account_name}[{account_idx}]] создал шаблон сканировки "
+                                    text = (f"Пользователь ID: [{account_name}[{account_idx}]] создал новую модель "
                                             f"'{model_name}'[MID: {max_index_in_modelid_table}, SID: {max_index_in_scan_mask_table}]")
                                     CSQLUserLogQuerys.send_log(
                                         account_idx,
@@ -307,33 +307,33 @@ def templates_create_mask_set_add_ajax(create_parameters: list):
                                         LOG_SUBTYPE.LGST_ADD,
                                         text)
 
-                                    response_for_client.update({"error_text": f"Шаблон сканировки '{model_name}' успешно создан!"})
+                                    response_for_client.update({"error_text": f"Модель устройства '{model_name}' успешно создана!"})
                                     response_for_client.update({"result": True})
                                     response_for_client.update({"arr_result": [max_index_in_modelid_table,
                                                                                max_index_in_scan_mask_table]})
                                     cdebug.debug_print(
-                                        f"templates_create_mask_set_add_ajax AJAX -> [Создание нового шаблона сканировки] -> [IDX:{account_idx}, {account_name}] -> "
+                                        f"templates_create_mask_set_add_ajax AJAX -> [Создание новой модели устройства] -> [IDX:{account_idx}, {account_name}] -> "
                                         f"[Удачное создание] -> ['{model_name}' SID: {max_index_in_scan_mask_table}, MID: {max_index_in_modelid_table}]")
 
                             else:
                                 response_for_client.update({"error_text": "Ошибка в обработке данных индексов!"})
                                 cdebug.debug_print(
-                                    f"templates_create_mask_set_add_ajax AJAX -> [Создание нового шаблона сканировки] -> [IDX:{account_idx}, {account_name}] -> "
+                                    f"templates_create_mask_set_add_ajax AJAX -> [Создание новой модели устройства] -> [IDX:{account_idx}, {account_name}] -> "
                                     f"[Ошибка создания] -> [Ошибка в обработке данных индексов!]")
                         else:
                             response_for_client.update({"error_text": f"Указанное вами название Vendor Code уже существует '{vendor_code}'!"})
                             cdebug.debug_print(
-                                f"templates_create_mask_set_add_ajax AJAX -> [Создание нового шаблона сканировки] -> [IDX:{account_idx}, {account_name}] -> "
+                                f"templates_create_mask_set_add_ajax AJAX -> [Создание новой модели устройства] -> [IDX:{account_idx}, {account_name}] -> "
                                 f"[Ошибка создания] -> [Указанное вами название Vendor Code уже существует '{vendor_code}'!]")
                     else:
                         response_for_client.update({"error_text": f"Указанное вами название устройства уже существует '{model_name}'!"})
                         cdebug.debug_print(
-                            f"templates_create_mask_set_add_ajax AJAX -> [Создание нового шаблона сканировки] -> [IDX:{account_idx}, {account_name}] -> "
+                            f"templates_create_mask_set_add_ajax AJAX -> [Создание новой модели устройства] -> [IDX:{account_idx}, {account_name}] -> "
                             f"[Ошибка создания] -> [Указанное вами название устройства уже существует '{model_name}']")
                 else:
                     response_for_client.update({"error_text": "Ошибка в обработке данных Названия устройства или Кода производителя!"})
                     cdebug.debug_print(
-                        f"templates_create_mask_set_add_ajax AJAX -> [Создание нового шаблона сканировки] -> [IDX:{account_idx}, {account_name}] -> "
+                        f"templates_create_mask_set_add_ajax AJAX -> [Создание новой модели устройства] -> [IDX:{account_idx}, {account_name}] -> "
                         f"[Ошибка создания] -> [Ошибка в обработке данных Названия устройства или Кода производителя!]")
             else:
 
@@ -343,7 +343,7 @@ def templates_create_mask_set_add_ajax(create_parameters: list):
                     response_for_client.update({"error_text": "Вы ошиблись во вводе параметров!"})
 
                 cdebug.debug_print(
-                    f"templates_create_mask_set_add_ajax AJAX -> [Создание нового шаблона сканировки] -> [IDX:{account_idx}, {account_name}] -> "
+                    f"templates_create_mask_set_add_ajax AJAX -> [Создание новой модели устройства] -> [IDX:{account_idx}, {account_name}] -> "
                     f"[Ошибка создания] -> [Ошибка ввода параметров]")
         else:
             raise NotConnectToDB("Not SQL Connect!")
@@ -351,26 +351,26 @@ def templates_create_mask_set_add_ajax(create_parameters: list):
     except NotConnectToDB as err:
         response_for_client.update({"error_text": "errorcode: templates_create_mask_set_add_ajax -> [NotConnectToDB]"})
         cdebug.debug_print(
-            f"templates_create_mask_set_add_ajax AJAX -> [Создание нового шаблона сканировки] -> [IDX:{account_idx}, {account_name}] -> "
+            f"templates_create_mask_set_add_ajax AJAX -> [Создание новой модели устройства] -> [IDX:{account_idx}, {account_name}] -> "
             f"[Исключение] [NotConnectToDB: '{err}']")
 
     except ErrorSQLQuery as err:
         response_for_client.update({"error_text": "errorcode: templates_create_mask_set_add_ajax -> [ErrorSQLQuery]"})
         cdebug.debug_print(
-            f"templates_create_mask_set_add_ajax AJAX -> [Создание нового шаблона сканировки] -> [IDX:{account_idx}, {account_name}] -> "
+            f"templates_create_mask_set_add_ajax AJAX -> [Создание новой модели устройства] -> [IDX:{account_idx}, {account_name}] -> "
             f"[Исключение] [ErrorSQLQuery: '{err}']")
 
     except ErrorSQLData as err:
         response_for_client.update({"error_text": "errorcode: templates_create_mask_set_add_ajax -> [ErrorSQLData]"})
         cdebug.debug_print(
-            f"templates_create_mask_set_add_ajax AJAX -> [Создание нового шаблона сканировки] -> [IDX:{account_idx}, {account_name}] -> "
+            f"templates_create_mask_set_add_ajax AJAX -> [Создание новой модели устройства] -> [IDX:{account_idx}, {account_name}] -> "
             f"[Исключение] [ErrorSQLData: '{err}']")
 
     except Exception as err:
 
         response_for_client.update({"error_text": "errorcode: templates_create_mask_set_add_ajax -> [Error Data]"})
         cdebug.debug_print(
-            f"templates_create_mask_set_add_ajax AJAX -> [Создание нового шаблона сканировки] -> [IDX:{account_idx}, {account_name}] -> "
+            f"templates_create_mask_set_add_ajax AJAX -> [Создание новой модели устройства] -> [IDX:{account_idx}, {account_name}] -> "
             f"[Исключение] [Error Data: '{err}']")
 
     finally:
@@ -378,6 +378,6 @@ def templates_create_mask_set_add_ajax(create_parameters: list):
 
     result = json.dumps(response_for_client)
     cdebug.debug_print(
-        f"templates_create_mask_set_add_ajax AJAX -> [Создание нового шаблона сканировки] -> [IDX:{account_idx}, {account_name}] -> "
+        f"templates_create_mask_set_add_ajax AJAX -> [Создание новой модели устройства] -> [IDX:{account_idx}, {account_name}] -> "
         f"[Ответ в JS] -> [{count}]")
     return result
