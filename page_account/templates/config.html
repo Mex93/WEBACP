@@ -23,9 +23,6 @@
                   <input {% if access_unit.get_session_var(access_type.ACCOUNT_TIMEOUT_EXIT) == 1 %}
                          checked
                          {% endif %}
-                         {% if access_unit.get_session_var(access_type.ALEVEL) == alevel.ULEVEL_NONE %}
-                         disabled
-                         {% endif %}
                   type="checkbox"  name = "cb_timeout" id = "cb_timeout"/>
 
                 <div class="checkbox__checkmark"></div>
