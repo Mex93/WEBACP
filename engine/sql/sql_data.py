@@ -65,6 +65,11 @@ class SQL_USERS_FIELDS:
     ufd_user_access_asr_add = "user_access_asr_add"
     ufd_user_access_asr_find = "user_access_asr_find"
 
+    ufd_user_access_pallet_edit = "user_access_pallet_edit"
+    ufd_user_access_pallet_delete = "user_access_pallet_delete"
+    ufd_user_access_pallet_add_tv = "user_access_pallet_add_tv"
+    ufd_user_access_pallet_find = "user_access_pallet_find"
+
 
 class SQL_ASR_FIELDS:
     asr_fd_tv_asr_id = "tv_asr_id"

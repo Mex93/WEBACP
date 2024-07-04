@@ -9,6 +9,7 @@ class LOG_TYPE(IntEnum):
     LGT_USER_ACCOUNT = 4,
     LGT_USER_LOGIN = 5,
     LGT_USER_LOGOUT = 6,
+    LGT_PALLETS = 7,
 
 
 class LOG_SUBTYPE(IntEnum):

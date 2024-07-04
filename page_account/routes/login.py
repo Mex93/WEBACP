@@ -1,4 +1,4 @@
-from flask import request, json
+from flask import json
 
 from engine.pages.enums import PAGE_ID
 from engine.common import get_checkbox_state, convert_date_from_sql_format
@@ -20,6 +20,8 @@ from engine.debug.CDebug import CDebug
 
 from engine.common import get_current_unix_time
 from engine.users.common import MAX_ACTIVITY_TIME_LEFT, MAX_CHECK_PERMISSIONS_TIME_LEFT, MAX_USER_SESSION_LIFE_TIME
+
+from captha_main import SIMPLE_CAPTCHA
 
 cdebug = CDebug()
 cdebug.debug_system_on(True)
@@ -176,7 +178,7 @@ def ulogin(password, email, savemy):
                                                              access_config_scan_find)
 
                                 cdebug.debug_print(
-                                    f"ulogin AJAX -> [{email}] -> [Получение прав доступа аккаунта] -> [STEMPLATE]"
+                                    f"ulogin AJAX -> [{email}] -> [Получение прав доступа аккаунта] -> [TEMPLATE]"
                                     f"[{access_config_scan_add}, "
                                     f"{access_config_scan_delete}, "
                                     f"{access_config_scan_find}, "
@@ -209,6 +211,38 @@ def ulogin(password, email, savemy):
                                     f"{access_config_asr_edit}, "
                                     f"{access_config_asr_find}, "
                                     f"{access_config_asr_add}]")
+
+                                #  ----------------------------------------------------------------------------------------
+                                access_config_pallet_delete = query_data.get(SQL_USERS_FIELDS.
+                                                                             ufd_user_access_pallet_delete, None)
+                                #
+                                access_config_pallet_edit = query_data.get(SQL_USERS_FIELDS.
+                                                                           ufd_user_access_pallet_edit, None)
+                                #
+                                access_config_pallet_add_tv = query_data.get(SQL_USERS_FIELDS.
+                                                                             ufd_user_access_pallet_add_tv, None)
+                                #
+                                access_config_pallet_find = query_data.get(SQL_USERS_FIELDS.
+                                                                           ufd_user_access_pallet_find, None)
+
+                                if None not in (access_config_pallet_delete,
+                                                access_config_pallet_edit,
+                                                access_config_pallet_add_tv,
+                                                access_config_pallet_find):
+                                    cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_PALLET_DELETE,
+                                                                 access_config_pallet_delete)
+                                    cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_PALLET_EDIT,
+                                                                 access_config_pallet_edit)
+                                    cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_PALLET_ADD_TV,
+                                                                 access_config_pallet_add_tv)
+                                    cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_PALLET_FIND,
+                                                                 access_config_pallet_find)
+                                    cdebug.debug_print(
+                                        f"ulogin AJAX -> [{email}] -> [Получение прав доступа аккаунта] -> [PALLETS]"
+                                        f"[{access_config_pallet_delete}, "
+                                        f"{access_config_pallet_edit}, "
+                                        f"{access_config_pallet_add_tv}, "
+                                        f"{access_config_pallet_find}]")
 
                             #  ----------------------------------------------------------------------------------------
                             # last login
@@ -288,6 +322,9 @@ def ulogin(password, email, savemy):
             response_for_client.update({"result": False})
             cdebug.debug_print(f"ulogin AJAX -> [{email}] -> "
                                f"[Проверка введённых данных не пройдена] ->[{result_login_check_fields}]")
+
+    new_captcha_dict = SIMPLE_CAPTCHA.create()
+    response_for_client.update({"new_captha": SIMPLE_CAPTCHA.captcha_html(new_captcha_dict)})
 
     result = json.dumps(response_for_client)
     cdebug.debug_print(f"ulogin AJAX -> [{email}] -> "

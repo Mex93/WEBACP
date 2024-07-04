@@ -35,6 +35,7 @@
                 <th>Управление ASR</th>
                 <th>Серийные номера TV</th>
                 <th>Шаблоны сканировки компонентов TV</th>
+                <th>Паллеты ГП</th>
                </tr>
 
                <tr><td><b>Удаление</b></td><td>
@@ -49,13 +50,22 @@
                    {% else %}
                    <span class = "noaccess"> недоступно</span>
                    {% endif %}
-               </td><td>
+               </td>
+               <td>
                    {% if access_unit.get_session_var(access_type.ACCESS_SCAN_DELETE) %}
                    <span class = "success"> доступно</span>
                    {% else %}
                    <span class = "noaccess"> недоступно</span>
                    {% endif %}
-               </td></tr>
+               </td>
+               <td>
+                   {% if access_unit.get_session_var(access_type.ACCESS_PALLET_DELETE) %}
+                   <span class = "success"> доступно</span>
+                   {% else %}
+                   <span class = "noaccess"> недоступно</span>
+                   {% endif %}
+               </td>
+               </tr>
                  <tr><td><b>Редактирование</b></td><td>
                    {% if access_unit.get_session_var(access_type.ACCESS_ASR_EDIT) %}
                    <span class = "success"> доступно</span>
@@ -68,13 +78,22 @@
                    {% else %}
                    <span class = "noaccess"> недоступно</span>
                    {% endif %}
-               </td><td>
+               </td>
+                     <td>
                    {% if access_unit.get_session_var(access_type.ACCESS_SCAN_EDIT) %}
                    <span class = "success"> доступно</span>
                    {% else %}
                    <span class = "noaccess"> недоступно</span>
                    {% endif %}
-               </td></tr>
+                    </td>
+                     <td>
+                   {% if access_unit.get_session_var(access_type.ACCESS_PALLET_EDIT) %}
+                   <span class = "success"> доступно</span>
+                   {% else %}
+                   <span class = "noaccess"> недоступно</span>
+                   {% endif %}
+                    </td>
+                 </tr>
                 <tr><td><b>Добавление</b></td><td>
                    {% if access_unit.get_session_var(access_type.ACCESS_ASR_ADD) %}
                    <span class = "success"> доступно</span>
@@ -89,6 +108,13 @@
                    {% endif %}
                </td><td>
                    {% if access_unit.get_session_var(access_type.ACCESS_SCAN_ADD) %}
+                   <span class = "success"> доступно</span>
+                   {% else %}
+                   <span class = "noaccess"> недоступно</span>
+                   {% endif %}
+               </td>
+                <td>
+                   {% if access_unit.get_session_var(access_type.ACCESS_PALLET_ADD_TV) %}
                    <span class = "success"> доступно</span>
                    {% else %}
                    <span class = "noaccess"> недоступно</span>
@@ -112,6 +138,13 @@
                    {% else %}
                    <span class = "noaccess"> недоступно</span>
                    {% endif %}
+                    <td>
+                   {% if access_unit.get_session_var(access_type.ACCESS_PALLET_FIND) %}
+                   <span class = "success"> доступно</span>
+                   {% else %}
+                   <span class = "noaccess"> недоступно</span>
+                   {% endif %}
+               </td>
                </td></tr>
         </table>
     </div>

@@ -1,5 +1,5 @@
-from engine.users.users_log.enums import LOG_TYPE, LOG_SUBTYPE, LOG_OBJECT_TYPE
-from engine.sql.sql_data import SQL_TABLE_NAME, SQL_USERS_FIELDS, SQL_LOG_FIELDS
+
+from engine.sql.sql_data import SQL_TABLE_NAME, SQL_LOG_FIELDS
 from engine.common import get_inet_ipaddress
 from engine.debug.CDebug import CDebug
 
@@ -7,7 +7,6 @@ from engine.users.CSQLUserQuerys import CSQLUserQuerys
 from engine.users.users_log.enums import LOG_TYPE, LOG_OBJECT_TYPE, LOG_SUBTYPE
 from engine.sql.enums import CONNECT_DB_TYPE
 
-from engine.debug.CExcelLog import CExcelLog
 
 class CSQLUserLogQuerys:
 

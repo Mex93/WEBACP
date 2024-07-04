@@ -1,6 +1,4 @@
 from flask import json
-from engine.pages.enums import PAGE_ID
-from page_account.account import bp_page_account
 
 from captha_main import SIMPLE_CAPTCHA
 

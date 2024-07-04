@@ -12,7 +12,8 @@ class PAGE_ID(IntEnum):
 
     TEMPLATES_FIND = 6,
     DEVICESN_FIND = 7,
+    PALLETS_FIND = 8,
 
-    INDEX = 8,
-    ABOUT = 9,
-    PAGE_NOT_FOUND = 10,
+    INDEX = 9,
+    ABOUT = 10,
+    PAGE_NOT_FOUND = 11,

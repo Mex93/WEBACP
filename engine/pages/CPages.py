@@ -32,12 +32,16 @@ class CPages:
         self.__template_name_asr_edit = 'edit'
         self.__template_name_asr_del = 'del'
 
-        # SN
+        # PALLETS
         self.__templates_devicesn_name_sn_find = 'get'
+        # SN
+        self.__templates_pallets_name = 'get'
 
         # templates path
         # templates
         self.__template_path_template_find = 'std'
+        #
+        self.__template_path_pallets_find = 'pallets'
         #
         self.__template_path_devicesn_find = 'devicesn'
         # asr
@@ -54,6 +58,8 @@ class CPages:
 
         # url routs
         # templates
+        self.__route_name_pallets_find = 'pallets/get'
+        #
         self.__route_name_devicesn_find = 'devicesn/get'
         # templates
         self.__route_name_templates_find = 'templates/std'
@@ -107,6 +113,9 @@ class CPages:
             case PAGE_ID.ASR_FIND:
                 name = self.__template_path_asr_find
 
+            case PAGE_ID.PALLETS_FIND:
+                name = self.__template_path_pallets_find
+
             # case PAGE_ID.PAGE_NOT_FOUND:
             #     name = self.__template_path_404
             case _:
@@ -137,6 +146,9 @@ class CPages:
             case PAGE_ID.ASR_FIND:
                 name = self.__template_name_asr_find
 
+            case PAGE_ID.PALLETS_FIND:
+                name = self.__templates_pallets_name
+
             # case PAGE_ID.PAGE_NOT_FOUND:
             #     name = self.__template_name_404
             case _:
@@ -166,6 +178,9 @@ class CPages:
 
             case PAGE_ID.ASR_FIND:
                 name = self.__route_name_asr_find
+
+            case PAGE_ID.PALLETS_FIND:
+                name = self.__route_name_pallets_find
 
             # case PAGE_ID.PAGE_NOT_FOUND:
             #     name = self.__route_name_404
