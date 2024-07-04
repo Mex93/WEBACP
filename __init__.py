@@ -10,6 +10,7 @@ from page_account.account import bp_page_account
 from page_asr.asr import bp_page_asr
 from page_templates.templates import bp_page_templates
 from page_device_sn.devicesn_main import bp_page_devicesn
+from page_pallets.pallets_main import bp_page_pallets
 
 app = Flask(__name__)
 app.permanent_session_lifetime = timedelta(days=1)
@@ -30,6 +31,7 @@ app.register_blueprint(bp_page_account, url_prefix='/account')
 app.register_blueprint(bp_page_asr, url_prefix='/asr')
 app.register_blueprint(bp_page_templates, url_prefix='/templates')
 app.register_blueprint(bp_page_devicesn, url_prefix='/devicesn')
+app.register_blueprint(bp_page_pallets, url_prefix='/pallets')
 
 # Другое
 csrf = CSRFProtect(app)

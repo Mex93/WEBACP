@@ -212,37 +212,38 @@ def ulogin(password, email, savemy):
                                     f"{access_config_asr_find}, "
                                     f"{access_config_asr_add}]")
 
-                                #  ----------------------------------------------------------------------------------------
-                                access_config_pallet_delete = query_data.get(SQL_USERS_FIELDS.
-                                                                             ufd_user_access_pallet_delete, None)
-                                #
-                                access_config_pallet_edit = query_data.get(SQL_USERS_FIELDS.
-                                                                           ufd_user_access_pallet_edit, None)
-                                #
-                                access_config_pallet_add_tv = query_data.get(SQL_USERS_FIELDS.
-                                                                             ufd_user_access_pallet_add_tv, None)
-                                #
-                                access_config_pallet_find = query_data.get(SQL_USERS_FIELDS.
-                                                                           ufd_user_access_pallet_find, None)
+                            #  ----------------------------------------------------------------------------------------
+                            access_config_pallet_delete = query_data.get(SQL_USERS_FIELDS.
+                                                                         ufd_user_access_pallet_delete, None)
+                            #
+                            access_config_pallet_edit = query_data.get(SQL_USERS_FIELDS.
+                                                                       ufd_user_access_pallet_edit, None)
+                            #
+                            access_config_pallet_add_tv = query_data.get(SQL_USERS_FIELDS.
+                                                                         ufd_user_access_pallet_add_tv, None)
+                            #
+                            access_config_pallet_find = query_data.get(SQL_USERS_FIELDS.
+                                                                       ufd_user_access_pallet_find, None)
+                            print(access_config_pallet_delete, access_config_pallet_edit, access_config_pallet_add_tv, access_config_pallet_find)
 
-                                if None not in (access_config_pallet_delete,
-                                                access_config_pallet_edit,
-                                                access_config_pallet_add_tv,
-                                                access_config_pallet_find):
-                                    cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_PALLET_DELETE,
-                                                                 access_config_pallet_delete)
-                                    cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_PALLET_EDIT,
-                                                                 access_config_pallet_edit)
-                                    cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_PALLET_ADD_TV,
-                                                                 access_config_pallet_add_tv)
-                                    cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_PALLET_FIND,
-                                                                 access_config_pallet_find)
-                                    cdebug.debug_print(
-                                        f"ulogin AJAX -> [{email}] -> [Получение прав доступа аккаунта] -> [PALLETS]"
-                                        f"[{access_config_pallet_delete}, "
-                                        f"{access_config_pallet_edit}, "
-                                        f"{access_config_pallet_add_tv}, "
-                                        f"{access_config_pallet_find}]")
+                            if None not in (access_config_pallet_delete,
+                                            access_config_pallet_edit,
+                                            access_config_pallet_add_tv,
+                                            access_config_pallet_find):
+                                cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_PALLET_DELETE,
+                                                             access_config_pallet_delete)
+                                cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_PALLET_EDIT,
+                                                             access_config_pallet_edit)
+                                cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_PALLET_ADD_TV,
+                                                             access_config_pallet_add_tv)
+                                cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_PALLET_FIND,
+                                                             access_config_pallet_find)
+                                cdebug.debug_print(
+                                    f"ulogin AJAX -> [{email}] -> [Получение прав доступа аккаунта] -> [PALLETS]"
+                                    f"[{access_config_pallet_delete}, "
+                                    f"{access_config_pallet_edit}, "
+                                    f"{access_config_pallet_add_tv}, "
+                                    f"{access_config_pallet_find}]")
 
                             #  ----------------------------------------------------------------------------------------
                             # last login
