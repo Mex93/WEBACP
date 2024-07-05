@@ -120,7 +120,7 @@ function get_login({ email, password, savemy }) {
                     }
                 }
 
-                cmessBox.sendErrorMessage(data.error_text);
+                cmessBox.sendErrorMessage(data.error_text, "",7000);
                 return false
             }
         },

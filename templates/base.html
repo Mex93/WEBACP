@@ -90,14 +90,20 @@
                                       {% if access_unit.is_access_for_panel(access_type.ACCESS_PALLET_FIND) == True %}
                                     <li><a href="/pallets/get">Найти</a></li>
                                       {% endif %}
-                                      {% if access_unit.is_access_for_panel(access_type.ACCESS_PALLET_DELETE) == True %}
-                                    <li><a href="/asr/get">Удалить</a></li>
+                                      {% if access_unit.is_access_for_panel(access_type.ACCESS_PALLET_DELETE_ALL) == True %}
+                                    <li><a href="/asr/get">Удалить паллет</a></li>
                                       {% endif %}
-                                      {% if access_unit.is_access_for_panel(access_type.ACCESS_PALLET_EDIT) == True %}
-                                    <li><a href="/asr/get">Редактировать</a></li>
+                                      {% if access_unit.is_access_for_panel(access_type.ACCESS_PALLET_DELETE_DEVICE) == True %}
+                                    <li><a href="/asr/get">Удалить устройство</a></li>
                                       {% endif %}
                                       {% if access_unit.is_access_for_panel(access_type.ACCESS_PALLET_ADD_TV) == True %}
-                                    <li><a href="/asr/get">Создать</a></li>
+                                    <li><a href="/asr/get">Добавить к паллету</a></li>
+                                      {% endif %}
+                                      {% if access_unit.is_access_for_panel(access_type.ACCESS_PALLET_CHANGED_STATUS) == True %}
+                                    <li><a href="/asr/get">Изменить статус готовности</a></li>
+                                      {% endif %}
+                                      {% if access_unit.is_access_for_panel(access_type.ACCESS_PALLET_CHANGED_INFO) == True %}
+                                    <li><a href="/asr/get">Изменить информацию</a></li>
                                       {% endif %}
                                   </ul>
                                 </div>

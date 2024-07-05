@@ -37,10 +37,12 @@ class CUserAccess(CUserSessions):
                       self.get_session_var(USER_SECTIONS_TYPE.ACCESS_ASR_FIND),
                       self.get_session_var(USER_SECTIONS_TYPE.ACCESS_ASR_DELETE))
             case USER_SECTION_ACCESS_TYPE.PALLETS:
-                li = (self.get_session_var(USER_SECTIONS_TYPE.ACCESS_PALLET_ADD_TV),
-                      self.get_session_var(USER_SECTIONS_TYPE.ACCESS_PALLET_EDIT),
+                li = (self.get_session_var(USER_SECTIONS_TYPE.ACCESS_PALLET_DELETE_ALL),
+                      self.get_session_var(USER_SECTIONS_TYPE.ACCESS_PALLET_DELETE_DEVICE),
+                      self.get_session_var(USER_SECTIONS_TYPE.ACCESS_PALLET_ADD_TV),
                       self.get_session_var(USER_SECTIONS_TYPE.ACCESS_PALLET_FIND),
-                      self.get_session_var(USER_SECTIONS_TYPE.ACCESS_PALLET_DELETE))
+                      self.get_session_var(USER_SECTIONS_TYPE.ACCESS_PALLET_CHANGED_STATUS),
+                      self.get_session_var(USER_SECTIONS_TYPE.ACCESS_PALLET_CHANGED_INFO))
 
         if len(li) > 0:
             for value in li:

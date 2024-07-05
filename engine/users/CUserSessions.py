@@ -39,9 +39,11 @@ class CUserSessions:
         self.__sname_access_asr_delete = "access_asr_delete"
         self.__sname_access_asr_find = "access_asr_find"
 
-        self.__sname_access_pallet_edit = "access_pallet_edit"
+        self.__sname_access_pallet_delete_all = "access_pallet_delete_all"
         self.__sname_access_pallet_add_tv = "access_pallet_add_tv"
-        self.__sname_access_pallet_delete = "access_pallet_delete"
+        self.__sname_access_pallet_delete_device = "access_pallet_delete_device"
+        self.__sname_access_pallet_changed_info = "access_pallet_changed_info"
+        self.__sname_access_pallet_changed_status = "access_pallet_changed_status"
         self.__sname_access_pallet_find = "access_pallet_find"
 
         self.__session_start_text = "session_start"
@@ -104,14 +106,19 @@ class CUserSessions:
             case USER_SECTIONS_TYPE.ACCESS_ASR_FIND:
                 return self.__sname_access_asr_find
 
-            case USER_SECTIONS_TYPE.ACCESS_PALLET_EDIT:
-                return self.__sname_access_pallet_edit
-            case USER_SECTIONS_TYPE.ACCESS_PALLET_DELETE:
-                return self.__sname_access_pallet_delete
+            case USER_SECTIONS_TYPE.ACCESS_PALLET_CHANGED_STATUS:
+                return self.__sname_access_pallet_changed_status
+            case USER_SECTIONS_TYPE.ACCESS_PALLET_CHANGED_INFO:
+                return self.__sname_access_pallet_changed_info
             case USER_SECTIONS_TYPE.ACCESS_PALLET_ADD_TV:
                 return self.__sname_access_pallet_add_tv
+            case USER_SECTIONS_TYPE.ACCESS_PALLET_DELETE_ALL:
+                return self.__sname_access_pallet_delete_all
+            case USER_SECTIONS_TYPE.ACCESS_PALLET_DELETE_DEVICE:
+                return self.__sname_access_pallet_delete_device
             case USER_SECTIONS_TYPE.ACCESS_PALLET_FIND:
                 return self.__sname_access_pallet_find
+
 
         return False
 

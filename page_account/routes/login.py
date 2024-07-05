@@ -158,7 +158,8 @@ def ulogin(password, email, savemy):
                             #  ----------------------------------------------------------------------------------------
                             access_config_scan_add = query_data.get(SQL_USERS_FIELDS.ufd_user_access_scan_add, None)
                             #
-                            access_config_scan_delete = query_data.get(SQL_USERS_FIELDS.ufd_user_access_scan_delete, None)
+                            access_config_scan_delete = query_data.get(SQL_USERS_FIELDS.ufd_user_access_scan_delete,
+                                                                       None)
                             #
                             access_config_scan_edit = query_data.get(SQL_USERS_FIELDS.ufd_user_access_scan_edit, None)
                             #
@@ -213,36 +214,54 @@ def ulogin(password, email, savemy):
                                     f"{access_config_asr_add}]")
 
                             #  ----------------------------------------------------------------------------------------
-                            access_config_pallet_delete = query_data.get(SQL_USERS_FIELDS.
-                                                                         ufd_user_access_pallet_delete, None)
+                            access_config_pallet_delete_all = query_data.get(SQL_USERS_FIELDS.
+                                                                             ufd_user_access_pallet_delete_all, None)
                             #
-                            access_config_pallet_edit = query_data.get(SQL_USERS_FIELDS.
-                                                                       ufd_user_access_pallet_edit, None)
+                            access_config_pallet_delete_device = query_data.get(SQL_USERS_FIELDS.
+                                                                                ufd_user_access_pallet_delete_device,
+                                                                                None)
                             #
                             access_config_pallet_add_tv = query_data.get(SQL_USERS_FIELDS.
                                                                          ufd_user_access_pallet_add_tv, None)
                             #
                             access_config_pallet_find = query_data.get(SQL_USERS_FIELDS.
                                                                        ufd_user_access_pallet_find, None)
-                            print(access_config_pallet_delete, access_config_pallet_edit, access_config_pallet_add_tv, access_config_pallet_find)
+                            #
+                            access_config_pallet_changed_info = query_data.get(SQL_USERS_FIELDS.
+                                                                               ufd_user_access_pallet_changed_info,
+                                                                               None)
+                            #
+                            access_config_pallet_changed_status = query_data.get(SQL_USERS_FIELDS.
+                                                                               ufd_user_access_pallet_changed_status,
+                                                                               None)
 
-                            if None not in (access_config_pallet_delete,
-                                            access_config_pallet_edit,
+                            if None not in (
+                                            access_config_pallet_delete_all,
+                                            access_config_pallet_delete_device,
                                             access_config_pallet_add_tv,
-                                            access_config_pallet_find):
-                                cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_PALLET_DELETE,
-                                                             access_config_pallet_delete)
-                                cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_PALLET_EDIT,
-                                                             access_config_pallet_edit)
+                                            access_config_pallet_find,
+                                            access_config_pallet_changed_info,
+                                            access_config_pallet_changed_status
+                                            ):
+                                cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_PALLET_DELETE_DEVICE,
+                                                             access_config_pallet_delete_device)
+                                cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_PALLET_DELETE_ALL,
+                                                             access_config_pallet_delete_all)
                                 cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_PALLET_ADD_TV,
                                                              access_config_pallet_add_tv)
                                 cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_PALLET_FIND,
                                                              access_config_pallet_find)
+                                cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_PALLET_CHANGED_INFO,
+                                                             access_config_pallet_changed_info)
+                                cuser_access.set_session_var(USER_SECTIONS_TYPE.ACCESS_PALLET_CHANGED_STATUS,
+                                                             access_config_pallet_changed_status)
                                 cdebug.debug_print(
                                     f"ulogin AJAX -> [{email}] -> [Получение прав доступа аккаунта] -> [PALLETS]"
-                                    f"[{access_config_pallet_delete}, "
-                                    f"{access_config_pallet_edit}, "
+                                    f"[{access_config_pallet_delete_all}, "
+                                    f"{access_config_pallet_delete_device}, "
                                     f"{access_config_pallet_add_tv}, "
+                                    f"{access_config_pallet_changed_info}, "
+                                    f"{access_config_pallet_changed_status}, "
                                     f"{access_config_pallet_find}]")
 
                             #  ----------------------------------------------------------------------------------------

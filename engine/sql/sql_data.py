@@ -65,10 +65,12 @@ class SQL_USERS_FIELDS:
     ufd_user_access_asr_add = "user_access_asr_add"
     ufd_user_access_asr_find = "user_access_asr_find"
 
-    ufd_user_access_pallet_edit = "user_access_pallet_edit"
-    ufd_user_access_pallet_delete = "user_access_pallet_delete"
-    ufd_user_access_pallet_add_tv = "user_access_pallet_add_tv"
     ufd_user_access_pallet_find = "user_access_pallet_find"
+    ufd_user_access_pallet_delete_all = "user_access_pallet_delete_all"
+    ufd_user_access_pallet_delete_device = "user_access_pallet_delete_device"
+    ufd_user_access_pallet_add_tv = "user_access_pallet_add_tv"
+    ufd_user_access_pallet_changed_status = "user_access_pallet_changed_status"
+    ufd_user_access_pallet_changed_info = "user_access_pallet_changed_info"
 
 
 class SQL_ASR_FIELDS:

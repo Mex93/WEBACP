@@ -59,7 +59,7 @@
                    {% endif %}
                </td>
                <td>
-                   {% if access_unit.get_session_var(access_type.ACCESS_PALLET_DELETE) %}
+                   {% if access_unit.get_session_var(access_type.ACCESS_PALLET_DELETE_ALL) %}
                    <span class = "success"> доступно</span>
                    {% else %}
                    <span class = "noaccess"> недоступно</span>
@@ -87,7 +87,7 @@
                    {% endif %}
                     </td>
                      <td>
-                   {% if access_unit.get_session_var(access_type.ACCESS_PALLET_EDIT) %}
+                   {% if access_unit.get_session_var(access_type.ACCESS_PALLET_CHANGED_STATUS) %}
                    <span class = "success"> доступно</span>
                    {% else %}
                    <span class = "noaccess"> недоступно</span>
@@ -145,7 +145,7 @@
                    <span class = "noaccess"> недоступно</span>
                    {% endif %}
                </td>
-               </td></tr>
+               </tr>
         </table>
     </div>
 </div>
