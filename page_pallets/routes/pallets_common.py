@@ -8,14 +8,14 @@ from engine.debug.CDebug import CDebug
 from engine.users.enums import USER_SECTIONS_TYPE
 
 from engine.sql.enums import CONNECT_DB_TYPE
-from engine.sql.sql_data import SQL_TV_MODEL_INFO_FIELDS
+from engine.sql.sql_data import SQL_PALLET_SN_FIELDS, SQL_PALLET_SCANNED_FIELDS
 from engine.sql.CSQL import NotConnectToDB, ErrorSQLQuery, ErrorSQLData
 
 from engine.users.users_log.CSQLUserLogQuerys import CSQLUserLogQuerys
 from engine.users.users_log.enums import LOG_TYPE, LOG_SUBTYPE, LOG_OBJECT_TYPE
 
-from engine.devicesn.CSQLSNQuerys import CSQLSNQuerys
-from engine.devicesn.CSN import CDeviceSN
+from engine.pallets.CSQLPalletQuerys import CSQLPalletQuerys
+from engine.pallets.CPallet import CPallet
 
 from engine.common import convert_date_from_sql_format
 from captha_main import SIMPLE_CAPTCHA
@@ -30,7 +30,7 @@ cuser_access = CUserAccess()
 cuser = CUser()
 
 
-def get_device_sn_data(device_sn):
+def get_pallet_sn_data(pallet_sn: str):
     response_for_client = {
         "error_text": "",
         "result": False
@@ -38,131 +38,176 @@ def get_device_sn_data(device_sn):
     account_name = cuser_access.get_session_var(USER_SECTIONS_TYPE.NICKNAME)
     account_idx = cuser_access.get_session_var(USER_SECTIONS_TYPE.ACC_INDEX)
     count = 0
+    pallet_sn = pallet_sn.upper()
 
-    csql = CSQLSNQuerys()
+    csql = CSQLPalletQuerys()
     try:
         result_connect = csql.connect_to_db(CONNECT_DB_TYPE.LINE)
         if result_connect is True:
-            data = csql.get_device_data(device_sn)
-            if data is not False:
-                result_arr = list()
-                dkeys: dict = data.keys()
-                count = 0
-                if len(dkeys):
-                    for sql_field in dkeys:
-                        arr_index = CDeviceSN.get_array_index_from_sql_label(sql_field)
-                        if arr_index == -1:
-                            continue
 
-                        value_type = CDeviceSN.get_value_type(arr_index)
-                        current_value = data.get(sql_field, None)
+            pallet_find_sn = None
+            pallet_find_sn_sql_id = 0
+            pallet_create_date = None
+            pallet_completed_check = None
+            pallet_completed_date = None
+            pallet_assembled_line = 0
 
-                        if sql_field == SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_name:
-                            if current_value:
-                                new_arr_index = CDeviceSN.get_array_index_from_text_id('model_type_name')
-                                if new_arr_index != -1:
-                                    current_value, type_name = CModels.get_parced_name_and_type(current_value)
-                                    params_dict = {
-                                        "text_id": CDeviceSN.get_text_id(new_arr_index),
-                                        "text_name": CDeviceSN.get_text_name(new_arr_index),
-                                        "is_editable": CDeviceSN.is_field_editable(new_arr_index),
-                                        "current_value": type_name,
-                                        "value_type": 'string'
-                                    }
+            pallet_scanned_result = False
+            device_count = 0
+            device_list = list()
+            error_find_max_count = False
+            data = csql.get_pallet_data(pallet_sn)
+            if data:
+                pallet_find_sn = data.get(SQL_PALLET_SN_FIELDS.fd_pallet_code, None)
+                pallet_find_sn_sql_id = data.get(SQL_PALLET_SN_FIELDS.fd_assy_id, None)
 
-                                    result_arr.append(params_dict)
+                pallet_create_date = data.get(SQL_PALLET_SN_FIELDS.fd_created_data, None)
+                pallet_completed_check = data.get(SQL_PALLET_SN_FIELDS.fd_completed_check, None)
+                pallet_completed_date = data.get(SQL_PALLET_SN_FIELDS.fd_completed_date, None)
+                pallet_assembled_line = data.get(SQL_PALLET_SN_FIELDS.fd_assembled_line, None)
 
-                        if current_value is None:
-                            if value_type == str:
-                                current_value = ''
-                            elif value_type == int:
-                                current_value = -1337
-                            else:
-                                current_value = ''
+                if None not in (pallet_find_sn, pallet_find_sn_sql_id, pallet_completed_check):
+                    pallet_scanned_result = True
 
-                        text_id = CDeviceSN.get_text_id(arr_index)
-                        text_name = CDeviceSN.get_text_name(arr_index)
-                        is_editable = CDeviceSN.is_field_editable(arr_index)
-                        if value_type == str:
-                            value_type = 'string'
-                        elif value_type == int:
-                            value_type = 'integer'
-                        elif value_type == 'date':
-                            if text_id == 'packing_data' or text_id == 'scanned_date' or text_id == 'first_scan_date':
-                                current_value = convert_date_from_sql_format(str(current_value))
+                    data = csql.get_pallet_sn_from_devices(pallet_sn)
+                    if data:
+                        for device in data:
+                            print(device)
+                            item_device_assy = device.get(SQL_PALLET_SCANNED_FIELDS.fd_assy_id, None)
+                            item_device_sn = device.get(SQL_PALLET_SCANNED_FIELDS.fd_tv_sn, None)
+                            item_scanned_data = device.get(SQL_PALLET_SCANNED_FIELDS.fd_scanned_data, None)
+                            item_model_fk = device.get(SQL_PALLET_SCANNED_FIELDS.fd_tv_model_fk, None)
 
-                            value_type = 'date'
-                        else:
-                            value_type = 'string'
+                            if None not in (item_device_assy, item_device_sn):
+                                if item_scanned_data:
+                                    item_scanned_data = convert_date_from_sql_format(str(item_scanned_data))
 
-                        params_dict = {
-                            "text_id": text_id,
-                            "text_name": text_name,
-                            "is_editable": is_editable,
-                            "current_value": current_value,
-                            "value_type": value_type
-                        }
+                                obj = {
+                                    'device_assy': item_device_assy,
+                                    'device_sn': item_device_sn,
+                                    'scanned_data': item_scanned_data,
+                                    'model_fk': item_model_fk
+                                }
 
-                        result_arr.append(params_dict)
-                        count += 1
-                if count:
-                    response_for_client.update({"error_text": "Список параметров предоставлен"})
-                    response_for_client.update({"result": True})
-                    response_for_client.update({"arr": result_arr})
+                                device_list.append(
+                                    obj)
+                                device_count += 1
+            else:
+                data_devices = csql.get_pallet_sn_from_devices_ex(pallet_sn)
+                if data_devices is not False:
+                    if data_devices is not None:
+                        pallet_find_sn = data_devices[0].get(SQL_PALLET_SCANNED_FIELDS.fd_pallet_code, None)
+                        if pallet_find_sn:
+                            data = csql.get_pallet_data(pallet_find_sn)
+                            if data is not False:
+                                pallet_find_sn_sql_id = data.get(SQL_PALLET_SN_FIELDS.fd_assy_id, None)
+                                if pallet_find_sn_sql_id:
+                                    pallet_create_date = data.get(SQL_PALLET_SN_FIELDS.fd_created_data, None)
+                                    pallet_completed_check = data.get(SQL_PALLET_SN_FIELDS.fd_completed_check, None)
+                                    pallet_completed_date = data.get(SQL_PALLET_SN_FIELDS.fd_completed_date, None)
+                                    pallet_assembled_line = data.get(SQL_PALLET_SN_FIELDS.fd_assembled_line, None)
+                                    pallet_scanned_result = True
 
-                    device_data = csql.get_device_data_log(device_sn)
-                    if device_data:
-                        cdebug.debug_sql_print(f'{account_name}[{account_idx}]', 'Запрос SN устройства', device_data)
+                                    data = csql.get_pallet_sn_from_devices(pallet_find_sn)
+                                    if data:
+                                        for device in data:
+                                            print(device)
+                                            item_device_assy = device.get(SQL_PALLET_SCANNED_FIELDS.fd_assy_id, None)
+                                            item_device_sn = device.get(SQL_PALLET_SCANNED_FIELDS.fd_tv_sn, None)
+                                            item_scanned_data = device.get(SQL_PALLET_SCANNED_FIELDS.fd_scanned_data,
+                                                                           None)
+                                            item_model_fk = device.get(SQL_PALLET_SCANNED_FIELDS.fd_tv_model_fk, None)
+                                            if None not in (item_device_assy, item_device_sn):
+                                                if item_scanned_data:
+                                                    item_scanned_data = convert_date_from_sql_format(
+                                                        str(item_scanned_data))
+                                                obj = {
+                                                    'device_assy': item_device_assy,
+                                                    'device_sn': item_device_sn,
+                                                    'scanned_data': item_scanned_data,
+                                                    'model_fk': item_model_fk
+                                                }
 
-                    #################################
-                    text = f"Пользователь ID: [{account_name}[{account_idx}]] произвёл поиск SN устройства '{device_sn}']"
-                    CSQLUserLogQuerys.send_log(
-                        account_idx,
-                        LOG_OBJECT_TYPE.LGOT_USER,
-                        LOG_TYPE.LGT_SN,
-                        LOG_SUBTYPE.LGST_FIND,
-                        text)
+                                                device_list.append(
+                                                    obj)
+                                                device_count += 1
+                    else:
+                        error_find_max_count = True
 
+            if pallet_scanned_result:
+                response_for_client.update({"error_text": "Список параметров предоставлен"})
+                response_for_client.update({"result": True})
+                response_for_client.update({"pallet_devices": device_list})
+
+                if pallet_create_date:
+                    pallet_create_date = convert_date_from_sql_format(str(pallet_create_date))
+
+                if pallet_completed_date:
+                    pallet_completed_date = convert_date_from_sql_format(str(pallet_completed_date))
+
+                response_for_client.update({"pallet_data":
+                    {
+                        'pallet_sn': pallet_find_sn,
+                        'assy_id': pallet_find_sn_sql_id,
+                        'create_date': pallet_create_date,
+                        'completed_check': pallet_completed_check,
+                        'completed_date': pallet_completed_date,
+                        'assembled_line': pallet_assembled_line
+                    }
+                })
+
+                #################################
+                text = f"Пользователь ID: [{account_name}[{account_idx}]] произвёл поиск паллета '{pallet_find_sn}']"
+                # CSQLUserLogQuerys.send_log(
+                #     account_idx,
+                #     LOG_OBJECT_TYPE.LGOT_USER,
+                #     LOG_TYPE.LGT_PALLETS,
+                #     LOG_SUBTYPE.LGST_FIND,
+                #     text)
+
+                cdebug.debug_print(
+                    f"get_pallet_sn_data AJAX -> [Получение информации о паллете] -> [IDX:{account_idx}, {account_name}] -> "
+                    f"[Удачно] -> [Список предоставлен '{pallet_find_sn}'] ")
+            else:
+                if error_find_max_count:
+                    response_for_client.update(
+                        {"error_text": f"С паллетом возникла ошибка! Сообщите администратору!!!!"})
+                    # другими словами - устройство не может быть привязано сразу к нескольким паллетам
                     cdebug.debug_print(
-                        f"get_device_sn_data AJAX -> [Получение списка параметров устройства SN:] -> [IDX:{account_idx}, {account_name}] -> "
-                        f"[Удачно] -> [Список предоставлен '{device_sn}'] ")
+                        f"get_pallet_sn_data AJAX -> [Получение информации о паллете] -> [IDX:{account_idx}, {account_name}] -> "
+                        f"[Ошибка] -> [С паллетом возникла ошибка! Вернулось множество значений при определении серийника паллета в таблице сканировки устройств '{pallet_sn}'] ")
                 else:
                     response_for_client.update(
-                        {"error_text": f"Не найден список ключей из запроса SQL для '{device_sn}'!"})
+                        {"error_text": f"Указанный паллет '{pallet_sn}' не найден !"})
+                    # другими словами - устройство не может быть привязано сразу к нескольким паллетам
                     cdebug.debug_print(
-                        f"get_device_sn_data AJAX -> [Получение списка параметров устройства SN:] -> [IDX:{account_idx}, {account_name}] -> "
-                        f"[Ошибка] -> [Не найден список ключей из запроса SQL!] -> '{device_sn}' ")
-
-            else:
-                response_for_client.update({"error_text": f"Не найдено устройство '{device_sn}'!"})
-                cdebug.debug_print(
-                    f"get_device_sn_data AJAX -> [Получение списка параметров устройства SN:] -> [IDX:{account_idx}, {account_name}] -> "
-                    f"[Ошибка] -> [Не найдено устройство '{device_sn}'] ")
+                        f"get_pallet_sn_data AJAX -> [Получение информации о паллете] -> [IDX:{account_idx}, {account_name}] -> "
+                        f"[Ошибка] -> [Паллет не найден '{pallet_sn}'] ")
         else:
             raise NotConnectToDB("Not SQL Connect!")
     except NotConnectToDB as err:
-        response_for_client.update({"error_text": "errorcode: get_device_sn_data -> [NotConnectToDB]"})
+        response_for_client.update({"error_text": "errorcode: get_pallet_sn_data -> [NotConnectToDB]"})
         cdebug.debug_print(
-            f"get_device_sn_data AJAX -> [Получение списка параметров устройства SN: '{device_sn}'] -> [IDX:{account_idx}, {account_name}] -> "
+            f"get_pallet_sn_data AJAX -> [Получение информации о паллете '{pallet_sn}'] -> [IDX:{account_idx}, {account_name}] -> "
             f"[Исключение] [NotConnectToDB: '{err}']")
 
     except ErrorSQLQuery as err:
-        response_for_client.update({"error_text": "errorcode: get_device_sn_data -> [ErrorSQLQuery]"})
+        response_for_client.update({"error_text": "errorcode: get_pallet_sn_data -> [ErrorSQLQuery]"})
         cdebug.debug_print(
-            f"get_device_sn_data AJAX -> [Получение списка параметров устройства SN: '{device_sn}'] -> [IDX:{account_idx}, {account_name}] -> "
+            f"get_pallet_sn_data AJAX -> [Получение информации о паллете '{pallet_sn}'] -> [IDX:{account_idx}, {account_name}] -> "
             f"[Исключение] [ErrorSQLQuery: '{err}']")
 
     except ErrorSQLData as err:
-        response_for_client.update({"error_text": "errorcode: get_device_sn_data -> [ErrorSQLData]"})
+        response_for_client.update({"error_text": "errorcode: get_pallet_sn_data -> [ErrorSQLData]"})
         cdebug.debug_print(
-            f"get_device_sn_data AJAX -> [Получение списка параметров устройства SN: '{device_sn}'] -> [IDX:{account_idx}, {account_name}] -> "
+            f"get_pallet_sn_data AJAX -> [Получение информации о паллете '{pallet_sn}'] -> [IDX:{account_idx}, {account_name}] -> "
             f"[Исключение] [ErrorSQLData: '{err}']")
 
     except Exception as err:
 
-        response_for_client.update({"error_text": "errorcode: get_device_sn_data -> [Error Data]"})
+        response_for_client.update({"error_text": "errorcode: get_pallet_sn_data -> [Error Data]"})
         cdebug.debug_print(
-            f"get_device_sn_data AJAX -> [Получение списка параметров устройства SN: '{device_sn}'] -> [IDX:{account_idx}, {account_name}] -> "
+            f"get_pallet_sn_data AJAX -> [Получение информации о паллете '{pallet_sn}'] -> [IDX:{account_idx}, {account_name}] -> "
             f"[Исключение] [Error Data: '{err}']")
 
     finally:
@@ -173,6 +218,6 @@ def get_device_sn_data(device_sn):
 
     result = json.dumps(response_for_client)
     cdebug.debug_print(
-        f"get_device_sn_data AJAX -> [Получение списка параметров устройства SN: '{device_sn}'] -> [IDX:{account_idx}, {account_name}] -> "
+        f"get_pallet_sn_data AJAX -> [Получение информации о паллете '{pallet_sn}'] -> [IDX:{account_idx}, {account_name}] -> "
         f"[Ответ в JS] -> [{count}]")
     return result

@@ -5,9 +5,9 @@ let TABLE_TYPE = {
 }
 let BUTTOM_TYPE = {
     TYPE_NONE: 0,
-    TYPE_EDIT: 1,
-    TYPE_DEL: 2,
-    TYPE_SAVE: 3,
+    TYPE_ADD_DEVICE: 1,
+    TYPE_DELETE_PALLET: 2,
+    TYPE_DELETE_DEVICE: 3,
     TYPE_CANCEL: 4,
 }
 

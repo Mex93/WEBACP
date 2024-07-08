@@ -5,7 +5,28 @@ class SQL_TABLE_NAME:
     asr_tv = "unfinished_tv"
     tv_model_info_tv = "tv"
     user_logs = "acp_log"
-    tv_scan_type = "public.tv_scan_type"
+    tv_scan_type = "tv_scan_type"
+    pallet_sn = "pallets_sn"
+    pallet_scanned = "pallets_scanned"
+
+
+# поля в паллетах
+class SQL_PALLET_SN_FIELDS:
+    fd_assy_id = 'assy_id'
+    fd_pallet_code = 'pallet_code'
+    fd_created_data = 'created_data'
+    fd_completed_check = 'completed_check'
+    fd_completed_date = 'completed_date'
+    fd_assembled_line = 'assembled_line'
+
+
+# поля в сканировки девайсов к паллетам
+class SQL_PALLET_SCANNED_FIELDS:
+    fd_assy_id = 'assy_id'
+    fd_pallet_code = 'pallet_code'
+    fd_scanned_data = 'scanned_data'
+    fd_tv_sn = 'tv_sn'
+    fd_tv_model_fk = 'tv_model_fk'
 
 
 # Название полей в конфиге готовых тв

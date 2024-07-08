@@ -45,7 +45,6 @@
             0
         {% endif %}
     </p>
-       </p>
        <p id="access_changed_info" hidden="">
         {% if access_unit.is_access_for_panel(access_type.ACCESS_PALLET_CHANGED_INFO) == True %}
             1
@@ -53,7 +52,6 @@
             0
         {% endif %}
     </p>
-        </p>
        <p id="access_changed_status" hidden="">
         {% if access_unit.is_access_for_panel(access_type.ACCESS_PALLET_CHANGED_STATUS) == True %}
             1
@@ -98,18 +96,20 @@
                 <div class = "" id = "table_pallets_id">
 
                 </div>
+                {% if access_unit.is_access_for_panel(access_type.ACCESS_PALLET_ADD_TV) == True %}
+                    <div class = "box_add_device">
+
+                    </div>
+                    <button id = "btn_add_device" type="submit" name = "addd" value = "addd" class = "btm_submit-common">Добавить</button>
+                {% endif %}
+                <div class = "box_pallet_info">
+
+                </div>
                 <div class = "inline_buttom">
-
-                        {% if access_unit.is_access_for_panel(access_type.ACCESS_PALLET_DELETE_DEVICE) == True %}
-                           <button id = "btn_add" type="submit" name = "add" value = "add" class = "btm_submit-common">Добавить устройство</button>
-                        {% endif %}
-                        {% if access_unit.is_access_for_panel(access_type.ACCESS_PALLET_DELETE_DEVICE) == True %}
-
-                        {% endif %}
-
-                        {% if access_unit.is_access_for_panel(access_type.ACCESS_PALLET_DELETE_DEVICE) == True %}
-                           <button id = "btn_del" type="submit" name = "delete" value = "delete" class = "btm_submit-common delete">Удалить весь паллет</button>
-                        {% endif %}
+                {% if access_unit.is_access_for_panel(access_type.ACCESS_PALLET_DELETE_ALL) == True %}
+                   <button id = "btn_del_all" type="submit" name = "del_all" value = "del_all" class = "btm_submit-common">Удалить паллет</button>
+                {% endif %}
+                <button id = "btn_cancel" type="submit" name = "cancel" value = "cancel" class = "btm_submit-common">Отмена</button>
                 </div>
             </div>
         </div>

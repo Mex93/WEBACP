@@ -10,7 +10,7 @@ import {CMessBox} from "/static/js/engine/CMessBox.js"
 import {
     CCaptha,
 } from "/static/js/engine/CCaptha.js";
-import {BUTTOM_TYPE, TABLE_TYPE} from "/static/js/engine/modules/devicesn/common.js";
+import {BUTTOM_TYPE, TABLE_TYPE} from "/static/js/engine/modules/pallets/common.js";
 
 import {
     cButtons,
@@ -21,11 +21,12 @@ let query = false;
 let cmessBoxMain = new CMessBox("error_box_main");
 let cmessBoxBlock = new CMessBox("error_box_block");
 let cButton = new cButtons(); // класс управления кнопками
-let accessDelete, accessEdit, accessCreate, accessFind = null;
-let isEdit = false;
-let isFindSuccess = false;
-let SuccessFindSN = null;
-let tableID = null;
+let accessDeletePallet, accessDeleteDevice, accessAddDevice, accessChangedStatus, accessChangedInfo, accessFind = null;
+let palletSQLID = null;
+let palletName = null;
+let isSuccessFind = false;
+let palletUnit = null;
+
 
 
 class HTMLBlocks
@@ -119,219 +120,83 @@ class HTMLBlocks
     // }
 }
 
+class CDevice
+{
+    #deviceNumber = null;
+    #palletNumber = null;
+    #deviceAssyID = null;
+    #modelFK = null;
+    #scannedDate = null;
+    constructor(cSN, palletNumber, deviceAssyID)
+    {
+        this.#deviceNumber = cSN;
+        this.#palletNumber = palletNumber;
+        this.#deviceAssyID = deviceAssyID;
+    }
+    // setters
+    setScannedDate = (cValue) => this.#scannedDate = cValue;
+    setModelFK = (cValue) => this.#modelFK = cValue;
+
+    // getters
+    getScannedDate = () => this.#scannedDate;
+    getModelFK = () => this.#modelFK;
+
+}
+
+class CPallet
+{
+    #snNumber = null;
+    #assembledLine = null;
+    #completedStatus = null;
+    #completedDate = null;
+    #createdDate = null;
+    #assyID = null;
+    #devicesUnits;
+    constructor(palletNumber, assyID)
+    {
+        this.#snNumber = palletNumber;
+        this.#assyID = assyID;
+        this.#devicesUnits = new Set();
+    }
+    // SETTERS
+    setLine = (cValue) => this.#assembledLine = cValue;
+    setCompletedStatus = (cValue) => this.#completedStatus = cValue;
+    setCompletedDate = (cValue) => this.#completedDate = cValue;
+    setCreatedDate = (cValue) => this.#createdDate = cValue;
+    setAssy = (cValue) => this.#assyID = cValue;
+
+    addDevice(aUnit)
+    {
+        if(aUnit instanceof CDevice)
+        {
+            this.#devicesUnits.add(aUnit);
+            return true;
+        }
+    }
+    getDevicesList()
+    {
+        return this.#devicesUnits.values();
+    }
+    clearDevicesList = () => this.#devicesUnits.clear();
+
+    // GETTERS
+    getLine = () => this.#assembledLine;
+    getCompletedStatus = () => this.#completedStatus;
+    getCompletedDate = () => this.#completedDate;
+    getCreatedDate = () => this.#createdDate;
+    getAssy = () => this.#assyID;
+}
+
+
 function destroyTableBlock()
 {
-    isEdit = false;
-    isFindSuccess = false;
-    SuccessFindSN = null;
-    if(tableID)
-    {
-        tableID.remove();
-        tableID = null;
-    }
-    // HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_BLOCK, false);
-    // HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.RESULT_BLOCK, false);
-    cButton.setShowForAll(false);
-    CParameters.removeUnits();
+
 }
 
-class CParameters
+function onUserPressedOnBTN(btnType)
 {
-    textID = null;
-    textName = null;
-    varType = null;
-    currentValue = null;
-    isEdit = false;
-    static units = [];
 
-    constructor()
-    {
-        this.constructor.units.push(this);
-    }
-
-    static getUnits()
-    {
-        if(this.units.length)
-        {
-            return this.units;
-        }
-        return false;
-    }
-    static removeUnits()
-    {
-        this.units = [];
-    }
-    static getUnitIDFromTextID(textID)
-    {
-        for(let item of this.units)
-        {
-            if(item.getTextID() === textID)
-            {
-                return item;
-            }
-        }
-    }
-
-    removeUnit()
-    {
-        this.constructor.units = this.constructor.units.filter((unitID) =>
-            unitID !== this);
-        return this.constructor.units;
-    }
-    isValid()
-    {
-        for(let item of [this.textID, this.textName])
-        {
-            if(!item)
-                return false;
-        }
-        return true;
-    }
-
-
-    setTextID = (varValue) => this.textID = varValue;
-    setTextName = (varValue) => this.textName = varValue;
-    setCurrentValue = (varValue) => this.currentValue = varValue;
-    setIsEdit = (varValue) => this.isEdit = varValue;
-    setVarType = (varValue) => this.varType = varValue;
-
-    getTextID = () => this.textID;
-    getTextName = () => this.textName;
-    getCurrentValue = () => this.currentValue;
-    getIsEdit = () => this.isEdit;
-    getVarType = () => this.varType;
 }
-
-function CreateTable(tableType)
-{
-    let block = document.getElementById('table_dsn_id');
-    if(block)
-    {
-        if(isFindSuccess)
-        {
-            block.innerHTML = '';
-        }
-
-        let table = document.createElement('table');
-
-        if(table)
-        {
-            table.id = 'parameters_table';
-            table.className = 'custom-table table-devicesn';
-            tableID = table;
-            if(tableType === TABLE_TYPE.TYPE_STANDART)
-            {
-                let tr = document.createElement('tr');
-                let th = document.createElement('th');
-                th.innerText = 'Параметр:'
-                tr.append(th)
-                th = document.createElement('th');
-                th.innerText = 'Значение:'
-                tr.append(th)
-                table.append(tr)
-
-                let arr = CParameters.getUnits();
-                for(let item of arr)
-                {
-                    let currentValue = item.getCurrentValue();
-                    if(!currentValue)
-                        continue  // костыль что бы пустые столбцы не показывались(так попизже)
-                    let textID = item.getTextID();
-                    let textName = item.getTextName();
-                    let varType = item.getVarType();
-                    // is valid не нужна так как уже была проверка во время загрузки
-                    if(varType === 'string' || varType === 'integer' || varType === 'date')
-                    {
-                        if(!currentValue)
-                        {
-                            currentValue = '';
-                        }
-                    }
-
-                    let tr = document.createElement('tr');
-                    let th = document.createElement('td');
-                    th.innerText = textName;
-                    tr.append(th)
-                    th = document.createElement('td');
-                    th.innerText = currentValue;
-                    th.id = `old_table_value_${textID}`;
-                    tr.append(th);
-                    table.append(tr);
-                }
-            }
-            else if(tableType === TABLE_TYPE.TYPE_EDITTING)
-            {
-                let tr = document.createElement('tr');
-                let th = document.createElement('th');
-                th.innerText = 'Параметр:'
-                tr.append(th)
-                th = document.createElement('th');
-                th.innerText = 'Старое значение:'
-                tr.append(th)
-                th = document.createElement('th');
-                th.innerText = 'Новое значение:'
-                tr.append(th)
-                table.append(tr)
-
-
-                let arr = CParameters.getUnits();
-                for(let item of arr)
-                {
-                    let textID = item.getTextID();
-                    let textName = item.getTextName();
-                    let currentValue = item.getCurrentValue();
-                    let varType = item.getVarType();
-                    let isEdit = item.getIsEdit();
-
-                    // is valid не нужна так как уже была проверка во время загрузки
-                    if(varType === 'string' || varType === 'integer' || varType === 'date')
-                    {
-                        if(!currentValue)
-                        {
-                            currentValue = '';
-                        }
-                    }
-
-                    let tr = document.createElement('tr');
-                    let th = document.createElement('td');
-                    th.innerText = textName;
-                    tr.append(th)
-                    th = document.createElement('td');
-                    th.innerText = currentValue;
-                    th.id = `old_table_value_${textID}`;
-                    if(!isEdit)
-                    {
-                        th.disabled = true;
-                    }
-                    tr.append(th)
-
-                    th = document.createElement('td');
-                    let input = document.createElement("input");
-                    input.type = "text";
-                    input.innerText = currentValue;
-                    input.placeholder = currentValue;
-                    input.maxLength = 64;
-                    input.minLength = 0;
-                    input.value = currentValue;
-                    input.id = `new_table_value_${textID}`;
-                    if(!isEdit)
-                    {
-                        input.disabled = true;
-                    }
-                    th.append(input);
-                    tr.append(th);
-
-                    table.append(tr);
-                }
-            }
-            block.append(table);
-        }
-    }
-}
-
-
-
-
 function getSerialNumberInfoData(snNumber)
 {
     console.log(snNumber)
@@ -349,21 +214,18 @@ function getSerialNumberInfoData(snNumber)
         cmessBoxMain.sendErrorMessage("Запрос от сервера ещё не пришёл!")
         return;
     }
-    if(isFindSuccess)
-    {
-        if(SuccessFindSN !== null)
-        {
-            if(snNumber === SuccessFindSN)
-            {
-                cmessBoxMain.sendErrorMessage("Вы уже запросили этот серийный номер!")
-                return
-            }
-        }
-    }
-    if(isFindSuccess !== false)
-    {
-        destroyTableBlock()
-    }
+    // if(isSuccessFind)
+    // {
+    //     if(snNumber === palletName)
+    //     {
+    //         cmessBoxMain.sendErrorMessage("Вы уже запросили этот серийный номер!")
+    //         return
+    //     }
+    // }
+    // if(isSuccessFind !== false)
+    // {
+    //     destroyTableBlock()
+    // }
     // класс должен быть объявлен тут для капчи, иначе значение блока не будед перезаписываться
     let cCaptha = new CCaptha('div input[name=captcha-hash]', "captcha-text");
     let cresult = cCaptha.validate(cmessBoxMain);
@@ -386,7 +248,7 @@ function getSerialNumberInfoData(snNumber)
         data : completed_json,
         dataType: 'json',
         type : 'POST',
-        url : './dsn_find_ajax',
+        url : './pallet_find_data_ajax',
         contentType: "application/json",
         success: function(data) {
             query = false;
@@ -404,55 +266,128 @@ function getSerialNumberInfoData(snNumber)
 
             HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_BLOCK, false);
 
-            if(data.result === true)  // загрузка ASR
+            console.log(data.pallet_data)
+            console.log(data.pallet_devices)
+            if(data.result === true)
             {
-                if (Array.isArray(data.arr))
+                if(data.pallet_data instanceof Object)
                 {
-                    console.log(data.arr)
-                    let count = 0;
-                    for(let item of data.arr)
-                    {
-                        console.log(item)
-                        let textID = item.text_id;
-                        let textName = item.text_name;
-                        let isEditable = item.is_editable;
-                        let currentValue = item.current_value;
-                        let valueType = item.value_type;
-
-                        let parameter = new CParameters();
-                        parameter.setTextID(textID);
-                        parameter.setTextName(textName);
-                        parameter.setIsEdit(isEditable);
-                        parameter.setVarType(valueType);
-                        parameter.setCurrentValue(currentValue);
-
-                        if(!parameter.isValid())
-                        {
-                            parameter.removeUnit();
-                            continue
+                    let {   assembled_line:line,
+                            assy_id:assyID,
+                            completed_check:complCheck,
+                            completed_date:complDate,
+                            create_date:createDate,
+                            pallet_sn:palletSN
                         }
-
-                        count++;
-                    }
-                    if(count)
+                        = data.pallet_data;
+                    if(assyID && palletSN)
                     {
-                        isEdit = false;
-                        isFindSuccess = true;
-                        SuccessFindSN = snNumber;
-                        CreateTable(TABLE_TYPE.TYPE_STANDART);
-                        HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.RESULT_BLOCK, true);
-                        cButton.switchBTNStatus(TABLE_TYPE.TYPE_STANDART);
+                        if(Boolean(complCheck))
+                        {
+                            palletUnit = new CPallet(palletSN);
+                            palletUnit.setCompletedDate(complDate);
+                            palletUnit.setLine(line);
+                            palletUnit.setCompletedStatus(complCheck);
+                            palletUnit.setCreatedDate(createDate);
+                            palletUnit.setAssy(assyID);
+
+                            if(Array.isArray(data.pallet_devices))
+                            {
+                                let count = 0;
+                                for(let device of data.pallet_devices)
+                                {
+                                    let
+                                        {
+                                            device_assy: assyID,
+                                            device_sn: deviceSN,
+                                            model_fk: modelFK,
+                                            scanned_data: scannedDate
+                                        } = device;
+                                    if(assyID && deviceSN && modelFK)
+                                    {
+                                        let unit = new CDevice(deviceSN, palletSN, assyID);
+                                        unit.setScannedDate(scannedDate);
+                                        unit.setModelFK(modelFK);
+                                        palletUnit.addDevice(unit);
+                                        count++;
+                                    }
+                                    else
+                                    {
+                                        cmessBoxMain.sendErrorMessage("Не могу обработать параметры устройства!");
+                                        break;
+                                    }
+                                }
+                                if(count)
+                                {
+                                    console.log(palletUnit)
+                                    console.log(palletUnit.getDevicesList())
+                                }
+                            }
+                        }
+                        else
+                           cmessBoxMain.sendErrorMessage("Ошибка получения статуса паллета!");
                     }
+                    else
+                        cmessBoxMain.sendErrorMessage("Ошибка получения данных паллета!");
                 }
+                else
+                    cmessBoxMain.sendErrorMessage("Возникла ошибка формирования паллета!!!");
             }
             else
             {
                 cmessBoxMain.sendErrorMessage(data.error_text);
             }
+
+
+            // if(data.result === true)  // загрузка ASR
+            // {
+            //     if (Array.isArray(data.arr))
+            //     {
+            //         console.log(data.arr)
+            //         let count = 0;
+            //         for(let item of data.arr)
+            //         {
+            //             console.log(item)
+            //             let textID = item.text_id;
+            //             let textName = item.text_name;
+            //             let isEditable = item.is_editable;
+            //             let currentValue = item.current_value;
+            //             let valueType = item.value_type;
+            //
+            //             let parameter = new CParameters();
+            //             parameter.setTextID(textID);
+            //             parameter.setTextName(textName);
+            //             parameter.setIsEdit(isEditable);
+            //             parameter.setVarType(valueType);
+            //             parameter.setCurrentValue(currentValue);
+            //
+            //             if(!parameter.isValid())
+            //             {
+            //                 parameter.removeUnit();
+            //                 continue
+            //             }
+            //
+            //             count++;
+            //         }
+            //         if(count)
+            //         {
+            //             // isEdit = false;
+            //             // isFindSuccess = true;
+            //             // SuccessFindSN = snNumber;
+            //             // CreateTable(TABLE_TYPE.TYPE_STANDART);
+            //             HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.RESULT_BLOCK, true);
+            //             cButton.switchBTNStatus(TABLE_TYPE.TYPE_STANDART);
+            //         }
+            //     }
+            // }
+            // else
+            // {
+            //     cmessBoxMain.sendErrorMessage(data.error_text);
+            // }
         },
         error: function(error) {
             // responseProcess = false
-            if(isFindSuccess !== false)
+            if(isSuccessFind !== false)
             {
                 destroyTableBlock()
                 HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_BLOCK, false);
@@ -466,280 +401,11 @@ function getSerialNumberInfoData(snNumber)
     return false;
 }
 
-function onUserPressedOnBTN(btnType)
-{
-    if(btnType === BUTTOM_TYPE.TYPE_EDIT)
-    {
-        if(accessEdit)
-        {
-            if(isFindSuccess)
-            {
-                if(!isEdit)
-                {
-                    CreateTable(TABLE_TYPE.TYPE_EDITTING);
-                    cButton.switchBTNStatus(TABLE_TYPE.TYPE_EDITTING);
-                    isEdit = true;
-                }
-            }
-        }
-    }
-    else if(btnType === BUTTOM_TYPE.TYPE_CANCEL)
-    {
-        if(isFindSuccess)
-        {
-            if(isEdit)
-            {
-                CreateTable(TABLE_TYPE.TYPE_STANDART);
-                cButton.switchBTNStatus(TABLE_TYPE.TYPE_STANDART);
-                isEdit = false;
-            }
-        }
-    }
-    else if(btnType === BUTTOM_TYPE.TYPE_DEL)
-    {
-        if(accessDelete)
-        {
-            if(isFindSuccess)
-            {
-                if (confirm(`"Вы действительно хотите удалить выбранный SN '${SuccessFindSN}' из базы готовых изделий ?
-            \nОтменить действие будет невозможно!"`)) // yes
-                {
-                    if(query)
-                        return
-
-                    let serial = SuccessFindSN;
-                    let assy = CParameters.getUnitIDFromTextID('db_primary_key');
-                    assy = Number(assy.getCurrentValue());
-
-                    destroyTableBlock();
-                    HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_BLOCK, true);
-
-                    if(!assy)
-                        return
-
-                    let completed_json = JSON.stringify({
-                        serial_number: serial,
-                        assy_id: assy,
-                    }); //$.parseJSON(json_text);
-
-
-                    $.ajax({
-                        data : completed_json,
-                        dataType: 'json',
-                        type : 'POST',
-                        url : './dsn_delete_sn_ajax',
-                        contentType: "application/json",
-                        success: function(data) {
-                            query = false;
-
-                            HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_BLOCK, false);
-                            HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.RESULT_BLOCK, false);
-
-                            if(data.result === true)  // удалился успешно
-                            {
-                                cmessBoxMain.sendSuccessMessage(data.error_text);
-                            }
-                            else
-                            {
-                                cmessBoxMain.sendErrorMessage(data.error_text);
-                            }
-                        },
-                        error: function(error) {
-                            // responseProcess = false
-
-                            cmessBoxMain.sendErrorMessage("Ошибка AJAX на стороне сервера!");
-                            return false
-                        }
-                    })
-                }
-            }
-        }
-    }
-    else if(btnType === BUTTOM_TYPE.TYPE_SAVE)
-    {
-        if(accessEdit)
-        {
-            if(isFindSuccess)
-            {
-                if(isEdit)
-                {
-                    if(query)
-                        return
-
-                    let arr = CParameters.getUnits();
-                    let arr_result = [];
-                    let count = 0;
-                    let isError = false;
-                    for(let item of arr)
-                    {
-                        let textID = item.getTextID();
-                        let element = document.getElementById(`new_table_value_${textID}`);
-                        if(element)
-                        {
-                            if(!item.getIsEdit())
-                                continue
-
-                            let oldValue = item.getCurrentValue();
-                            let varType = item.getVarType();
-
-                            let currentValue = element.value;
-
-                            if(varType === 'string')
-                            {
-                                currentValue = String(currentValue);
-                            }
-                            else if(varType === 'integer')
-                            {
-                                currentValue = Number(currentValue);
-                            }
-                            else if(varType === 'date')
-                            {
-                                currentValue = String(currentValue);
-                            }
-
-                            if(currentValue === oldValue)
-                                continue
-
-                            arr_result.push([textID, oldValue, currentValue, element, varType]);
-                            count++;
-                        }
-                    }
-                    if(count)
-                    {
-                        console.log(arr_result)
-
-                        let serial = SuccessFindSN;
-                        let assy = CParameters.getUnitIDFromTextID('db_primary_key');
-                        assy = Number(assy.getCurrentValue());
-
-                        if(!assy)
-                            return
-
-                        let completed_json = JSON.stringify({
-                            serial_number: serial,
-                            assy_id: assy,
-                            arr: arr_result
-                        }); //$.parseJSON(json_text);
-                        HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_BLOCK, true);
-
-                        $.ajax({
-                            data : completed_json,
-                            dataType: 'json',
-                            type : 'POST',
-                            url : './dsn_save_edit_sn_ajax',
-                            contentType: "application/json",
-                            success: function(data) {
-                                query = false;
-
-                                HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_BLOCK, false);
-
-                                if(data.result === true)  // удалился успешно
-                                {
-                                    // cmessBoxMain.sendSuccessMessage(data.error_text);
-                                    let count = 0;
-                                    for(let arr of arr_result)
-                                    {
-                                        let [textID, , currentValue, htmlID, ] = arr;
-                                        let old_element = document.getElementById(`old_table_value_${textID}`);
-
-                                        if(old_element)
-                                        {
-                                            old_element.innerText = currentValue;
-                                        }
-
-                                        htmlID.value = currentValue;
-                                        htmlID.placeholder = currentValue;
-
-                                        let unit = CParameters.getUnitIDFromTextID(textID);
-                                        if(unit)
-                                        {
-                                            unit.setCurrentValue(currentValue);
-                                        }
-                                        count++;
-                                    }
-                                    if(count !== arr_result.length || data.reload_block)
-                                    {
-                                        destroyTableBlock();
-                                        HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_BLOCK, false);
-                                        HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.RESULT_BLOCK, false);
-
-                                        document.querySelector("#dsn_find").scrollIntoView({
-                                            behavior: 'smooth'
-                                        });
-                                    }
-                                    else
-                                    {
-                                        document.querySelector("#dsn_result_block").scrollIntoView({
-                                            behavior: 'smooth'
-                                        });
-                                    }
-
-                                    if(count !== arr_result.length)
-                                        cmessBoxMain.sendErrorMessage("Возникла ошибка в обработчике!");
-                                    else if(data.reload_block)
-                                        cmessBoxMain.sendWarningMessage("Ключевое поле изменено! Режим поиска сброшен!");
-                                    else
-                                        cmessBoxBlock.sendSuccessMessage('Данные успешно изменены!');
-                                }
-                                else
-                                {
-                                    document.querySelector("#dsn_result_block").scrollIntoView({
-                                        behavior: 'smooth'
-                                    });
-                                    cmessBoxBlock.sendErrorMessage(data.error_text);
-                                }
-                            },
-                            error: function(error) {
-                                // responseProcess = false
-
-                                cmessBoxMain.sendErrorMessage("Ошибка AJAX на стороне сервера!");
-                                return false
-                            }
-                        })
-                    }
-                    else
-                    {
-                        cmessBoxBlock.sendWarningMessage("Вы пока ещё не вносили изменений!");
-                        document.querySelector("#dsn_result_block").scrollIntoView({
-                            behavior: 'smooth'
-                        });
-                    }
-                }
-            }
-        }
-    }
-}
-
 // ----------------------------------------------------------------- FUNC END
 
 $(document).ready(function()
 {
     let isValid = (numb) => (numb === 0 || numb === 1)
-
-    accessDelete = document.getElementById("access_del");
-    if(accessDelete)
-    {
-        accessDelete = +accessDelete.innerText;
-        if(!isValid(accessDelete))
-        {
-            accessDelete = false;
-        }
-    }
-    else
-        accessDelete = false;
-
-    accessEdit = document.getElementById("access_edit");
-    if(accessEdit)
-    {
-        accessEdit = +accessEdit.innerText;
-        if(!isValid(accessEdit))
-        {
-            accessEdit = false;
-        }
-    }
-
-    else
-        accessEdit = false;
 
     accessFind = document.getElementById("access_find");
     if(accessFind)
@@ -753,29 +419,90 @@ $(document).ready(function()
     else
         accessFind = false;
 
-
-    accessCreate = document.getElementById("access_create");
-    if(accessCreate)
+    accessDeletePallet = document.getElementById("access_del_all");
+    if(accessDeletePallet)
     {
-        accessCreate = +accessCreate.innerText;
-        if(!isValid(accessCreate))
+        accessDeletePallet = +accessDeletePallet.innerText;
+        if(!isValid(accessDeletePallet))
         {
-            accessCreate = false;
+            accessDeletePallet = false;
+        }
+    }
+
+    else
+        accessDeletePallet = false;
+
+    accessDeleteDevice = document.getElementById("access_del_device");
+    if(accessDeleteDevice)
+    {
+        accessDeleteDevice = +accessDeleteDevice.innerText;
+        if(!isValid(accessDeleteDevice))
+        {
+            accessDeleteDevice = false;
         }
     }
     else
-        accessCreate = false;
+        accessDeleteDevice = false;
 
-    if(!accessEdit && !accessCreate && !accessDelete && !accessFind)
+    accessChangedStatus = document.getElementById("access_changed_status");
+    if(accessChangedStatus)
     {
-        alert("Ошибка доступа 2!!!!")
-        return;
+        accessChangedStatus = +accessChangedStatus.innerText;
+        if(!isValid(accessChangedStatus))
+        {
+            accessChangedStatus = false;
+        }
+    }
+    else
+        accessChangedStatus = false;
+
+
+    accessChangedInfo = document.getElementById("access_changed_info");
+    if(accessChangedInfo)
+    {
+        accessChangedInfo = +accessChangedInfo.innerText;
+        if(!isValid(accessChangedInfo))
+        {
+            accessChangedInfo = false;
+        }
+    }
+    else
+        accessChangedInfo = false;
+
+    accessAddDevice = document.getElementById("access_add_tv");
+    if(accessAddDevice)
+    {
+        accessAddDevice = +accessAddDevice.innerText;
+        if(!isValid(accessAddDevice))
+        {
+            accessAddDevice = false;
+        }
+    }
+    else
+        accessAddDevice = false;
+
+    const arr = [
+        accessChangedInfo,
+        accessChangedStatus,
+        accessAddDevice,
+        accessFind,
+        accessDeleteDevice,
+        accessDeletePallet
+        ]
+
+    for(let item in arr)
+    {
+        if(!item)
+        {
+            alert("Ошибка доступа 1!!!!")
+            return;
+        }
     }
 
-    let inputFieldSN = document.getElementById("dsn_name")
+    let inputFieldSN = document.getElementById("pallets_name")
     if(inputFieldSN !== null)
     {
-        $("#dsn_find").on("submit", function (event) {
+        $("#pallets_find").on("submit", function (event) {
             event.preventDefault(); // Отменяем стандартное поведение формы
 
             // Получаем данные из полей формы
@@ -784,96 +511,64 @@ $(document).ready(function()
     }
     else
     {
-        alert("Ошибка 3!!!!")
+        alert("Ошибка 2!!!!")
         return;
     }
 
-
     let units = [];
     units.push(new HTMLBlocks('load_anim_block',   HTMLBlocks.BLOCK_TYPE.ANIM_BLOCK));
-    units.push(new HTMLBlocks('dsn_result_block',   HTMLBlocks.BLOCK_TYPE.RESULT_BLOCK));
+    units.push(new HTMLBlocks('pallets_result_block',   HTMLBlocks.BLOCK_TYPE.RESULT_BLOCK));
 
     for(let item of units)
     {
         if(!item.isValidWithUnit())
         {
-            alert("Ошибка 4!!!!")
+            alert("Ошибка 3!!!!")
             return;
         }
     }
-    let btnEdit = document.getElementById("btn_edit");
-    let btnDel = document.getElementById("btn_del");
-    let btnSave = document.getElementById("btn_save");
+    let btnAddDevice = document.getElementById("btn_add_device");
+    let btnDelPallet = document.getElementById("btn_del_all");
     let btnCancel = document.getElementById("btn_cancel");
 
-    if(accessEdit)
+    if(!btnCancel)
     {
-        if(
-            !btnEdit ||
-            !btnSave ||
-            !btnCancel)
+        alert("Ошибка 4!!!!")
+        return;
+    }
+    btnCancel.addEventListener("click", (event) =>
+    {
+        event.preventDefault(); // Отменяем стандартное поведение формы
+        onUserPressedOnBTN(BUTTOM_TYPE.TYPE_CANCEL);
+    })
+
+
+    if(accessDeletePallet)
+    {
+        if(!btnDelPallet)
         {
             alert("Ошибка 5!!!!")
             return;
         }
+        btnDelPallet.addEventListener("click", (event) =>
+        {
+            event.preventDefault(); // Отменяем стандартное поведение формы
+            onUserPressedOnBTN(BUTTOM_TYPE.TYPE_DELETE_PALLET);
+        })
     }
-    if(accessDelete)
+    if(accessAddDevice)
     {
-        if(!btnDel)
+        if(!btnAddDevice)
         {
             alert("Ошибка 5!!!!")
             return;
         }
-    }
-
-    // if(
-    //     !btnEdit ||
-    // !btnDel ||
-    // !btnSave ||
-    // !btnCancel)
-    // {
-    //     alert("Ошибка 5!!!!")
-    //     return;
-    // }
-
-    if(btnEdit)
-    {
-        cButton.addBTN(btnEdit, "Редактировать", BUTTOM_TYPE.TYPE_EDIT);
-        btnEdit.addEventListener("click", (event) =>
+        btnAddDevice.addEventListener("click", (event) =>
         {
             event.preventDefault(); // Отменяем стандартное поведение формы
-            onUserPressedOnBTN(BUTTOM_TYPE.TYPE_EDIT);
+            onUserPressedOnBTN(BUTTOM_TYPE.TYPE_ADD_DEVICE);
         })
     }
-    if(btnDel)
-    {
-        cButton.addBTN(btnDel, "Удалить", BUTTOM_TYPE.TYPE_DEL);
-        btnDel.addEventListener("click", (event) =>
-        {
-            event.preventDefault(); // Отменяем стандартное поведение формы
-            onUserPressedOnBTN(BUTTOM_TYPE.TYPE_DEL);
-        })
-    }
-    if(btnSave)
-    {
-        cButton.addBTN(btnSave, "Сохранить", BUTTOM_TYPE.TYPE_SAVE);
-        btnSave.addEventListener("click", (event) =>
-        {
-            event.preventDefault(); // Отменяем стандартное поведение формы
-            onUserPressedOnBTN(BUTTOM_TYPE.TYPE_SAVE);
-        })
-    }
-    if(btnCancel)
-    {
-        cButton.addBTN(btnCancel, "Отменить редактирование", BUTTOM_TYPE.TYPE_CANCEL);
-        btnCancel.addEventListener("click", (event) =>
-        {
-            event.preventDefault(); // Отменяем стандартное поведение формы
-            onUserPressedOnBTN(BUTTOM_TYPE.TYPE_CANCEL);
-        })
-    }
-
-    cButton.setShowForAll(false)
 
     HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_BLOCK, false);
     HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.RESULT_BLOCK, false);
