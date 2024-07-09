@@ -1,12 +1,15 @@
-.table-devicesn {
+.table-palletesn {
 	display: inline-block;
 	margin: 2%;
 	align-items: center;
 }
-.table-devicesn .custom-table {
+.table-palletesn .custom-table {
 	width: 100%;
 }
-.inline_buttom .btm_submit-common.delete {
+.inline_buttom .btm_submit-common#btn_del_all {
+	background: red;
+}
+#btn_del_device {
 	background: red;
 }
 

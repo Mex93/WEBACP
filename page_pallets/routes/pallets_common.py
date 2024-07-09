@@ -16,6 +16,7 @@ from engine.users.users_log.enums import LOG_TYPE, LOG_SUBTYPE, LOG_OBJECT_TYPE
 
 from engine.pallets.CSQLPalletQuerys import CSQLPalletQuerys
 from engine.pallets.CPallet import CPallet
+from engine.pallets.enums import INPUT_TYPE
 
 from engine.common import convert_date_from_sql_format
 from captha_main import SIMPLE_CAPTCHA
@@ -39,7 +40,7 @@ def get_pallet_sn_data(pallet_sn: str):
     account_idx = cuser_access.get_session_var(USER_SECTIONS_TYPE.ACC_INDEX)
     count = 0
     pallet_sn = pallet_sn.upper()
-
+    # todo придумать как убрать быдлокод в вычислении паллета и его устройств, так как повтор кода
     csql = CSQLPalletQuerys()
     try:
         result_connect = csql.connect_to_db(CONNECT_DB_TYPE.LINE)
@@ -72,7 +73,6 @@ def get_pallet_sn_data(pallet_sn: str):
                     data = csql.get_pallet_sn_from_devices(pallet_sn)
                     if data:
                         for device in data:
-                            print(device)
                             item_device_assy = device.get(SQL_PALLET_SCANNED_FIELDS.fd_assy_id, None)
                             item_device_sn = device.get(SQL_PALLET_SCANNED_FIELDS.fd_tv_sn, None)
                             item_scanned_data = device.get(SQL_PALLET_SCANNED_FIELDS.fd_scanned_data, None)
@@ -111,7 +111,6 @@ def get_pallet_sn_data(pallet_sn: str):
                                     data = csql.get_pallet_sn_from_devices(pallet_find_sn)
                                     if data:
                                         for device in data:
-                                            print(device)
                                             item_device_assy = device.get(SQL_PALLET_SCANNED_FIELDS.fd_assy_id, None)
                                             item_device_sn = device.get(SQL_PALLET_SCANNED_FIELDS.fd_tv_sn, None)
                                             item_scanned_data = device.get(SQL_PALLET_SCANNED_FIELDS.fd_scanned_data,
@@ -145,29 +144,69 @@ def get_pallet_sn_data(pallet_sn: str):
                 if pallet_completed_date:
                     pallet_completed_date = convert_date_from_sql_format(str(pallet_completed_date))
 
-                response_for_client.update({"pallet_data":
-                    {
-                        'pallet_sn': pallet_find_sn,
-                        'assy_id': pallet_find_sn_sql_id,
-                        'create_date': pallet_create_date,
-                        'completed_check': pallet_completed_check,
-                        'completed_date': pallet_completed_date,
-                        'assembled_line': pallet_assembled_line
-                    }
-                })
+                params_list = \
+                    [
+                        ['pallet_sn', pallet_find_sn],
+                        ['assy_id', pallet_find_sn_sql_id],
+                        ['assembled_line', pallet_assembled_line],
+                        ['completed_check', pallet_completed_check],
+                        ['create_date', pallet_create_date],
+                        ['completed_date', pallet_completed_date],
 
-                #################################
-                text = f"Пользователь ID: [{account_name}[{account_idx}]] произвёл поиск паллета '{pallet_find_sn}']"
-                # CSQLUserLogQuerys.send_log(
-                #     account_idx,
-                #     LOG_OBJECT_TYPE.LGOT_USER,
-                #     LOG_TYPE.LGT_PALLETS,
-                #     LOG_SUBTYPE.LGST_FIND,
-                #     text)
+                    ]
+                params_completed = []
+                count = 0
+                for item in params_list:
+                    array_index = CPallet.get_array_index_from_text_id(item[0])
+                    if array_index != -1:
 
-                cdebug.debug_print(
-                    f"get_pallet_sn_data AJAX -> [Получение информации о паллете] -> [IDX:{account_idx}, {account_name}] -> "
-                    f"[Удачно] -> [Список предоставлен '{pallet_find_sn}'] ")
+                        text_id = CPallet.get_text_id(array_index)
+                        text_name = CPallet.get_text_name(array_index)
+                        value_type = CPallet.get_value_type(array_index)
+                        input_type = CPallet.get_input_type(array_index)
+                        is_editting = CPallet.is_field_editable(array_index)
+                        if is_editting:
+                            is_editting = 'editable'
+                        else:
+                            is_editting = 'no-editable'
+
+                        if input_type == INPUT_TYPE.CHECKBOX:
+                            input_type = 'cb'
+                        else:
+                            input_type = 'input'
+
+                        if value_type == str:
+                            value_type = 'string'
+                        elif value_type == int:
+                            value_type = 'integer'
+                        elif value_type == bool:
+                            value_type = 'bool'
+
+                        params_completed.append([text_id, text_name, value_type, input_type, is_editting, item[1]])
+                        count += 1
+
+                if count:
+                    response_for_client.update({"pallet_data": params_completed})
+                    #################################
+                    text = f"Пользователь ID: [{account_name}[{account_idx}]] произвёл поиск паллета '{pallet_find_sn}']"
+                    # CSQLUserLogQuerys.send_log(
+                    #     account_idx,
+                    #     LOG_OBJECT_TYPE.LGOT_USER,
+                    #     LOG_TYPE.LGT_PALLETS,
+                    #     LOG_SUBTYPE.LGST_FIND,
+                    #     text)
+
+                    cdebug.debug_print(
+                        f"get_pallet_sn_data AJAX -> [Получение информации о паллете] -> [IDX:{account_idx}, {account_name}] -> "
+                        f"[Удачно] -> [Список предоставлен '{pallet_find_sn}'] ")
+
+                else:
+                    response_for_client.update(
+                        {"error_text": f"Ошибка получения параметров паллета!"})
+                    # другими словами - устройство не может быть привязано сразу к нескольким паллетам
+                    cdebug.debug_print(
+                        f"get_pallet_sn_data AJAX -> [Получение информации о паллете] -> [IDX:{account_idx}, {account_name}] -> "
+                        f"[Ошибка] -> [Ошибка получения параметров паллета '{pallet_sn}'] ")
             else:
                 if error_find_max_count:
                     response_for_client.update(
