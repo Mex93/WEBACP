@@ -26,7 +26,7 @@ let palletSQLID = null;
 let palletName = null;
 let isSuccessFind = false;
 let tableBlock = 'table_block_id';
-let tableDeviceBlock = 'box_add_device';
+let tableDeviceBlock = 'box_devices';
 
 
 class HTMLBlocks
@@ -227,7 +227,7 @@ class CPalletInfo
 
 function destroyTableBlock()
 {
-    if(palletName)
+    if(isSuccessFind)
     {
         palletSQLID = null;
         palletName = null;
@@ -244,10 +244,67 @@ function onUserPressedOnBTN(btnType)
 {
     if(btnType === BUTTOM_TYPE.TYPE_CANCEL)
     {
-        if(palletName)
+        if(isSuccessFind)
         {
             destroyTableBlock();
+            gotoToMainBlock();
         }
+    }
+    else if(btnType === BUTTOM_TYPE.TYPE_ADD_DEVICE)
+    {
+
+
+    }
+    else if(btnType === BUTTOM_TYPE.TYPE_DELETE_PALLET)
+    {
+        if(accessDeletePallet)
+        {
+            if(isSuccessFind)
+            {
+                if (confirm(`"Вы действительно хотите удалить выбранный паллет '${palletName}' ?
+                \nОтменить действие будет невозможно!\n
+                Содержимое паллета будет удалено!"`)) // yes
+                 {
+                     if(query)
+                     {
+                         cmessBoxMain.sendErrorMessage("Запрос от сервера ещё не пришёл!")
+                         return;
+                     }
+                     query = true;
+                     let completed_json = JSON.stringify({
+                         pallet_sn: palletName,
+                         pallet_sql_id: palletSQLID
+                     }); //$.parseJSON(json_text);
+
+                     $.ajax({
+                         data : completed_json,
+                         dataType: 'json',
+                         type : 'POST',
+                         url : './pallet_delete_all_ajax',
+                         contentType: "application/json",
+                         success: function(data) {
+                             query = false;
+                             if(isSuccessFind)
+                                 destroyTableBlock();
+
+                             if (data.result === true)
+                             {
+                                 cmessBoxMain.sendSuccessMessage(data.error_text);
+                             }
+                             else
+                                cmessBoxMain.sendErrorMessage(data.error_text);
+
+                             gotoToMainBlock();
+                         },
+                         error: function(error) {
+                                 // responseProcess = false
+                                 cmessBoxMain.sendErrorMessage("Ошибка AJAX на стороне сервера!");
+                             }
+                     })
+                 }
+            }
+        }
+
     }
 }
 
@@ -257,8 +314,24 @@ function DestroyUnits()
     CDevice.clearUnits();
 }
 
-
-
+function gotoToPalletBlock()
+{
+    document.querySelector("#table_block_id").scrollIntoView({
+        behavior: 'smooth'
+    });
+}
+function gotoToDeviceBlock()
+{
+    document.querySelector("#box_devices").scrollIntoView({
+        behavior: 'smooth'
+    });
+}
+function gotoToMainBlock()
+{
+    document.querySelector("#pallets_find").scrollIntoView({
+        behavior: 'smooth'
+    });
+}
 function getSerialNumberInfoData(snNumber)
 {
     console.log(snNumber)
@@ -276,18 +349,7 @@ function getSerialNumberInfoData(snNumber)
         cmessBoxMain.sendErrorMessage("Запрос от сервера ещё не пришёл!")
         return;
     }
-    // if(isSuccessFind)
-    // {
-    //     if(snNumber === palletName)
-    //     {
-    //         cmessBoxMain.sendErrorMessage("Вы уже запросили этот серийный номер!")
-    //         return
-    //     }
-    // }
-    // if(isSuccessFind !== false)
-    // {
-    //     destroyTableBlock()
-    // }
+
     // класс должен быть объявлен тут для капчи, иначе значение блока не будед перезаписываться
     let cCaptha = new CCaptha('div input[name=captcha-hash]', "captcha-text");
     let cresult = cCaptha.validate(cmessBoxMain);
@@ -295,10 +357,22 @@ function getSerialNumberInfoData(snNumber)
     {
         return false;
     }
-    query = true;
-    HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_BLOCK, true);
-    HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.RESULT_BLOCK, false);
 
+    if(!isSuccessFind)
+    {
+        HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.RESULT_BLOCK, false);
+    }
+    else
+    {
+        if(palletName === snNumber)
+        {
+            cmessBoxMain.sendErrorMessage("Вы уже запросили этот паллет!")
+            return;
+        }
+    }
+    HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_BLOCK, true);
+
+    query = true;
     let completed_json = JSON.stringify({
         captcha_hash: cresult.captcha_hash,
         captcha_text: cresult.captcha_text,
@@ -334,6 +408,10 @@ function getSerialNumberInfoData(snNumber)
             {
                 if(Array.isArray(data.pallet_data))
                 {
+                    if(isSuccessFind)
+                        destroyTableBlock()
+
+
                     let count = 0;
                     for(let item of data.pallet_data)
                     {
@@ -357,6 +435,7 @@ function getSerialNumberInfoData(snNumber)
                             if(pUnit)
                             {
                                 palletSQLID = pUnit.getValue();
+                                isSuccessFind = true;
                             }
                         }
                         if(palletName && palletSQLID)
@@ -393,7 +472,9 @@ function getSerialNumberInfoData(snNumber)
                                 let inputType = element.getInputType();
                                 if(inputType === 'input')
                                 {
-                                    th.innerText = `${element.getValue()}`;
+                                    let value = element.getValue();
+                                    value = value === null ? '': value;
+                                    th.innerText = `${value}`;
                                 }
                                 else if(inputType === 'cb')
                                 {
@@ -417,10 +498,13 @@ function getSerialNumberInfoData(snNumber)
 
                                     if(inputType === 'input')
                                     {
+                                        let value = element.getValue();
+                                        value = value === null ? '': value;
+
                                         let input = document.createElement("input");
                                         input.type = "text";
-                                        input.innerText = `${element.getValue()}`;
-                                        input.placeholder = `${element.getValue()}`;
+                                        input.innerText = `${value}`;
+                                        input.placeholder = `${value}`;
 
                                         if(vType === 'string')
                                         {
@@ -432,7 +516,7 @@ function getSerialNumberInfoData(snNumber)
                                         }
 
                                         input.minLength = 0;
-                                        input.value = `${element.getValue()}`;
+                                        input.value = `${value}`;
                                         input.id = `new_info_table_value_${textID}`;
 
                                         if(disabledField)
@@ -478,7 +562,7 @@ function getSerialNumberInfoData(snNumber)
                             if(count)
                             {
                                 tableBlock.append(table);
-
+                                gotoToPalletBlock();
                                 if(Array.isArray(data.pallet_devices))
                                 {
                                     let count = 0;

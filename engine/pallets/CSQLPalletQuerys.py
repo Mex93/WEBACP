@@ -28,6 +28,78 @@ class CSQLPalletQuerys(CSqlAgent):
             return result[0]
         return False
 
+    def is_pallet_valid(self, pallet_sn: str, sql_id: int) -> bool:
+
+        query_string = (f"SELECT {SQL_PALLET_SN_FIELDS.fd_pallet_code} "
+                        f"FROM {SQL_TABLE_NAME.pallet_sn} "
+                        f"WHERE "
+                        f"{SQL_PALLET_SN_FIELDS.fd_pallet_code} = %s AND "
+                        f"{SQL_PALLET_SN_FIELDS.fd_assy_id} = %s "
+                        "LIMIT 1")
+
+        result = self.sql_query_and_get_result(
+            self.get_sql_handle(), query_string, (pallet_sn, sql_id, ), "_1", )  # Запрос типа аасоциативного массива
+        if result is False:  # Errorrrrrrrrrrrrr based data
+            return False
+        # print(result)
+
+        sql_result = result[0].get(SQL_PALLET_SN_FIELDS.fd_pallet_code, None)
+        if sql_result is not None:
+            return True
+        return False
+
+    def get_pallet_device_count(self, pallet_sn: str) -> int | bool:
+
+        query_string = (f"SELECT COUNT(*) as count_of_devices "
+                        f"FROM {SQL_TABLE_NAME.pallet_scanned} "
+                        f"WHERE "
+                        f"{SQL_PALLET_SCANNED_FIELDS.fd_pallet_code} = %s "
+                        "LIMIT 100")
+
+        result = self.sql_query_and_get_result(
+            self.get_sql_handle(), query_string, (pallet_sn,), "_1", )  # Запрос типа аасоциативного массива
+        if result is False:  # Errorrrrrrrrrrrrr based data
+            return False
+        # print(result)
+
+        sql_result = result[0].get('count_of_devices', None)
+        if sql_result is not None:
+            return int(sql_result)
+        return False
+
+    def delete_all_pallet_devices(self, pallet_sn: str) -> bool:
+
+        query_string = (f"DELETE "
+                        f"FROM {SQL_TABLE_NAME.pallet_scanned} "
+                        f"WHERE "
+                        f"{SQL_PALLET_SCANNED_FIELDS.fd_pallet_code} = %s "
+                        )
+
+        result = self.sql_query_and_get_result(
+            self.get_sql_handle(), query_string, (pallet_sn,), "_d", )  # Запрос типа аасоциативного массива
+        if result is False:  # Errorrrrrrrrrrrrr based data
+            return False
+        # print(result)
+
+        return True
+
+    def delete_pallet(self, pallet_sn: str, sql_id) -> bool:
+
+        query_string = (f"DELETE "
+                        f"FROM {SQL_TABLE_NAME.pallet_sn} "
+                        f"WHERE "
+                        f"{SQL_PALLET_SN_FIELDS.fd_pallet_code} = %s AND "
+                        f"{SQL_PALLET_SN_FIELDS.fd_assy_id} = %s "
+                        )
+
+        result = self.sql_query_and_get_result(
+            self.get_sql_handle(), query_string, (pallet_sn, sql_id, ), "_d", )  # Запрос типа аасоциативного массива
+        if result is False:  # Errorrrrrrrrrrrrr based data
+            return False
+        # print(result)
+
+        return True
+
     def get_pallet_data_ex(self, assy_id: int, pallet_sn: str) -> dict | bool:
 
         query_string = (f"SELECT * "

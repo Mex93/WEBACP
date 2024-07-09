@@ -101,16 +101,16 @@
                     {% if access_unit.is_access_for_panel(access_type.ACCESS_PALLET_DELETE_ALL) == True %}
                         <button id = "btn_del_all" type="submit" name = "del_all" value = "del_all" class = "btm_submit-common">Удалить паллет</button>
                     {% endif %}
+                    <button id = "btn_cancel" type="submit" name = "cancel" value = "cancel" class = "btm_submit-common">Отмена</button>
                 </div>
 
-                 <div id = "box_add_device">
+                 <div id = "box_devices">
 
                 </div>
                 <div class = "inline_buttom">
                      {% if access_unit.is_access_for_panel(access_type.ACCESS_PALLET_ADD_TV) == True %}
                         <button id = "btn_add_device" type="submit" name = "addd" value = "addd" class = "btm_submit-common">Добавить устройство</button>
                      {% endif %}
-                    <button id = "btn_cancel" type="submit" name = "cancel" value = "cancel" class = "btm_submit-common">Отмена</button>
                 </div>
             </div>
         </div>
