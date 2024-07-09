@@ -27,6 +27,7 @@ let palletName = null;
 let isSuccessFind = false;
 let tableBlock = 'table_block_id';
 let tableDeviceBlock = 'box_devices';
+const MAX_PALLET_PLACES = 5*12
 
 
 class HTMLBlocks
@@ -144,14 +145,15 @@ class CDevice
         if(!this.#deviceNumber)
             return false;
     }
-    getUnitIDFromDeviceNumber(dNumber)
+    static getUnitIDFromDeviceNumber(dNumber)
     {
-        for(let item of this.constructor.units)
+        for(let item of this.units)
         {
             if (item.#deviceNumber !== dNumber)
                 continue;
             return item
         }
+        return false;
     }
     getUnitIDFromDeviceAssy(dAssy)
     {
@@ -252,7 +254,37 @@ function onUserPressedOnBTN(btnType)
     }
     else if(btnType === BUTTOM_TYPE.TYPE_ADD_DEVICE)
     {
+        if(accessAddDevice)
+        {
+            if(isSuccessFind)
+            {
+                let result = prompt(`Укажите серийный номер устройства, что бы добавить в паллет '${palletName}'.\n\n\
+                Условия добавления:\n\
+                - Паллет должен быть не заполнен выше максимального значения в ${MAX_PALLET_PLACES} штук.\n\
+                - Устройство должно быть собрано на сборочном конвейере.\n\
+                - Устройство должно физически находится на паллете.\n\
+                - Устройство не должно быть привязано к выбранному или другому паллету.\n\
+                - Устройство, во время сборки на сборочном конвейере, должно успешно пройти операцию сканировки на упаковке.\n\
+                - Сборочная линия устройства и паллета должны совпадать.\n\n\
+               Нажмите 'ОК', что бы добавить устройство:`);
 
+                if(result)  // ввёл что либо или окно пустое
+                {
+                    let deviceSN = result.toUpperCase();
+                    if(deviceSN.length > 10)
+                    {
+                        if(!CDevice.getUnitIDFromDeviceNumber(deviceSN))
+                        {
+                            console.log(deviceSN)
+                        }
+                        else
+                            cmessBoxBlock.sendErrorMessage("Указанное устройство уже есть в выбранном паллете!")
+                    }
+                    else
+                        cmessBoxBlock.sendErrorMessage("Длинна SN устройства слишком мала!")
+                }
+            }
+        }
 
     }
     else if(btnType === BUTTOM_TYPE.TYPE_DELETE_PALLET)
@@ -577,7 +609,7 @@ function getSerialNumberInfoData(snNumber)
                                             } = device;
                                         if(assyID && deviceSN && modelFK)
                                         {
-                                            let unit = new CDevice(assyID, deviceSN);
+                                            let unit = new CDevice(deviceSN, assyID);
                                             unit.setScannedDate(scannedDate);
                                             unit.setModelFK(modelFK);
                                             count++;
@@ -623,10 +655,10 @@ function getSerialNumberInfoData(snNumber)
 
                                             tr = document.createElement('tr');
                                             th = document.createElement('td');
-                                            th.innerText = deviceSN;
+                                            th.innerText = deviceAssy;
                                             tr.append(th)
                                             th = document.createElement('td');
-                                            th.innerText = deviceAssy;
+                                            th.innerText = deviceSN;
                                             tr.append(th)
                                             th = document.createElement('td');
                                             th.innerText = modelFK;
