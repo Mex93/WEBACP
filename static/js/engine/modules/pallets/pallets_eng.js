@@ -26,7 +26,8 @@ let palletSQLID = null;
 let palletName = null;
 let isSuccessFind = false;
 let tableBlock = 'table_block_id';
-let tableDeviceBlock = 'box_devices';
+let tableDeviceBlockID = 'box_devices';
+let tableDevicesIDName = 'device_table';
 const MAX_PALLET_PLACES = 5*12
 
 
@@ -145,6 +146,18 @@ class CDevice
         if(!this.#deviceNumber)
             return false;
     }
+    static getDeviceCount()
+    {
+        let count = 0;
+        this.units.forEach( (element) =>
+        {
+            if(!element.isValid())
+                return
+            count ++;
+        })
+
+        return count;
+    }
     static getUnitIDFromDeviceNumber(dNumber)
     {
         for(let item of this.units)
@@ -226,6 +239,72 @@ class CPalletInfo
 
 }
 
+function createTableDeviceHeader()
+{
+    if(!document.getElementById(tableDevicesIDName))
+    {
+        let table = document.createElement('table');
+        table.id = tableDevicesIDName;
+        table.className = 'custom-table table-palletesn';
+        let tr = document.createElement('tr');
+        let th = document.createElement('th');
+        th.innerText = 'Номер устройства в БД:'
+        tr.append(th)
+        th = document.createElement('th');
+        th.innerText = 'Серийный номер устройства:'
+        tr.append(th)
+        th = document.createElement('th');
+        th.innerText = 'ID модели:'
+        tr.append(th)
+        th = document.createElement('th');
+        th.innerText = 'Дата сканировки:'
+        tr.append(th)
+        th = document.createElement('th');
+        th.innerText = 'Действие:'
+        tr.append(th)
+        table.append(tr)
+        return table;
+    }
+   return null;
+}
+function createTableDeviceBody(table, deviceUnit)
+{
+    let deviceSN = deviceUnit.getDeviceSN();
+    let scannedDate = deviceUnit.getScannedDate();
+    let deviceAssy = deviceUnit.getAssy();
+    let modelFK = deviceUnit.getModelFK();
+
+    let tr = document.createElement('tr');
+    let th = document.createElement('td');
+    th.innerText = deviceAssy;
+    tr.append(th)
+    th = document.createElement('td');
+    th.innerText = deviceSN;
+    tr.append(th)
+    th = document.createElement('td');
+    th.innerText = modelFK;
+    tr.append(th)
+    th = document.createElement('td');
+    th.innerText = scannedDate;
+    tr.append(th)
+    th = document.createElement('td');
+    if(accessDeleteDevice)
+    {
+        let btn = document.createElement('button');
+        btn.id = 'btn_del_device'
+        btn.innerText = 'Удалить'
+        btn.className = 'btm_submit-common'
+        th.append(btn)
+    }
+    else
+    {
+        th.innerText = '-'
+    }
+
+    tr.append(th)
+    table.append(tr)
+}
+
 
 function destroyTableBlock()
 {
@@ -236,7 +315,7 @@ function destroyTableBlock()
         isSuccessFind = false;
         DestroyUnits();
         tableBlock.innerHTML = '';
-        tableDeviceBlock.innerHTML = '';
+        tableDeviceBlockID.innerHTML = '';
     }
     HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_BLOCK, false);
     HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.RESULT_BLOCK, false);
@@ -266,16 +345,99 @@ function onUserPressedOnBTN(btnType)
                 - Устройство не должно быть привязано к выбранному или другому паллету.\n\
                 - Устройство, во время сборки на сборочном конвейере, должно успешно пройти операцию сканировки на упаковке.\n\
                 - Сборочная линия устройства и паллета должны совпадать.\n\n\
-               Нажмите 'ОК', что бы добавить устройство:`);
+               Нажмите 'ОК', что бы добавить устройство:`, '');
 
                 if(result)  // ввёл что либо или окно пустое
                 {
                     let deviceSN = result.toUpperCase();
                     if(deviceSN.length > 10)
                     {
+                        if(query)
+                        {
+                            cmessBoxMain.sendErrorMessage("Запрос от сервера ещё не пришёл!")
+                            return;
+                        }
                         if(!CDevice.getUnitIDFromDeviceNumber(deviceSN))
                         {
-                            console.log(deviceSN)
+                            if(CDevice.getDeviceCount() < MAX_PALLET_PLACES)
+                            {
+                                query = true;
+                                let completed_json = JSON.stringify({
+                                    pallet_sn: palletName,
+                                    pallet_sql_id: palletSQLID,
+                                    device_sn: deviceSN
+                                }); //$.parseJSON(json_text);
+
+                                $.ajax({
+                                    data : completed_json,
+                                    dataType: 'json',
+                                    type : 'POST',
+                                    url : './pallet_add_device_ajax',
+                                    contentType: "application/json",
+                                    success: function(data) {
+                                        query = false;
+
+                                        let destroyPallet = () =>
+                                        {
+                                            destroyTableBlock();
+                                            cmessBoxMain.sendSuccessMessage("Возникла ошибка. Паллет сброшен!");
+                                            gotoToMainBlock();
+                                        }
+
+                                        if (data.result === true)
+                                        {
+                                            //let countInPallet = CDevice.getDeviceCount();
+                                            let table = document.getElementById(tableDevicesIDName);
+                                            if(!table)  // если ноль, то создать таблицу
+                                            {
+                                                table = createTableDeviceHeader();
+                                                if(!table)
+                                                {
+                                                    destroyPallet();
+                                                    return
+                                                }
+                                                else
+                                                {
+                                                    tableDeviceBlockID.append(table);
+                                                }
+                                            }
+                                            if(table)
+                                            {
+                                                let assy = data.assyid;
+                                                let modelFK = data.model_fk;
+                                                let scannedDate = data.scanned_data;
+                                                if(assy && modelFK && scannedDate)
+                                                {
+                                                    let unit = new CDevice(deviceSN, assy);
+                                                    unit.setScannedDate(scannedDate);
+                                                    unit.setModelFK(modelFK);
+                                                    createTableDeviceBody(table, unit)
+                                                }
+                                            }
+                                            cmessBoxBlock.sendSuccessMessage(data.error_text);
+                                        }
+                                        else
+                                        {
+                                            gotoToDeviceBlock();
+                                            cmessBoxBlock.sendErrorMessage(data.error_text);
+                                            if(data.hasOwnProperty('reset_pallet'))
+                                            {
+                                                if(data.reset_pallet === true)
+                                                {
+                                                    destroyPallet();
+                                                }
+                                            }
+                                        }
+
+                                    },
+                                    error: function(error) {
+                                        // responseProcess = false
+                                        cmessBoxMain.sendErrorMessage("Ошибка AJAX на стороне сервера!");
+                                    }
+                                })
+                            }
+                            else
+                                cmessBoxBlock.sendErrorMessage("Паллет уже заполнен максимально!")
                         }
                         else
                             cmessBoxBlock.sendErrorMessage("Указанное устройство уже есть в выбранном паллете!")
@@ -623,67 +785,17 @@ function getSerialNumberInfoData(snNumber)
                                     }
                                     if(count)
                                     {
-                                        let table = document.createElement('table');
-                                        table.id = 'device_table';
-                                        table.className = 'custom-table table-palletesn';
-                                        let tr = document.createElement('tr');
-                                        let th = document.createElement('th');
-                                        th.innerText = 'Номер устройства в БД:'
-                                        tr.append(th)
-                                        th = document.createElement('th');
-                                        th.innerText = 'Серийный номер устройства:'
-                                        tr.append(th)
-                                        th = document.createElement('th');
-                                        th.innerText = 'ID модели:'
-                                        tr.append(th)
-                                        th = document.createElement('th');
-                                        th.innerText = 'Дата сканировки:'
-                                        tr.append(th)
-                                        th = document.createElement('th');
-                                        th.innerText = 'Действие:'
-                                        tr.append(th)
-                                        table.append(tr)
-
-                                        let units = CDevice.getUnits();
-                                        console.log(units)
-                                        for(let device of units)
+                                        table = createTableDeviceHeader();
+                                        if(table)
                                         {
-                                            let deviceSN = device.getDeviceSN();
-                                            let scannedDate = device.getScannedDate();
-                                            let deviceAssy = device.getAssy();
-                                            let modelFK = device.getModelFK();
-
-                                            tr = document.createElement('tr');
-                                            th = document.createElement('td');
-                                            th.innerText = deviceAssy;
-                                            tr.append(th)
-                                            th = document.createElement('td');
-                                            th.innerText = deviceSN;
-                                            tr.append(th)
-                                            th = document.createElement('td');
-                                            th.innerText = modelFK;
-                                            tr.append(th)
-                                            th = document.createElement('td');
-                                            th.innerText = scannedDate;
-                                            tr.append(th)
-                                            th = document.createElement('td');
-                                            if(accessDeleteDevice)
+                                            let units = CDevice.getUnits();
+                                            //console.log(units)
+                                            for(let device of units)
                                             {
-                                                let btn = document.createElement('button');
-                                                btn.id = 'btn_del_device'
-                                                btn.innerText = 'Удалить'
-                                                btn.className = 'btm_submit-common'
-                                                th.append(btn)
+                                                createTableDeviceBody(table, device);
                                             }
-                                            else
-                                            {
-                                                th.innerText = '-'
-                                            }
-
-                                            tr.append(th)
-                                            table.append(tr)
+                                            tableDeviceBlockID.append(table);
                                         }
-                                        tableDeviceBlock.append(table);
                                     }
                                 }
                                 HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_BLOCK, false);
@@ -733,8 +845,8 @@ $(document).ready(function()
         return
     }
 
-    tableDeviceBlock = document.getElementById(tableDeviceBlock);
-    if(!tableDeviceBlock)
+    tableDeviceBlockID = document.getElementById(tableDeviceBlockID);
+    if(!tableDeviceBlockID)
     {
         alert("Не могу найти блок для вставки таблицы устройств!")
         return

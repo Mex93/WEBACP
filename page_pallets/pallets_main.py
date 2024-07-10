@@ -7,7 +7,7 @@ from engine.pages.enums import PAGE_ID
 from engine.users.CUser import CUser
 from engine.users.CUserAccess import CUserAccess
 from engine.users.enums import USER_SECTIONS_TYPE, USER_SECTION_ACCESS_TYPE
-from engine.pallets.common import is_palletsn_valid
+from engine.pallets.common import is_palletsn_valid, is_devicesn_valid
 from engine.pallets.common import is_cirylic
 
 bp_page_pallets = Blueprint('pallets', __name__, template_folder='templates', static_folder='static')
@@ -109,5 +109,41 @@ def pallet_delete_all_ajax():
                 response_for_client.update({"error_text": "Вы неверно ввели номер паллета/SN устройства!"})
         else:
             response_for_client.update({"error_text": "Вы неверно ввели номер паллета/SN устройства!"})
+
+    return jsonify(response_for_client)
+
+@bp_page_pallets.route('/pallet_add_device_ajax', methods=['POST', 'GET'])
+def pallet_add_device_ajax():
+    if cuser_access.is_sessions_start() is False:
+        return cpages.redirect_on_page(PAGE_ID.ACCOUNT_LOGIN)
+
+    if cuser_access.is_avalible_any_access_field(USER_SECTION_ACCESS_TYPE.PALLETS) is False:
+        return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
+
+    if cuser_access.is_access_for_panel(USER_SECTIONS_TYPE.ACCESS_PALLET_ADD_TV) is False:
+        return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
+
+    response_for_client = {
+        "error_text": "Error query Type",
+        "result": False
+    }
+
+    if request.method == "POST":
+        json_ajax = request.get_json()
+        pallet_sn = json_ajax.get('pallet_sn')
+        pallet_sql_id = int(json_ajax.get('pallet_sql_id'))
+        device_sn = json_ajax.get('device_sn')
+
+        if (pallet_sn and isinstance(pallet_sn, str) and
+                pallet_sql_id and isinstance(pallet_sql_id, int) and
+                device_sn and isinstance(device_sn, str)):
+            if is_palletsn_valid(pallet_sn) and is_devicesn_valid(device_sn) and not is_cirylic(pallet_sn) and not is_cirylic(device_sn):
+                from page_pallets.routes.pallets_common import set_pallet_add_device_ajax
+                device_sn = device_sn.upper()
+                return set_pallet_add_device_ajax(pallet_sn, pallet_sql_id, device_sn)
+            else:
+                response_for_client.update({"error_text": "Вы неверно ввели номер SN устройства!"})
+        else:
+            response_for_client.update({"error_text": "Вы неверно ввели номер SN устройства!"})
 
     return jsonify(response_for_client)

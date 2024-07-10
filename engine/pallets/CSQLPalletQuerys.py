@@ -2,12 +2,29 @@ from engine.sql.CSQLAgent import CSqlAgent
 from engine.sql.sql_data import (SQL_TABLE_NAME,
                                  SQL_PALLET_SCANNED_FIELDS,
                                  SQL_PALLET_SN_FIELDS,
+                                 SQL_ASSEMBLED_TV_FIELDS
                                  )
 
 
 class CSQLPalletQuerys(CSqlAgent):
     def __init__(self):
         super().__init__()
+
+    def get_tv_info(self, tv_sn: str) -> bool | dict:
+        """Инфа о телевизоре"""
+        query_string = (f"SELECT * "
+                        f"FROM {SQL_TABLE_NAME.assembled_tv} "
+                        f"WHERE {SQL_ASSEMBLED_TV_FIELDS.fd_tv_sn} = %s "
+                        f"LIMIT 1")  # на всякий лимит
+
+        result = self.sql_query_and_get_result(
+            self.get_sql_handle(), query_string, (tv_sn,), "_1", )  # Запрос типа аасоциативного массива
+        if result is False:  # Errorrrrrrrrrrrrr based data
+            return False
+
+        # print(result)
+
+        return dict(result[0])
 
     def get_pallet_data(self, pallet_sn: str) -> dict | bool:
 
@@ -28,9 +45,9 @@ class CSQLPalletQuerys(CSqlAgent):
             return result[0]
         return False
 
-    def is_pallet_valid(self, pallet_sn: str, sql_id: int) -> bool:
+    def is_pallet_valid(self, pallet_sn: str, sql_id: int) -> bool | int:
 
-        query_string = (f"SELECT {SQL_PALLET_SN_FIELDS.fd_pallet_code} "
+        query_string = (f"SELECT {SQL_PALLET_SN_FIELDS.fd_assembled_line} "
                         f"FROM {SQL_TABLE_NAME.pallet_sn} "
                         f"WHERE "
                         f"{SQL_PALLET_SN_FIELDS.fd_pallet_code} = %s AND "
@@ -43,10 +60,34 @@ class CSQLPalletQuerys(CSqlAgent):
             return False
         # print(result)
 
-        sql_result = result[0].get(SQL_PALLET_SN_FIELDS.fd_pallet_code, None)
+        sql_result = result[0].get(SQL_PALLET_SN_FIELDS.fd_assembled_line, None)
         if sql_result is not None:
-            return True
+            return int(sql_result)
         return False
+
+    def insert_scanned_tv_on_pallet(self, pallet_code: str, tv_sn: str, tv_fk: int) -> tuple | bool:
+        """Вставить тв в паллет """
+
+        query_string = (f"INSERT INTO "
+                        f"{SQL_TABLE_NAME.pallet_scanned}"
+                        f"("
+                        f"{SQL_PALLET_SCANNED_FIELDS.fd_pallet_code}, "
+                        f"{SQL_PALLET_SCANNED_FIELDS.fd_tv_sn}, "
+                        f"{SQL_PALLET_SCANNED_FIELDS.fd_tv_model_fk}"
+                        f") VALUES"
+                        f"(%s, %s, %s) "
+                        f"RETURNING {SQL_PALLET_SCANNED_FIELDS.fd_assy_id}, {SQL_PALLET_SCANNED_FIELDS.fd_scanned_data}")  # на всякий лимит
+
+        result = self.sql_query_and_get_result(
+            self.get_sql_handle(), query_string, (pallet_code, tv_sn, tv_fk), "_i", )
+        if result is False:  # Errorrrrrrrrrrrrr based data
+            return False
+
+        sql_pass = result[0][0]  # возвращает кортеж с одним элементом
+        if sql_pass is None:
+            return False
+
+        return result[0][0], result[0][1]  # index, scandate
 
     def get_pallet_device_count(self, pallet_sn: str) -> int | bool:
 
@@ -118,6 +159,52 @@ class CSQLPalletQuerys(CSqlAgent):
         sql_result = result[0].get(SQL_PALLET_SN_FIELDS.fd_pallet_code, None)
         if sql_result is not None:
             return result[0]
+        return False
+
+    def is_device_in_pallet(self, pallet_sn: str, device_sn: str) -> bool | None:
+
+        query_string = (f"SELECT COUNT(*) as tv_count "
+                        f"FROM {SQL_TABLE_NAME.pallet_scanned} "
+                        f"WHERE "
+                        f"{SQL_PALLET_SCANNED_FIELDS.fd_pallet_code} = %s AND "
+                        f"{SQL_PALLET_SCANNED_FIELDS.fd_tv_sn} = %s "
+                        "LIMIT 2")
+
+        result = self.sql_query_and_get_result(
+            self.get_sql_handle(), query_string, (pallet_sn, device_sn,), "_1", )  # Запрос типа аасоциативного массива
+        if result is False:  # Errorrrrrrrrrrrrr based data
+            return False
+        # print(result)
+
+        sql_result = int(result[0].get('tv_count', None))
+        if sql_result is not None:
+            if sql_result > 0:
+                return True
+        else:
+            return None
+        return False
+
+    def get_device_count_in_pallet(self, pallet_sn: str) -> int | bool:
+
+        query_string = (f"SELECT COUNT(*) as tv_count "
+                        f"FROM {SQL_TABLE_NAME.pallet_scanned} "
+                        f"WHERE "
+                        f"{SQL_PALLET_SCANNED_FIELDS.fd_pallet_code} = %s AND "
+                        f"{SQL_PALLET_SCANNED_FIELDS.fd_tv_sn} = %s "
+                        "LIMIT 2")
+
+        result = self.sql_query_and_get_result(
+            self.get_sql_handle(), query_string, (pallet_sn, device_sn,), "_1", )  # Запрос типа аасоциативного массива
+        if result is False:  # Errorrrrrrrrrrrrr based data
+            return False
+        # print(result)
+
+        sql_result = int(result[0].get('tv_count', None))
+        if sql_result is not None:
+            if sql_result > 0:
+                return True
+        else:
+            return None
         return False
 
     def get_pallet_sn_from_devices(self, device_sn: str) -> dict | bool:
