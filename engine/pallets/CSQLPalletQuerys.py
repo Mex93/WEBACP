@@ -184,6 +184,42 @@ class CSQLPalletQuerys(CSqlAgent):
             return None
         return False
 
+    def is_device_in_pallet_ex(self, pallet_sn: str, device_sn: str, assy_id: int) -> bool | None:
+
+        query_string = (f"SELECT COUNT(*) as tv_count "
+                        f"FROM {SQL_TABLE_NAME.pallet_scanned} "
+                        f"WHERE "
+                        f"{SQL_PALLET_SCANNED_FIELDS.fd_pallet_code} = %s AND "
+                        f"{SQL_PALLET_SCANNED_FIELDS.fd_assy_id} = %s AND "
+                        f"{SQL_PALLET_SCANNED_FIELDS.fd_tv_sn} = %s "
+                        "LIMIT 2")
+
+        result = self.sql_query_and_get_result(
+            self.get_sql_handle(), query_string, (pallet_sn, assy_id, device_sn,), "_1", )  # Запрос типа аасоциативного массива
+        if result is False:  # Errorrrrrrrrrrrrr based data
+            return False
+        # print(result)
+
+        sql_result = int(result[0].get('tv_count', None))
+        if sql_result is not None:
+            if sql_result > 0:
+                return True
+
+        return False
+
+    def delete_device_from_pallet(self, device_sn: str, assy_id: int, pallete_code: str):
+        """удалить тв с паллета"""
+        query_string = (f"DELETE "
+                        f"FROM {SQL_TABLE_NAME.pallet_scanned} "
+                        f"WHERE "
+                        f"{SQL_PALLET_SCANNED_FIELDS.fd_pallet_code} = %s AND "
+                        f"{SQL_PALLET_SCANNED_FIELDS.fd_assy_id} = %s AND "
+                        f"{SQL_PALLET_SCANNED_FIELDS.fd_tv_sn} = %s "
+                        )  # на всякий лимит
+
+        self.sql_query_and_get_result(
+            self.get_sql_handle(), query_string, (pallete_code, assy_id, device_sn,), "_d", )  # Запрос типа аасоциативного массива
+
     def get_device_count_in_pallet(self, pallet_sn: str) -> int | bool:
 
         query_string = (f"SELECT COUNT(*) as tv_count "

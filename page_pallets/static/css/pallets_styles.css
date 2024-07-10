@@ -9,7 +9,7 @@
 .inline_buttom .btm_submit-common#btn_del_all {
 	background: red;
 }
-#btn_del_device {
+.btm_submit-common.btn_del_device {
 	background: red;
 }
-
+ 

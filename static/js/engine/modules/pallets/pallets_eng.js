@@ -143,8 +143,7 @@ class CDevice
     }
     isValid()
     {
-        if(!this.#deviceNumber)
-            return false;
+        return this.#deviceNumber;
     }
     static getDeviceCount()
     {
@@ -239,6 +238,120 @@ class CPalletInfo
 
 }
 
+function onUserPressedBtnDeviceDel(deviceUnit)
+{
+    if(deviceUnit)
+    {
+        if(accessDeleteDevice)
+        {
+            if(isSuccessFind)
+            {
+                let deviceSN = deviceUnit.getDeviceSN();
+                if(!deviceSN)
+                    return
+
+                if (confirm(`"Вы действительно хотите удалить устройство '${deviceSN}' с паллета '${palletName}' ?
+            \nОтменить действие будет невозможно!"`)) // yes
+                {
+                    if(query)
+                    {
+                        cmessBoxMain.sendErrorMessage("Запрос от сервера ещё не пришёл!")
+                        return;
+                    }
+                    let destroyPallet = () =>
+                    {
+                        destroyTableBlock();
+                        gotoToMainBlock();
+                    }
+                    if(CDevice.getUnitIDFromDeviceNumber(deviceSN) !== false)
+                    {
+                        let assy = deviceUnit.getAssy();
+                        if(assy)
+                        {
+                            query = true;
+                            let completed_json = JSON.stringify({
+                                pallet_sn: palletName,
+                                pallet_sql_id: palletSQLID,
+                                device_sn: deviceSN,
+                                device_assy: assy
+                            }); //$.parseJSON(json_text);
+
+                            $.ajax({
+                                data : completed_json,
+                                dataType: 'json',
+                                type : 'POST',
+                                url : './pallet_delete_device_ajax',
+                                contentType: "application/json",
+                                success: function(data) {
+                                    query = false;
+
+                                    if (data.result === true)
+                                    {
+                                        cmessBoxBlock.sendSuccessMessage(data.error_text);
+
+                                        deviceUnit.removeUnit();
+
+                                        let html_text_id = `device_field_${assy}`
+                                        let tr = document.getElementById(html_text_id);
+                                        if(tr)
+                                        {
+                                            tr.remove();
+
+                                            let count = CDevice.getDeviceCount();
+                                            if(!count)
+                                            {
+                                                let table = document.getElementById(tableDevicesIDName);
+                                                if(table)
+                                                    table.remove();
+                                            }
+                                        }
+                                        else
+                                        {
+                                            cmessBoxBlock.sendErrorMessage('Ошибка вычисления tr ID');
+                                            destroyPallet();
+                                        }
+
+
+                                    }
+                                    else
+                                    {
+                                        cmessBoxBlock.sendErrorMessage(data.error_text);
+
+                                        if(data.hasOwnProperty('reset_pallet'))
+                                        {
+                                            if(data.reset_pallet === true)
+                                            {
+                                                destroyPallet();
+                                            }
+                                        }
+                                    }
+
+                                },
+                                error: function(error) {
+                                    // responseProcess = false
+                                    cmessBoxMain.sendErrorMessage("Ошибка AJAX на стороне сервера!");
+                                    gotoToMainBlock();
+                                }
+                            });
+                        }
+                        else
+                        {
+                            cmessBoxBlock.sendErrorMessage('Ошибка вычисления assY ID');
+                            destroyPallet();
+                        }
+                    }
+                    else
+                    {
+                        cmessBoxBlock.sendErrorMessage('В паллете нет этого устройства!');
+                        destroyPallet();
+                    }
+                }
+            }
+        }
+    }
+}
+
+
 function createTableDeviceHeader()
 {
     if(!document.getElementById(tableDevicesIDName))
@@ -267,6 +380,8 @@ function createTableDeviceHeader()
     }
    return null;
 }
+
+
 function createTableDeviceBody(table, deviceUnit)
 {
     let deviceSN = deviceUnit.getDeviceSN();
@@ -275,6 +390,7 @@ function createTableDeviceBody(table, deviceUnit)
     let modelFK = deviceUnit.getModelFK();
 
     let tr = document.createElement('tr');
+    tr.id = `device_field_${deviceAssy}`
     let th = document.createElement('td');
     th.innerText = deviceAssy;
     tr.append(th)
@@ -291,10 +407,19 @@ function createTableDeviceBody(table, deviceUnit)
     if(accessDeleteDevice)
     {
         let btn = document.createElement('button');
-        btn.id = 'btn_del_device'
+        btn.id = `btn_del_device_${deviceAssy}`
         btn.innerText = 'Удалить'
-        btn.className = 'btm_submit-common'
+        btn.classList.add('btm_submit-common');
+        btn.classList.add('btn_del_device');
+
         th.append(btn)
+
+        if(btn)
+        {
+            btn.addEventListener("click", function (element) {
+                onUserPressedBtnDeviceDel(deviceUnit);
+            })
+        }
     }
     else
     {
@@ -380,7 +505,7 @@ function onUserPressedOnBTN(btnType)
                                         let destroyPallet = () =>
                                         {
                                             destroyTableBlock();
-                                            cmessBoxMain.sendSuccessMessage("Возникла ошибка. Паллет сброшен!");
+                                            cmessBoxMain.sendErrorMessage("Возникла ошибка. Паллет сброшен!");
                                             gotoToMainBlock();
                                         }
 
@@ -432,6 +557,7 @@ function onUserPressedOnBTN(btnType)
                                     },
                                     error: function(error) {
                                         // responseProcess = false
+                                        gotoToMainBlock();
                                         cmessBoxMain.sendErrorMessage("Ошибка AJAX на стороне сервера!");
                                     }
                                 })
