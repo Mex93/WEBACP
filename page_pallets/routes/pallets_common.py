@@ -296,7 +296,7 @@ def set_pallet_delete_all_ajax(pallet_sn: str, pallet_sql_id: int):
 
                 response_for_client.update({"result": True})
                 cdebug.debug_print(
-                    f"get_pallet_sn_data AJAX -> [Удаление паллета '{pallet_sn} [{pallet_sql_id}]] -> [IDX:{account_idx}, {account_name}] -> "
+                    f"set_pallet_delete_all_ajax AJAX -> [Удаление паллета '{pallet_sn} [{pallet_sql_id}]] -> [IDX:{account_idx}, {account_name}] -> "
                     f"[Удачно] -> [Паллет успешно удалён!] ")
             else:
                 response_for_client.update(
