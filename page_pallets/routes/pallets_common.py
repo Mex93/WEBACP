@@ -19,7 +19,7 @@ from engine.pallets.CPallet import CPallet
 from engine.pallets.enums import INPUT_TYPE
 from engine.pallets.common import MAX_DEVICES_ON_PALLET
 
-from engine.common import convert_date_from_sql_format
+from engine.common import convert_date_from_sql_format, get_current_data_stamp
 from captha_main import SIMPLE_CAPTCHA
 
 from engine.tv_models.CModels import CModels
@@ -188,6 +188,10 @@ def get_pallet_sn_data(pallet_sn: str):
 
                 if count:
                     response_for_client.update({"pallet_data": params_completed})
+
+
+
+
                     #################################
                     text = f"Пользователь ID: [{account_name}[{account_idx}]] произвёл поиск паллета '{pallet_find_sn}']"
                     CSQLUserLogQuerys.send_log(
@@ -277,6 +281,7 @@ def set_pallet_delete_all_ajax(pallet_sn: str, pallet_sql_id: int):
         result_connect = csql.connect_to_db(CONNECT_DB_TYPE.LINE)
         if result_connect is True:
             if csql.is_pallet_valid(pallet_sn, pallet_sql_id) is not False:
+
                 csql.delete_pallet(pallet_sn, pallet_sql_id)
 
                 if csql.get_pallet_device_count(pallet_sn):
@@ -369,7 +374,8 @@ def set_pallet_add_device_ajax(pallet_sn: str, pallet_sql_id: int, devicesn: str
                                     if device_line_fk == pallet_line:
                                         model_fk = device_data.get(SQL_ASSEMBLED_TV_FIELDS.fd_tvfk, None)
                                         if model_fk is not None:
-                                            insert_result = csql.insert_scanned_tv_on_pallet(pallet_sn, devicesn, model_fk)
+                                            insert_result = csql.insert_scanned_tv_on_pallet(pallet_sn, devicesn,
+                                                                                             model_fk)
                                             if insert_result is not False:
                                                 if isinstance(insert_result, tuple):
                                                     #################################
@@ -386,7 +392,9 @@ def set_pallet_add_device_ajax(pallet_sn: str, pallet_sql_id: int, devicesn: str
                                                             "error_text": f"Указанное устройство '{devicesn}' успешно добавлено к паллету '{pallet_sn}'!"})
                                                     response_for_client.update({"assyid": insert_result[0]})
                                                     response_for_client.update({"model_fk": model_fk})
-                                                    response_for_client.update({"scanned_data": convert_date_from_sql_format(str(insert_result[1]))})
+                                                    response_for_client.update({
+                                                                                   "scanned_data": convert_date_from_sql_format(
+                                                                                       str(insert_result[1]))})
                                                     response_for_client.update({"result": True})
                                                     cdebug.debug_print(
                                                         f"get_pallet_sn_data AJAX -> [Привязка устройства '{devicesn}' к паллету '{pallet_sn} [{pallet_sql_id}]] -> [IDX:{account_idx}, {account_name}] -> "
@@ -571,3 +579,114 @@ def set_pallet_delete_device_ajax(pallet_sn: str, pallet_sql_id: int, devicesn: 
     return result
 
 
+def set_pallet_save_info_ajax(pallet_sn, pallet_sql_id, text_id, new_value, old_value):
+    response_for_client = {
+        "error_text": "",
+        "result": False
+    }
+    account_name = cuser_access.get_session_var(USER_SECTIONS_TYPE.NICKNAME)
+    account_idx = cuser_access.get_session_var(USER_SECTIONS_TYPE.ACC_INDEX)
+    count = 0
+
+    csql = CSQLPalletQuerys()
+    try:
+        find_arr_index = CPallet.get_array_index_from_text_id(text_id)
+        if (
+                find_arr_index != -1 and
+                new_value != old_value and
+                CPallet.is_field_editable(find_arr_index)):
+
+            value_type = CPallet.get_value_type(find_arr_index)
+
+            new_value = value_type(new_value)  # не ошибка!!! value_type хранит ссылку на функцию str, int итд
+
+            if type(new_value) is value_type:
+                result_connect = csql.connect_to_db(CONNECT_DB_TYPE.LINE)
+                if result_connect is True:
+                    pallet_line = csql.is_pallet_valid(pallet_sn, pallet_sql_id)
+                    if pallet_line is not False:
+                        # input_type = CPallet.get_input_type(find_arr_index)
+
+                        sql_label = CPallet.get_sql_label(find_arr_index)
+                        text_name = CPallet.get_text_name(find_arr_index)
+                        csql.update_pallet_info(pallet_sn, pallet_sql_id, sql_label, new_value)
+
+                        if text_id == 'completed_check':
+                            csql.set_completed_status(pallet_sn, pallet_sql_id)
+                            response_for_client.update({"reload_completed_date": convert_date_from_sql_format(get_current_data_stamp())})
+
+                        #################################
+                        text = f"Пользователь ID: [{account_name}[{account_idx}]] изменил свойство '{text_name}' паллета '{pallet_sn}' на '{old_value} -> {new_value}']"
+                        CSQLUserLogQuerys.send_log(
+                            account_idx,
+                            LOG_OBJECT_TYPE.LGOT_USER,
+                            LOG_TYPE.LGT_PALLETS,
+                            LOG_SUBTYPE.LGST_UPDATE,
+                            text)
+
+                        response_for_client.update(
+                            {
+                                "error_text": f"Свойство успешно изменено!"})
+                        response_for_client.update({"result": True})
+                        cdebug.debug_print(
+                            f"set_pallet_delete_device_ajax AJAX -> [Сохранение параметров паллета '{pallet_sn} [{pallet_sql_id}]] -> [IDX:{account_idx}, {account_name}] -> "
+                            f"[Удачно] -> [Свойство успешно изменено. '{text_name}' на '{old_value} -> {new_value}'] ")
+                        # input_type = CPallet.get_input_type(find_arr_index)
+                    else:
+                        response_for_client.update({"reset_pallet": True})
+                        response_for_client.update(
+                            {"error_text": f"Указанный паллет '{pallet_sn}' не найден!"})
+                        cdebug.debug_print(
+                            f"set_pallet_save_info_ajax AJAX -> [Сохранение параметров паллета '{pallet_sn} [{pallet_sql_id}]] -> [IDX:{account_idx}, {account_name}] -> "
+                            f"[Ошибка] [Паллет '{pallet_sn}' не найден!]")
+                else:
+                    raise NotConnectToDB("Not SQL Connect!")
+            else:
+                response_for_client.update({"reset_pallet": True})
+                response_for_client.update(
+                    {"error_text": f"Выбранное поле(2) паллета '{pallet_sn}' нельзя редактировать!"})
+                cdebug.debug_print(
+                    f"set_pallet_save_info_ajax AJAX -> [Сохранение параметров паллета '{pallet_sn} [{pallet_sql_id}]] -> [IDX:{account_idx}, {account_name}] -> "
+                    f"[Ошибка] [Выбранное поле паллета '{pallet_sn}' нельзя редактировать!]")
+
+        else:
+            response_for_client.update({"reset_pallet": True})
+            response_for_client.update(
+                {"error_text": f"Выбранное поле(1) паллета '{pallet_sn}' нельзя редактировать!"})
+            cdebug.debug_print(
+                f"set_pallet_save_info_ajax AJAX -> [Сохранение параметров паллета '{pallet_sn} [{pallet_sql_id}]] -> [IDX:{account_idx}, {account_name}] -> "
+                f"[Ошибка] [Выбранное поле паллета '{pallet_sn}' нельзя редактировать!]")
+
+    except NotConnectToDB as err:
+        response_for_client.update({"error_text": "errorcode: set_pallet_save_info_ajax -> [NotConnectToDB]"})
+        cdebug.debug_print(
+            f"set_pallet_save_info_ajax AJAX -> [Сохранение параметров паллета '{pallet_sn} [{pallet_sql_id}]] -> [IDX:{account_idx}, {account_name}] -> "
+            f"[Исключение] [NotConnectToDB: '{err}']")
+
+    except ErrorSQLQuery as err:
+        response_for_client.update({"error_text": "errorcode: set_pallet_save_info_ajax -> [ErrorSQLQuery]"})
+        cdebug.debug_print(
+            f"set_pallet_save_info_ajax AJAX -> [Сохранение параметров паллета '{pallet_sn} [{pallet_sql_id}]] -> [IDX:{account_idx}, {account_name}] -> "
+            f"[Исключение] [ErrorSQLQuery: '{err}']")
+
+    except ErrorSQLData as err:
+        response_for_client.update({"error_text": "errorcode: set_pallet_save_info_ajax -> [ErrorSQLData]"})
+        cdebug.debug_print(
+            f"set_pallet_save_info_ajax AJAX -> [Сохранение параметров паллета '{pallet_sn} [{pallet_sql_id}]] -> [IDX:{account_idx}, {account_name}] -> "
+            f"[Исключение] [ErrorSQLData: '{err}']")
+
+    except Exception as err:
+
+        response_for_client.update({"error_text": "errorcode: set_pallet_save_info_ajax -> [Error Data]"})
+        cdebug.debug_print(
+            f"set_pallet_save_info_ajax AJAX -> [Сохранение параметров паллета '{pallet_sn} [{pallet_sql_id}]] -> [IDX:{account_idx}, {account_name}] -> "
+            f"[Исключение] [Error Data: '{err}']")
+
+    finally:
+        csql.disconnect_from_db()
+
+    result = json.dumps(response_for_client)
+    cdebug.debug_print(
+        f"set_pallet_save_info_ajax AJAX -> [Сохранение параметров паллета '{pallet_sn} [{pallet_sql_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+        f"[Ответ в JS] -> [{count}]")
+    return result

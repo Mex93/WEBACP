@@ -80,6 +80,7 @@ def get_pallet_find_data_ajax():
 
     return jsonify(response_for_client)
 
+
 @bp_page_pallets.route('/pallet_delete_all_ajax', methods=['POST', 'GET'])
 def pallet_delete_all_ajax():
     if cuser_access.is_sessions_start() is False:
@@ -112,6 +113,7 @@ def pallet_delete_all_ajax():
 
     return jsonify(response_for_client)
 
+
 @bp_page_pallets.route('/pallet_add_device_ajax', methods=['POST', 'GET'])
 def pallet_add_device_ajax():
     if cuser_access.is_sessions_start() is False:
@@ -137,7 +139,8 @@ def pallet_add_device_ajax():
         if (pallet_sn and isinstance(pallet_sn, str) and
                 pallet_sql_id and isinstance(pallet_sql_id, int) and
                 device_sn and isinstance(device_sn, str)):
-            if is_palletsn_valid(pallet_sn) and is_devicesn_valid(device_sn) and not is_cirylic(pallet_sn) and not is_cirylic(device_sn):
+            if is_palletsn_valid(pallet_sn) and is_devicesn_valid(device_sn) and not is_cirylic(
+                    pallet_sn) and not is_cirylic(device_sn):
                 from page_pallets.routes.pallets_common import set_pallet_add_device_ajax
                 device_sn = device_sn.upper()
                 return set_pallet_add_device_ajax(pallet_sn, pallet_sql_id, device_sn)
@@ -147,6 +150,7 @@ def pallet_add_device_ajax():
             response_for_client.update({"error_text": "Вы неверно ввели номер SN устройства!"})
 
     return jsonify(response_for_client)
+
 
 @bp_page_pallets.route('/pallet_delete_device_ajax', methods=['POST', 'GET'])
 def pallet_delete_device_ajax():
@@ -175,7 +179,8 @@ def pallet_delete_device_ajax():
                 pallet_sql_id and isinstance(pallet_sql_id, int) and
                 device_sn and isinstance(device_sn, str) and
                 device_assy and isinstance(device_assy, int)):
-            if is_palletsn_valid(pallet_sn) and is_devicesn_valid(device_sn) and not is_cirylic(pallet_sn) and not is_cirylic(device_sn):
+            if is_palletsn_valid(pallet_sn) and is_devicesn_valid(device_sn) and not is_cirylic(
+                    pallet_sn) and not is_cirylic(device_sn):
                 from page_pallets.routes.pallets_common import set_pallet_delete_device_ajax
 
                 return set_pallet_delete_device_ajax(pallet_sn, pallet_sql_id, device_sn, device_assy)
@@ -183,5 +188,47 @@ def pallet_delete_device_ajax():
                 response_for_client.update({"error_text": "Ошибка номера SN устройства!"})
         else:
             response_for_client.update({"error_text": "Ошибка номера SN устройства!"})
+
+    return jsonify(response_for_client)
+
+
+@bp_page_pallets.route('/pallet_save_info_ajax', methods=['POST', 'GET'])
+def pallet_save_info_ajax():
+    if cuser_access.is_sessions_start() is False:
+        return cpages.redirect_on_page(PAGE_ID.ACCOUNT_LOGIN)
+
+    if cuser_access.is_avalible_any_access_field(USER_SECTION_ACCESS_TYPE.PALLETS) is False:
+        return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
+
+    if cuser_access.is_access_for_panel(USER_SECTIONS_TYPE.ACCESS_PALLET_CHANGED_INFO) is False:
+        return cpages.redirect_on_page(PAGE_ID.ACCOUNT_MAIN)
+
+    response_for_client = {
+        "error_text": "Error query Type",
+        "result": False
+    }
+
+    if request.method == "POST":
+        json_ajax = request.get_json()
+        pallet_sn = json_ajax.get('pallet_sn', None)
+        pallet_sql_id = int(json_ajax.get('pallet_sql_id', None))
+        text_id = json_ajax.get('text_id', None)
+        new_value = json_ajax.get('new_value', None)
+        old_value = json_ajax.get('old_value', None)
+
+        if (
+                pallet_sn and isinstance(pallet_sn, str) and
+                pallet_sql_id and isinstance(pallet_sql_id, int) and
+                text_id and isinstance(text_id, str)
+                ):
+
+            if is_palletsn_valid(pallet_sn) and not is_cirylic(pallet_sn):
+                from page_pallets.routes.pallets_common import set_pallet_save_info_ajax
+
+                return set_pallet_save_info_ajax(pallet_sn, pallet_sql_id, text_id, new_value, old_value)
+            else:
+                response_for_client.update({"error_text": "Ошибка номера паллета или параметров!"})
+        else:
+            response_for_client.update({"error_text": "Ошибка номера паллета или параметров!"})
 
     return jsonify(response_for_client)

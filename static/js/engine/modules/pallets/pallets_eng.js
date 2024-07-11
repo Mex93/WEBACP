@@ -12,16 +12,18 @@ import {
 } from "/static/js/engine/CCaptha.js";
 import {BUTTOM_TYPE, TABLE_TYPE} from "/static/js/engine/modules/pallets/common.js";
 
-import {
-    cButtons,
-} from "/static/js/engine/modules/asr/CButtons.js";
-
 
 let query = false;
 let cmessBoxMain = new CMessBox("error_box_main");
 let cmessBoxBlock = new CMessBox("error_box_block");
-let cButton = new cButtons(); // класс управления кнопками
-let accessDeletePallet, accessDeleteDevice, accessAddDevice, accessChangedStatus, accessChangedInfo, accessFind = null;
+
+let accessDeletePallet,
+    accessDeleteDevice,
+    accessAddDevice,
+    accessChangedStatus,
+    accessChangedInfo,
+    accessFind = null;
+
 let palletSQLID = null;
 let palletName = null;
 let isSuccessFind = false;
@@ -310,8 +312,6 @@ function onUserPressedBtnDeviceDel(deviceUnit)
                                             cmessBoxBlock.sendErrorMessage('Ошибка вычисления tr ID');
                                             destroyPallet();
                                         }
-
-
                                     }
                                     else
                                     {
@@ -325,7 +325,6 @@ function onUserPressedBtnDeviceDel(deviceUnit)
                                             }
                                         }
                                     }
-
                                 },
                                 error: function(error) {
                                     // responseProcess = false
@@ -409,8 +408,7 @@ function createTableDeviceBody(table, deviceUnit)
         let btn = document.createElement('button');
         btn.id = `btn_del_device_${deviceAssy}`
         btn.innerText = 'Удалить'
-        btn.classList.add('btm_submit-common');
-        btn.classList.add('btn_del_device');
+        btn.className ='btm_submit-common btn_del_device';
 
         th.append(btn)
 
@@ -652,9 +650,202 @@ function gotoToMainBlock()
         behavior: 'smooth'
     });
 }
+
+function onUserChangePalletValue(itemUnit, htmlID)
+{
+    console.log('change')
+    let result = Check_onUserChangePalletValue(itemUnit, htmlID)
+    if(!result)
+    {
+        let oldValue = itemUnit.getValue();
+        if(htmlID.type === 'checkbox')
+        {
+            htmlID.checked = oldValue ? 'checked':'';
+        }
+        else if(htmlID.type === 'text')
+        {
+           if(htmlID.placeholder === oldValue && htmlID.value === oldValue)
+           {
+               return
+           }
+            htmlID.value = 'Ошибка!';
+        }
+    }
+    else
+    {
+        let cValue = null;
+
+        if(htmlID.type === 'checkbox')
+            cValue = htmlID.checked;
+
+        else if(htmlID.type === 'text')
+            cValue = htmlID.value;
+
+        if(query)
+        {
+            // cmessBoxMain.sendErrorMessage("Запрос от сервера ещё не пришёл!")
+            return;
+        }
+        query = true;
+        let textID = itemUnit.getTextID();
+        let oldValue = itemUnit.getValue();
+
+        let completed_json = JSON.stringify({
+            pallet_sn: palletName,
+            pallet_sql_id: palletSQLID,
+            text_id: textID,
+            new_value: cValue,
+            old_value: oldValue,
+        }); //$.parseJSON(json_text);
+
+        $.ajax({
+            data : completed_json,
+            dataType: 'json',
+            type : 'POST',
+            url : './pallet_save_info_ajax',
+            contentType: "application/json",
+            success: function(data) {
+                query = false;
+
+                if (data.result === true)
+                {
+                    itemUnit.setValue(cValue);
+
+                    let oldValueID = document.getElementById(`old_info_table_value_${textID}`);
+                    if(oldValueID)
+                    {
+                        if(htmlID.type === 'checkbox')
+                        {
+                            oldValueID.innerText = `${cValue ? 'Закрыт': 'Открыт'}`;
+
+                            if(data.hasOwnProperty('reload_completed_date'))
+                            {
+                                // изменение даты закрытия в морде
+                                let complTextID = 'completed_date'
+                                let dateUnit = CPalletInfo.getUnitIDFromTextID(complTextID);
+                                if(dateUnit)
+                                {
+                                    oldValueID = document.getElementById(`old_info_table_value_${complTextID}`);
+                                    if(oldValueID)
+                                    {
+                                        let date = data.reload_completed_date;
+                                        oldValueID.innerText = date;
+                                        let newValueID = document.getElementById(`new_info_table_value_${complTextID}`);
+                                        if(newValueID)
+                                        {
+                                            newValueID.placeholder = date;
+                                            newValueID.value = date;
+                                        }
+
+                                    }
+                                }
+                            }
+                        }
+                        else if(htmlID.type === 'text')
+                        {
+                            oldValueID.innerText = cValue;
+                            htmlID.placeholder = cValue;
+                        }
+                    }
+                    cmessBoxMain.sendSuccessMessage(data.error_text);
+                }
+                else
+                {
+                    if(data.hasOwnProperty('reset_pallet'))
+                    {
+                        if(data.reset_pallet === true)
+                        {
+                            destroyTableBlock();
+                            gotoToMainBlock();
+                            return
+                        }
+                    }
+                    if(htmlID.type === 'checkbox')
+                    {
+                        htmlID.checked = oldValue ? 'checked':'';
+                    }
+                    else if(htmlID.type === 'text')
+                    {
+                        htmlID.value = oldValue
+                    }
+                    cmessBoxMain.sendErrorMessage(data.error_text);
+                }
+
+
+            },
+            error: function(error) {
+                // responseProcess = false
+                cmessBoxMain.sendErrorMessage("Ошибка AJAX на стороне сервера!");
+            }
+        })
+    }
+}
+function Check_onUserChangePalletValue(itemUnit, htmlID)
+{
+    if(!itemUnit)
+        return false;
+
+    let oldValue = itemUnit.getValue();
+
+    if(!accessChangedInfo)
+        return false;
+
+    if(!isSuccessFind)
+        return false;
+
+    let editStatus = itemUnit.getEditStatus();
+    if(editStatus === 'no-editable')
+        return false;
+
+    let textID = itemUnit.getTextID();
+    if(textID === 'completed_check')
+    {
+        if(!accessChangedStatus)
+            return false;
+    }
+
+
+    let cvalue = htmlID.value;
+    if(cvalue === oldValue)
+        return false;
+    let inputType = itemUnit.getInputType();
+    if(inputType === 'input')
+    {
+        let valueType = itemUnit.getValueType();
+        if(valueType === 'string')
+        {
+            if(cvalue.length > 64)
+                return false
+            if(/[а-яА-ЯЁё]/.test(cvalue))
+                return false
+        }
+        else if(valueType === 'integer')
+        {
+            function is_numeric(str)
+            {
+                return /^\d+$/.test(str);
+            }
+            if(!is_numeric(cvalue))
+                return false;
+
+            if(+cvalue > 100000 && +cvalue < 0)
+                return false;
+
+            if(textID === 'assembled_line')
+            {
+                if(+cvalue < 1 || +cvalue > 10)
+                    return false;
+            }
+        }
+    }
+    return true;
+
+}
+
+
 function getSerialNumberInfoData(snNumber)
 {
-    console.log(snNumber)
+    // console.log(snNumber)
     if(!accessFind)
     {
         return;
@@ -722,8 +913,8 @@ function getSerialNumberInfoData(snNumber)
 
             HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_BLOCK, false);
 
-            console.log(data.pallet_data)
-            console.log(data.pallet_devices)
+            // console.log(data.pallet_data)
+            // console.log(data.pallet_devices)
             if(data.result === true)
             {
                 if(Array.isArray(data.pallet_data))
@@ -780,6 +971,7 @@ function getSerialNumberInfoData(snNumber)
 
                             let pUnits = CPalletInfo.getUnits();
                             count = 0;
+                            let arrHTMLID = [];
                             pUnits.forEach( (element, index) => {
 
                                 let textID = element.getTextID();
@@ -838,6 +1030,7 @@ function getSerialNumberInfoData(snNumber)
                                         input.minLength = 0;
                                         input.value = `${value}`;
                                         input.id = `new_info_table_value_${textID}`;
+                                        arrHTMLID.push([`new_info_table_value_${textID}`, element]);
 
                                         if(disabledField)
                                         {
@@ -850,6 +1043,8 @@ function getSerialNumberInfoData(snNumber)
                                                 input.disabled = true;
                                             }
                                         }
+                                        input.id = `new_info_table_value_${textID}`;
+                                        arrHTMLID.push([`new_info_table_value_${textID}`, element]);
                                         th.append(input);
                                     }
                                     else if(inputType === 'cb')
@@ -870,11 +1065,11 @@ function getSerialNumberInfoData(snNumber)
                                             }
                                         }
                                         input.id = `new_info_table_value_${textID}`;
+                                        arrHTMLID.push([`new_info_table_value_${textID}`, element]);
                                         th.append(input);
                                     }
 
                                     tr.append(th);
-
                                 }
                                 table.append(tr);
                                 count++;
@@ -882,6 +1077,18 @@ function getSerialNumberInfoData(snNumber)
                             if(count)
                             {
                                 tableBlock.append(table);
+                                // NOTE! Событие должно быть тут, так как раньше не приаттачится
+                                arrHTMLID.forEach( (element) =>
+                                {
+                                    let newID = document.getElementById(element[0])
+                                    if(newID)
+                                    {
+                                        newID.addEventListener("change", function (felement) {
+                                            onUserChangePalletValue(element[1], newID);
+                                        })
+                                    }
+                                });
+
                                 gotoToPalletBlock();
                                 if(Array.isArray(data.pallet_devices))
                                 {
