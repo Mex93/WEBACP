@@ -62,7 +62,7 @@
                             <div class="row">
                                 <img src="{{ url_for('static', filename = 'img/config_db.png') }}" alt="">
                             </div>
-                              {% if access_unit.is_access_for_panel(access_section.ASR) == True %}
+                              {% if access_unit.is_avalible_any_access_field(access_section.ASR) == True %}
                                 <div class="row">
                                   <header>ASR</header>
                                   <ul class="mega-links">
@@ -81,7 +81,7 @@
                                   </ul>
                                 </div>
                               {% endif %}
-                              {% if access_unit.is_access_for_panel(access_section.PALLETS) == True %}
+                              {% if access_unit.is_avalible_any_access_field(access_section.PALLETS) == True %}
                                 <div class="row">
                                   <header>Паллеты ГП</header>
                                   <ul class="mega-links">
@@ -106,7 +106,7 @@
                                   </ul>
                                 </div>
                               {% endif %}
-                              {% if access_unit.is_access_for_panel(access_section.SN) == True %}
+                              {% if access_unit.is_avalible_any_access_field(access_section.SN) == True %}
                                 <div class="row">
                                   <header>Серийные номера</header>
                                   <ul class="mega-links">
@@ -125,7 +125,7 @@
                                   </ul>
                                 </div>
                               {% endif %}
-                              {% if access_unit.is_access_for_panel(access_section.SCAN_TEMPLATES) == True %}
+                              {% if access_unit.is_avalible_any_access_field(access_section.SCAN_TEMPLATES) == True %}
                                 <div class="row">
                                   <header>Модели устройств</header>
                                   <ul class="mega-links">

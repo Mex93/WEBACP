@@ -26,6 +26,58 @@ class CSQLPalletQuerys(CSqlAgent):
 
         return dict(result[0])
 
+    def get_pallet_data_log(self, pallet_sn: str, pallet_assy: int) -> str | bool:
+
+        query_string = (f"SELECT * "
+                        f"FROM {SQL_TABLE_NAME.pallet_sn} "
+                        f"WHERE "
+                        f"{SQL_PALLET_SN_FIELDS.fd_assy_id} = %s AND "
+                        f"{SQL_PALLET_SN_FIELDS.fd_pallet_code} = %s "
+                        "LIMIT 1")
+
+        result = self.sql_query_and_get_result(
+            self.get_sql_handle(), query_string, (pallet_assy, pallet_sn,),
+            "_1", )  # Запрос типа аасоциативного массива
+        if result is False:  # Errorrrrrrrrrrrrr based data
+            return False
+        # print(result)
+
+        sql_result = result[0].get(SQL_PALLET_SN_FIELDS.fd_pallet_code, None)
+        if sql_result is not None:
+            template_str = str()
+            for key in result[0]:
+                value = result[0].get(key, None)
+                template_str += f'{key}: {value} '
+            return template_str
+
+        return False
+
+    def get_pallet_devices_data_log(self, pallet_sn: str) -> str | bool:
+
+        query_string = (f"SELECT * "
+                        f"FROM {SQL_TABLE_NAME.pallet_scanned} "
+                        f"WHERE "
+                        f"{SQL_PALLET_SCANNED_FIELDS.fd_pallet_code} = %s "
+                        "LIMIT 100")
+
+        result = self.sql_query_and_get_result(
+            self.get_sql_handle(), query_string, (pallet_sn,),
+            "_1", )  # Запрос типа аасоциативного массива
+        if result is False:  # Errorrrrrrrrrrrrr based data
+            return False
+        # print(result)
+
+        sql_result = result[0].get(SQL_PALLET_SCANNED_FIELDS.fd_pallet_code, None)
+        if sql_result is not None:
+            template_str = str()
+            for item in result:
+                pcode = item.get(SQL_PALLET_SCANNED_FIELDS.fd_tv_sn, None)
+                cdate = item.get(SQL_PALLET_SCANNED_FIELDS.fd_scanned_data, None)
+                template_str += f'{pcode}: {cdate} '
+            return template_str
+
+        return False
+
     def get_pallet_data(self, pallet_sn: str) -> dict | bool:
 
         query_string = (f"SELECT * "
@@ -76,7 +128,8 @@ class CSQLPalletQuerys(CSqlAgent):
                         f"{SQL_PALLET_SCANNED_FIELDS.fd_tv_model_fk}"
                         f") VALUES"
                         f"(%s, %s, %s) "
-                        f"RETURNING {SQL_PALLET_SCANNED_FIELDS.fd_assy_id}, {SQL_PALLET_SCANNED_FIELDS.fd_scanned_data}")  # на всякий лимит
+                        f"RETURNING {SQL_PALLET_SCANNED_FIELDS.fd_assy_id}, "
+                        f"{SQL_PALLET_SCANNED_FIELDS.fd_scanned_data}")  # на всякий лимит
 
         result = self.sql_query_and_get_result(
             self.get_sql_handle(), query_string, (pallet_code, tv_sn, tv_fk), "_i", )

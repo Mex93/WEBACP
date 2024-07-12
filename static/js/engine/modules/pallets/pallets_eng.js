@@ -999,14 +999,16 @@ function getSerialNumberInfoData(snNumber)
                                 {
                                     th = document.createElement('td');
 
+
+
+                                    let vType = element.getValueType();
+
                                     let disabledField = false;
-                                    if(!accessChangedStatus ||
-                                        element.getEditStatus() === 'no-editable')
+
+                                    if(element.getEditStatus() === 'no-editable')
                                     {
                                         disabledField = true;
                                     }
-                                    let vType = element.getValueType();
-
 
                                     if(inputType === 'input')
                                     {
@@ -1036,13 +1038,7 @@ function getSerialNumberInfoData(snNumber)
                                         {
                                             input.disabled = true;
                                         }
-                                        else if(textID === 'completed_check')
-                                        {
-                                            if(!accessChangedStatus)
-                                            {
-                                                input.disabled = true;
-                                            }
-                                        }
+
                                         input.id = `new_info_table_value_${textID}`;
                                         arrHTMLID.push([`new_info_table_value_${textID}`, element]);
                                         th.append(input);

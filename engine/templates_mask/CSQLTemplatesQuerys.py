@@ -2,7 +2,8 @@ from engine.sql.CSQLAgent import CSqlAgent
 from engine.sql.sql_data import (SQL_TABLE_NAME,
                                  SQL_TV_MODEL_INFO_FIELDS,
                                  SQL_MASK_FIELDS,
-                                 SQL_ASSEMBLED_TV_FIELDS)
+                                 SQL_ASSEMBLED_TV_FIELDS,
+                                 SQL_PALLET_SCANNED_FIELDS)
 
 
 class CSQLTemplatesQuerys(CSqlAgent):
@@ -81,6 +82,25 @@ class CSQLTemplatesQuerys(CSqlAgent):
         if isinstance(sql_result, int):
             if sql_result > 0:
                 return True
+        return False
+
+    def is_model_in_any_pallet(self, model_id: int) -> dict | bool:
+
+        query_string = (f"SELECT * "
+                        f"FROM {SQL_TABLE_NAME.pallet_scanned} "
+                        f"WHERE {SQL_PALLET_SCANNED_FIELDS.fd_tv_model_fk} = %s "
+                        "LIMIT 1")
+
+        result = self.sql_query_and_get_result(
+            self.get_sql_handle(), query_string, (model_id,), "_1", )  # Запрос типа аасоциативного массива
+        if result is False:  # Errorrrrrrrrrrrrr based data
+            return False
+        # print(result)
+
+        sql_result = result[0].get(SQL_PALLET_SCANNED_FIELDS.fd_pallet_code, None)
+        if sql_result is not None:
+            return dict(sql_result)
+
         return False
 
     def get_scanned_params(self, scan_fk: int, model_fk: int) -> dict | bool:

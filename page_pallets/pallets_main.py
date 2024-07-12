@@ -62,7 +62,7 @@ def get_pallet_find_data_ajax():
         c_text = json_ajax.get('captcha_text')
 
         if c_hash and c_text:
-            if SIMPLE_CAPTCHA.verify(c_text, c_hash) is False:  # не забыть поправить на true
+            if SIMPLE_CAPTCHA.verify(c_text, c_hash) is True:  # не забыть поправить на true
                 if dsn_device and isinstance(dsn_device, str):
                     if is_palletsn_valid(dsn_device) and not is_cirylic(dsn_device):
                         from page_pallets.routes.pallets_common import get_pallet_sn_data
@@ -104,7 +104,7 @@ def pallet_delete_all_ajax():
 
         if pallet_sn and isinstance(pallet_sn, str) and pallet_sql_id and isinstance(pallet_sql_id, int):
             if is_palletsn_valid(pallet_sn) and not is_cirylic(pallet_sn):
-                from page_pallets.routes.pallets_common import set_pallet_delete_all_ajax
+                from page_pallets.routes.pallets_delete_all import set_pallet_delete_all_ajax
                 return set_pallet_delete_all_ajax(pallet_sn, pallet_sql_id)
             else:
                 response_for_client.update({"error_text": "Вы неверно ввели номер паллета/SN устройства!"})
@@ -141,7 +141,7 @@ def pallet_add_device_ajax():
                 device_sn and isinstance(device_sn, str)):
             if is_palletsn_valid(pallet_sn) and is_devicesn_valid(device_sn) and not is_cirylic(
                     pallet_sn) and not is_cirylic(device_sn):
-                from page_pallets.routes.pallets_common import set_pallet_add_device_ajax
+                from page_pallets.routes.pallets_add_device import set_pallet_add_device_ajax
                 device_sn = device_sn.upper()
                 return set_pallet_add_device_ajax(pallet_sn, pallet_sql_id, device_sn)
             else:
@@ -181,7 +181,7 @@ def pallet_delete_device_ajax():
                 device_assy and isinstance(device_assy, int)):
             if is_palletsn_valid(pallet_sn) and is_devicesn_valid(device_sn) and not is_cirylic(
                     pallet_sn) and not is_cirylic(device_sn):
-                from page_pallets.routes.pallets_common import set_pallet_delete_device_ajax
+                from page_pallets.routes.pallets_delete_device import set_pallet_delete_device_ajax
 
                 return set_pallet_delete_device_ajax(pallet_sn, pallet_sql_id, device_sn, device_assy)
             else:
@@ -223,7 +223,7 @@ def pallet_save_info_ajax():
                 ):
 
             if is_palletsn_valid(pallet_sn) and not is_cirylic(pallet_sn):
-                from page_pallets.routes.pallets_common import set_pallet_save_info_ajax
+                from page_pallets.routes.pallets_edit_info import set_pallet_save_info_ajax
 
                 return set_pallet_save_info_ajax(pallet_sn, pallet_sql_id, text_id, new_value, old_value)
             else:

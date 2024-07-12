@@ -37,37 +37,46 @@ def templates_delete_mask_ajax(scan_fk, model_id, model_name):
             data = csql.is_valid_scanned_mask(scan_fk, model_id)
             if data is not False:
                 if not csql.is_any_model_used_on_devices(model_id):
+                    if csql.is_model_in_any_pallet(model_id) is False:
 
-                    scan_data = csql.get_model_data_log(scan_fk, model_id)
+                        scan_data = csql.get_model_data_log(scan_fk, model_id)
 
-                    if csql.delete_template(scan_fk, model_id) is True:
+                        if csql.delete_template(scan_fk, model_id) is True:
 
-                        if scan_data:
-                            cdebug.debug_sql_print(f'{account_name}[{account_idx}]',
-                                                   'Удаление модели устройства',
-                                                   scan_data)
+                            if scan_data:
+                                cdebug.debug_sql_print(f'{account_name}[{account_idx}]',
+                                                       'Удаление модели устройства',
+                                                       scan_data)
 
-                        #################################
-                        text = f"Пользователь ID: [{account_name}[{account_idx}]] удалил модель устройства '{model_name}'[MID: {model_id}, SID: {scan_fk}]"
-                        CSQLUserLogQuerys.send_log(
-                            account_idx,
-                            LOG_OBJECT_TYPE.LGOT_USER,
-                            LOG_TYPE.LGT_SCAN_TEMPLATE,
-                            LOG_SUBTYPE.LGST_DELETE,
-                            text)
+                            #################################
+                            text = f"Пользователь ID: [{account_name}[{account_idx}]] удалил модель устройства '{model_name}'[MID: {model_id}, SID: {scan_fk}]"
+                            CSQLUserLogQuerys.send_log(
+                                account_idx,
+                                LOG_OBJECT_TYPE.LGOT_USER,
+                                LOG_TYPE.LGT_SCAN_TEMPLATE,
+                                LOG_SUBTYPE.LGST_DELETE,
+                                text)
 
-                        response_for_client.update({"error_text": f"Шаблон '{model_name}' успешно удалён!"})
-                        response_for_client.update({"result": True})
-                        cdebug.debug_print(
-                            f"templates_delete_mask_ajax AJAX -> [Удаление модели устройства '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
-                            f"[Удачно] -> [Шаблон '{model_name}' успешно удалён!] ")
+                            response_for_client.update({"error_text": f"Шаблон '{model_name}' успешно удалён!"})
+                            response_for_client.update({"result": True})
+                            cdebug.debug_print(
+                                f"templates_delete_mask_ajax AJAX -> [Удаление модели устройства '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+                                f"[Удачно] -> [Шаблон '{model_name}' успешно удалён!] ")
+                        else:
+                            response_for_client.update(
+                                {"error_text": f"Ошибка удаления модели устройства '{model_name}[{model_id}]'!"})
+
+                            cdebug.debug_print(
+                                f"templates_delete_mask_ajax AJAX -> [Удаление модели устройства '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
+                                f"[Ошибка] -> [Ошибка удаления модели устройства '{model_name}[{model_id}]'] ")
                     else:
                         response_for_client.update(
-                            {"error_text": f"Ошибка удаления модели устройства '{model_name}[{model_id}]'!"})
+                            {
+                                "error_text": f"Модель '{model_name}[{model_id}]' нельзя удалить, так как в паллетах хранятся её экземпляры!"})
 
                         cdebug.debug_print(
                             f"templates_delete_mask_ajax AJAX -> [Удаление модели устройства '{model_name}[{model_id}]'] -> [IDX:{account_idx}, {account_name}] -> "
-                            f"[Ошибка] -> [Ошибка удаления модели устройства '{model_name}[{model_id}]'] ")
+                            f"[Ошибка] -> [Модель '{model_name}[{model_id}]' нельзя удалить, так как в БД хранятся её экземпляры!'] ")
                 else:
                     response_for_client.update(
                         {"error_text": f"Модель '{model_name}[{model_id}]' нельзя удалить, так как в БД хранятся её экземпляры!"})
