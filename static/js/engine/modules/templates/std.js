@@ -212,6 +212,18 @@ function onUserPressedMainMenuBtnEdit(mmUnit)
                             lockedValue = 'disabled';
                             lockedState = 'disabled';
                         }
+                        if(!accessCreate || !accessDelete)
+                        {
+                            const arrrr = ['vendor_code', 'model_fk', 'platform_fk', 'software_type'];
+
+                            for(let item of arrrr)
+                            if(text_id === item)
+                            {
+                                lockedValue = 'disabled';
+                                lockedState = 'disabled';
+                                break;
+                            }
+                        }
 
 
                         let rulesText = getHelpText(text_id);
