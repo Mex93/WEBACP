@@ -37,33 +37,44 @@ def set_delete_sn_ajax_ajax(device_sn: str, assy_id: int):
         if result_connect is True:
             data = csql.is_devicesn_valid(device_sn, assy_id)
             if data is not False:
-                device_data = csql.get_device_data_log(device_sn)
-                data = csql.delete_sn(assy_id)
-                if data:
-                    response_for_client.update({"error_text": f"Устройство '{device_sn}' успешно удалено!"})
-                    response_for_client.update({"result": True})
+                in_pallet_code = csql.is_device_in_any_pallet(device_sn)
+                if not in_pallet_code:
 
-                    if device_data:
-                        cdebug.debug_sql_print(f'{account_name}[{account_idx}]', 'Удаление SN устройства', device_data)
+                    device_data = csql.get_device_data_log(device_sn)
+                    data = csql.delete_sn(assy_id)
+                    if data:
+                        response_for_client.update({"error_text": f"Устройство '{device_sn}' успешно удалено!"})
+                        response_for_client.update({"result": True})
 
-                    #################################
-                    text = f"Пользователь ID: [{account_name}[{account_idx}]] удалил готовое устройство из базы '{device_sn}'[{assy_id}]]"
-                    CSQLUserLogQuerys.send_log(
-                        account_idx,
-                        LOG_OBJECT_TYPE.LGOT_USER,
-                        LOG_TYPE.LGT_SN,
-                        LOG_SUBTYPE.LGST_DELETE,
-                        text)
+                        if device_data:
+                            cdebug.debug_sql_print(f'{account_name}[{account_idx}]', 'Удаление SN устройства', device_data)
 
-                    cdebug.debug_print(
-                        f"set_delete_sn_ajax_ajax AJAX -> [Удаление устройства SN: '{device_sn}'[{assy_id}]] -> [IDX:{account_idx}, {account_name}] -> "
-                        f"[Удачно] -> [Устройство успешно удалено '{device_sn}'[{assy_id}]] ")
+                        #################################
+                        text = f"Пользователь ID: [{account_name}[{account_idx}]] удалил готовое устройство из базы '{device_sn}'[{assy_id}]]"
+                        CSQLUserLogQuerys.send_log(
+                            account_idx,
+                            LOG_OBJECT_TYPE.LGOT_USER,
+                            LOG_TYPE.LGT_SN,
+                            LOG_SUBTYPE.LGST_DELETE,
+                            text)
+
+                        response_for_client.update({"reset_table": True})
+                        cdebug.debug_print(
+                            f"set_delete_sn_ajax_ajax AJAX -> [Удаление устройства SN: '{device_sn}'[{assy_id}]] -> [IDX:{account_idx}, {account_name}] -> "
+                            f"[Удачно] -> [Устройство успешно удалено '{device_sn}'[{assy_id}]] ")
+                    else:
+                        response_for_client.update({"reset_table": True})
+                        response_for_client.update({"error_text": f"Не найдено устройство '{device_sn}'!"})
+                        cdebug.debug_print(
+                            f"set_delete_sn_ajax_ajax AJAX -> [Удаление устройства SN: '{device_sn}'[{assy_id}]] -> [IDX:{account_idx}, {account_name}] -> "
+                            f"[Ошибка] -> [Не найдено устройство '{device_sn}'[{assy_id}]] ")
                 else:
-                    response_for_client.update({"error_text": f"Не найдено устройство '{device_sn}'!"})
+                    response_for_client.update({"error_text": f"Устройство '{device_sn}' найдено в паллете СГП '{in_pallet_code}'!"})
                     cdebug.debug_print(
                         f"set_delete_sn_ajax_ajax AJAX -> [Удаление устройства SN: '{device_sn}'[{assy_id}]] -> [IDX:{account_idx}, {account_name}] -> "
-                        f"[Ошибка] -> [Не найдено устройство '{device_sn}'[{assy_id}]] ")
+                        f"[Ошибка] -> [Устройство '{device_sn}' найдено в паллете СГП '{in_pallet_code}'!] ")
             else:
+                response_for_client.update({"reset_table": True})
                 response_for_client.update({"error_text": f"Не найдено устройство '{device_sn}'!"})
                 cdebug.debug_print(
                     f"set_delete_sn_ajax_ajax AJAX -> [Удаление устройства SN: '{device_sn}'[{assy_id}]] -> [IDX:{account_idx}, {account_name}] -> "
@@ -71,25 +82,28 @@ def set_delete_sn_ajax_ajax(device_sn: str, assy_id: int):
         else:
             raise NotConnectToDB("Not SQL Connect!")
     except NotConnectToDB as err:
+        response_for_client.update({"reset_table": True})
         response_for_client.update({"error_text": "errorcode: set_delete_sn_ajax_ajax -> [NotConnectToDB]"})
         cdebug.debug_print(
             f"set_delete_sn_ajax_ajax AJAX -> [Удаление устройства SN: '{device_sn}'[{assy_id}]] -> [IDX:{account_idx}, {account_name}] -> "
             f"[Исключение] [NotConnectToDB: '{err}']")
 
     except ErrorSQLQuery as err:
+        response_for_client.update({"reset_table": True})
         response_for_client.update({"error_text": "errorcode: set_delete_sn_ajax_ajax -> [ErrorSQLQuery]"})
         cdebug.debug_print(
             f"set_delete_sn_ajax_ajax AJAX -> [Удаление устройства SN: '{device_sn}'[{assy_id}]] -> [IDX:{account_idx}, {account_name}] -> "
             f"[Исключение] [ErrorSQLQuery: '{err}']")
 
     except ErrorSQLData as err:
+        response_for_client.update({"reset_table": True})
         response_for_client.update({"error_text": "errorcode: set_delete_sn_ajax_ajax -> [ErrorSQLData]"})
         cdebug.debug_print(
             f"set_delete_sn_ajax_ajax AJAX -> [Удаление устройства SN: '{device_sn}'[{assy_id}]] -> [IDX:{account_idx}, {account_name}] -> "
             f"[Исключение] [ErrorSQLData: '{err}']")
 
     except Exception as err:
-
+        response_for_client.update({"reset_table": True})
         response_for_client.update({"error_text": "errorcode: set_delete_sn_ajax_ajax -> [Error Data]"})
         cdebug.debug_print(
             f"set_delete_sn_ajax_ajax AJAX -> [Удаление устройства SN: '{device_sn}'[{assy_id}]] -> [IDX:{account_idx}, {account_name}] -> "

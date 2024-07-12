@@ -465,7 +465,12 @@ function getSerialNumberInfoData(snNumber)
 
     return false;
 }
-
+function gotoToMainBlock()
+{
+    document.querySelector("#dsn_find").scrollIntoView({
+        behavior: 'smooth'
+    });
+}
 function onUserPressedOnBTN(btnType)
 {
     if(btnType === BUTTOM_TYPE.TYPE_EDIT)
@@ -511,7 +516,7 @@ function onUserPressedOnBTN(btnType)
                     let assy = CParameters.getUnitIDFromTextID('db_primary_key');
                     assy = Number(assy.getCurrentValue());
 
-                    destroyTableBlock();
+
                     HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_BLOCK, true);
 
                     if(!assy)
@@ -531,9 +536,14 @@ function onUserPressedOnBTN(btnType)
                         contentType: "application/json",
                         success: function(data) {
                             query = false;
-
                             HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.ANIM_BLOCK, false);
-                            HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.RESULT_BLOCK, false);
+
+                            if(data.hasOwnProperty('reset_table'))
+                            {
+                                destroyTableBlock();
+                                HTMLBlocks.showBlock(HTMLBlocks.BLOCK_TYPE.RESULT_BLOCK, true);
+                            }
+
 
                             if(data.result === true)  // удалился успешно
                             {
@@ -541,6 +551,7 @@ function onUserPressedOnBTN(btnType)
                             }
                             else
                             {
+                                gotoToMainBlock();
                                 cmessBoxMain.sendErrorMessage(data.error_text);
                             }
                         },

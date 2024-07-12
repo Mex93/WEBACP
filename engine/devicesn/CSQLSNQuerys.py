@@ -2,6 +2,7 @@ from engine.sql.CSQLAgent import CSqlAgent
 from engine.sql.sql_data import (SQL_TABLE_NAME,
                                  SQL_TV_MODEL_INFO_FIELDS,
                                  SQL_ASSEMBLED_TV_FIELDS,
+                                 SQL_PALLET_SCANNED_FIELDS,
                                  )
 
 
@@ -32,6 +33,25 @@ class CSQLSNQuerys(CSqlAgent):
                 asr_str += f'{key}: {value} '
             return asr_str
 
+        return False
+
+    def is_device_in_any_pallet(self, device_sn: str) -> dict | bool:
+
+        query_string = (f"SELECT {SQL_PALLET_SCANNED_FIELDS.fd_pallet_code} "
+                        f"FROM {SQL_TABLE_NAME.pallet_scanned} "
+                        f"WHERE "
+                        f"{SQL_PALLET_SCANNED_FIELDS.fd_tv_sn} = %s"
+                        "LIMIT 1")
+
+        result = self.sql_query_and_get_result(
+            self.get_sql_handle(), query_string, (device_sn,), "_1", )  # Запрос типа аасоциативного массива
+        if result is False:  # Errorrrrrrrrrrrrr based data
+            return False
+        # print(result)
+
+        sql_result = result[0].get(SQL_PALLET_SCANNED_FIELDS.fd_pallet_code, None)
+        if sql_result is not None:
+            return sql_result
         return False
 
     def get_device_data(self, device_sn: str):
