@@ -81,31 +81,6 @@
                                   </ul>
                                 </div>
                               {% endif %}
-                              {% if access_unit.is_avalible_any_access_field(access_section.PALLETS) == True %}
-                                <div class="row">
-                                  <header>Паллеты ГП</header>
-                                  <ul class="mega-links">
-                                      {% if access_unit.is_access_for_panel(access_type.ACCESS_PALLET_FIND) == True %}
-                                    <li><a href="/pallets/get">Найти</a></li>
-                                      {% endif %}
-                                      {% if access_unit.is_access_for_panel(access_type.ACCESS_PALLET_DELETE_ALL) == True %}
-                                    <li><a href="/pallets/get">Удалить паллет</a></li>
-                                      {% endif %}
-                                      {% if access_unit.is_access_for_panel(access_type.ACCESS_PALLET_DELETE_DEVICE) == True %}
-                                    <li><a href="/pallets/get">Удалить устройство</a></li>
-                                      {% endif %}
-                                      {% if access_unit.is_access_for_panel(access_type.ACCESS_PALLET_ADD_TV) == True %}
-                                    <li><a href="/pallets/get">Добавить к паллету</a></li>
-                                      {% endif %}
-                                      {% if access_unit.is_access_for_panel(access_type.ACCESS_PALLET_CHANGED_STATUS) == True %}
-                                    <li><a href="/pallets/get">Изменить готовность</a></li>
-                                      {% endif %}
-                                      {% if access_unit.is_access_for_panel(access_type.ACCESS_PALLET_CHANGED_INFO) == True %}
-                                    <li><a href="/pallets/get">Изменить информацию</a></li>
-                                      {% endif %}
-                                  </ul>
-                                </div>
-                              {% endif %}
                               {% if access_unit.is_avalible_any_access_field(access_section.SN) == True %}
                                 <div class="row">
                                   <header>Серийные номера</header>
@@ -142,6 +117,31 @@
                                     <li><a href="/templates/std">Редактировать</a></li>
                                       {% endif %}
 
+                                  </ul>
+                                </div>
+                              {% endif %}
+                              {% if access_unit.is_avalible_any_access_field(access_section.PALLETS) == True %}
+                                <div class="row">
+                                  <header>Паллеты ГП</header>
+                                  <ul class="mega-links">
+                                      {% if access_unit.is_access_for_panel(access_type.ACCESS_PALLET_FIND) == True %}
+                                    <li><a href="/pallets/get">Найти</a></li>
+                                      {% endif %}
+                                      {% if access_unit.is_access_for_panel(access_type.ACCESS_PALLET_DELETE_ALL) == True %}
+                                    <li><a href="/pallets/get">Удалить паллет</a></li>
+                                      {% endif %}
+                                      {% if access_unit.is_access_for_panel(access_type.ACCESS_PALLET_DELETE_DEVICE) == True %}
+                                    <li><a href="/pallets/get">Удалить устройство</a></li>
+                                      {% endif %}
+                                      {% if access_unit.is_access_for_panel(access_type.ACCESS_PALLET_ADD_TV) == True %}
+                                    <li><a href="/pallets/get">Добавить к паллету</a></li>
+                                      {% endif %}
+                                      {% if access_unit.is_access_for_panel(access_type.ACCESS_PALLET_CHANGED_STATUS) == True %}
+                                    <li><a href="/pallets/get">Изменить готовность</a></li>
+                                      {% endif %}
+                                      {% if access_unit.is_access_for_panel(access_type.ACCESS_PALLET_CHANGED_INFO) == True %}
+                                    <li><a href="/pallets/get">Изменить информацию</a></li>
+                                      {% endif %}
                                   </ul>
                                 </div>
                               {% endif %}
