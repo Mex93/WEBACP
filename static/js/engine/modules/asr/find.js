@@ -431,7 +431,7 @@ function clearResultBox()
         }
     }
 }
-
+let capthaSuccessfullTimer = 0
 
 
 function getASRData(inputData) // получение инфы о аср
@@ -481,21 +481,38 @@ function getASRData(inputData) // получение инфы о аср
 
     // класс должен быть объявлен тут для капчи, иначе значение блока не будед перезаписываться
     let cCaptha = new CCaptha('div input[name=captcha-hash]', "captcha-text");
-    let cresult = cCaptha.validate(cmessBox);
-    if(!cresult)
+    let cresult = undefined;
+    if(capthaSuccessfullTimer === 0)  // жёсткий костыль но пока временно
     {
-        return false;
+        cresult = cCaptha.validate(cmessBox);
+        if(!cresult)
+        {
+            return false;
+        }
     }
 
     //
     responseProcess = true;
     antiFlood = getTimestampInSeconds() + 1;
 
-    let completed_json = JSON.stringify({
-        captcha_hash: cresult.captcha_hash,
-        captcha_text: cresult.captcha_text,
-        casrname: inputData.asrName
-    }); //$.parseJSON(json_text);
+    let completed_json = undefined;
+
+    if(capthaSuccessfullTimer > 0)  // captha has ben true added
+    {
+        completed_json = JSON.stringify({
+            captcha_hash: 777,
+            captcha_text: 777,
+            casrname: inputData.asrName
+        }); //$.parseJSON(json_text);
+    }
+    else
+    {
+        completed_json = JSON.stringify({
+            captcha_hash: cresult.captcha_hash,
+            captcha_text: cresult.captcha_text,
+            casrname: inputData.asrName
+        }); //$.parseJSON(json_text);
+    }
 
     cresultBox.showResultBox(true);
     cresultBox.showAnimBox(true);
@@ -517,16 +534,29 @@ function getASRData(inputData) // получение инфы о аср
             if(data.new_captha)
             {
                 // update captha
-                let capthaID = document.getElementById("captha_block_id");
-
-                if(capthaID !== null)
+                if(capthaSuccessfullTimer === 0)
                 {
-                    capthaID.innerHTML = data.new_captha
+                    let capthaID = document.getElementById("captha_block_id");
+                    if(capthaID !== null)
+                    {
+                        capthaID.innerHTML = data.new_captha
+                    }
                 }
             }
 
             if(data.result === true)  // загрузка ASR
             {
+
+                let capthaID = document.getElementById("captha_block_id");
+                if(capthaID !== null)
+                {
+                    if(capthaSuccessfullTimer === 0)
+                    {
+                        capthaID.style.display = 'none'
+                    }
+                }
+
+                capthaSuccessfullTimer = 300;  // ~ 5 min disabled captha
                 successAsrID = data.asr_name;
                 // console.log(successAsrID)
 
@@ -694,6 +724,22 @@ function LoadAssocArray()
             return false
         }
     })
+}
+
+function OnUpdateCaptha()
+{
+    if(capthaSuccessfullTimer !== 0)
+    {
+        capthaSuccessfullTimer--;
+        if(capthaSuccessfullTimer === 0)
+        {
+            let capthaID = document.getElementById("captha_block_id");
+            if(capthaID !== null)
+            {
+                capthaID.style.display = ''
+            }
+        }
+    }
 }
 
 
@@ -877,5 +923,6 @@ $(document).ready(function() {
     }
     // загрузка ассоциативного массива
     setTimeout(LoadAssocArray, 1000)
+    setInterval(OnUpdateCaptha, 1000)
 
 }); // document ready

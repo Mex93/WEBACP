@@ -1,7 +1,7 @@
 from flask import json
 
 from engine.pages.enums import PAGE_ID
-from engine.common import get_checkbox_state, convert_date_from_sql_format
+from engine.common import convert_date_from_sql_format
 from engine.sql.enums import CONNECT_DB_TYPE
 from engine.sql.CSQL import NotConnectToDB, ErrorSQLQuery, ErrorSQLData
 from engine.sql.sql_data import SQL_USERS_FIELDS

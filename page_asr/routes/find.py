@@ -377,7 +377,6 @@ def asr_find_ajax(asr_name):
 
     if acc_index > 0 and nickname:
         line_csql = CSQLASRQuerys()
-        user_csql = CSQLUserQuerys()
         try:
             result_connect = line_csql.connect_to_db(CONNECT_DB_TYPE.LINE)
             if result_connect is True:
