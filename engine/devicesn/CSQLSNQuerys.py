@@ -91,6 +91,11 @@ class CSQLSNQuerys(CSqlAgent):
     def insert_key_in_attached_base(self, tv_fk: int, tv_sn: str, tricolor_key: str, assembled_line: int,
                                     load_date) -> bool:
 
+        if load_date is None:
+            load_date = "now()"
+        else:
+            load_date = str(load_date)
+
         query_string = (f"INSERT INTO {SQL_TABLE_NAME.tb_process_atached} "
                         f"({SQL_KEY_PROCESS_BASE.fd_tv_fk}, "
                         f"{SQL_KEY_PROCESS_BASE.fd_load_key_date}, "
