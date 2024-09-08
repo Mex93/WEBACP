@@ -3,6 +3,8 @@ from engine.sql.sql_data import (SQL_TABLE_NAME,
                                  SQL_TV_MODEL_INFO_FIELDS,
                                  SQL_ASSEMBLED_TV_FIELDS,
                                  SQL_PALLET_SCANNED_FIELDS,
+                                 SQL_KEY_PROCESS_BASE,
+                                 SQL_KEY_HISTORY
                                  )
 
 
@@ -19,7 +21,7 @@ class CSQLSNQuerys(CSqlAgent):
                         "LIMIT 1")
 
         result = self.sql_query_and_get_result(
-            self.get_sql_handle(), query_string, (device_sn, ), "_1", )  # Запрос типа аасоциативного массива
+            self.get_sql_handle(), query_string, (device_sn,), "_1", )  # Запрос типа аасоциативного массива
         if result is False:  # Errorrrrrrrrrrrrr based data
             return False
         # print(result)
@@ -53,6 +55,73 @@ class CSQLSNQuerys(CSqlAgent):
         if sql_result is not None:
             return sql_result
         return False
+
+    def get_assembled_tv_from_tricolor_key(self, tv_sn: str) -> tuple | bool:
+
+        query_string = (f"SELECT "
+                        f"{SQL_TABLE_NAME.tv_model_info_tv}.{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_name}, "
+                        f"{SQL_TABLE_NAME.assembled_tv}.{SQL_ASSEMBLED_TV_FIELDS.fd_tvfk},"
+                        f"{SQL_TABLE_NAME.assembled_tv}.{SQL_ASSEMBLED_TV_FIELDS.fd_tricolor_key},"
+                        f"{SQL_TABLE_NAME.assembled_tv}.{SQL_ASSEMBLED_TV_FIELDS.fd_linefk}, "
+                        f"{SQL_TABLE_NAME.assembled_tv}.{SQL_ASSEMBLED_TV_FIELDS.fd_completed_date} "
+
+                        f"FROM {SQL_TABLE_NAME.assembled_tv} "
+
+                        f"JOIN {SQL_TABLE_NAME.tv_model_info_tv} ON "
+                        f"{SQL_TABLE_NAME.tv_model_info_tv}.{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_id} = "
+                        f"{SQL_TABLE_NAME.assembled_tv}.{SQL_ASSEMBLED_TV_FIELDS.fd_tvfk} "
+
+                        f"WHERE {SQL_TABLE_NAME.assembled_tv}.{SQL_ASSEMBLED_TV_FIELDS.fd_tv_sn} = %s "
+
+                        f"LIMIT 1")  # на всякий лимит
+
+        result = self.sql_query_and_get_result(
+            self.get_sql_handle(), query_string, (tv_sn,), "_1", )  # Запрос типа аасоциативного массива
+        if result is False:  # Errorrrrrrrrrrrrr based data
+            return False
+
+        assembled_line = result[0].get(SQL_ASSEMBLED_TV_FIELDS.fd_linefk, None)
+        tricolor_key = result[0].get(SQL_ASSEMBLED_TV_FIELDS.fd_tricolor_key, None)
+        tv_fk = result[0].get(SQL_ASSEMBLED_TV_FIELDS.fd_tvfk, None)
+        completed_scan_time = result[0].get(SQL_ASSEMBLED_TV_FIELDS.fd_completed_date, None)
+        tv_name = result[0].get(SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_name, None)
+        ret_tup = (tv_fk, tv_sn, completed_scan_time, tv_name, assembled_line, tricolor_key)
+        return ret_tup
+
+    def insert_key_in_attached_base(self, tv_fk: int, tv_sn: str, tricolor_key: str, assembled_line: int,
+                                    load_date) -> bool:
+
+        query_string = (f"INSERT INTO {SQL_TABLE_NAME.tb_process_atached} "
+                        f"({SQL_KEY_PROCESS_BASE.fd_tv_fk}, "
+                        f"{SQL_KEY_PROCESS_BASE.fd_load_key_date}, "
+                        f"{SQL_KEY_PROCESS_BASE.fd_assembled_line}, "
+                        f"{SQL_KEY_PROCESS_BASE.fd_tricolor_key}, "
+                        f"{SQL_KEY_PROCESS_BASE.fd_used_device_sn})"
+                        f"VALUES (%s, %s, %s, %s, %s) RETURNING {SQL_KEY_PROCESS_BASE.fd_assy_id}")  # на всякий лимит
+
+        result = self.sql_query_and_get_result(
+            self.get_sql_handle(), query_string, (tv_fk, load_date, assembled_line, tricolor_key, tv_sn),
+            "_i", transaction=False)  # Запрос типа аасоциативного массива
+        if result is False:  # Errorrrrrrrrrrrrr based data
+            return False
+
+        return True
+
+    def delete_key_from_key_history(self, tv_sn: str, tricolor_key: str) -> bool:
+
+        query_string = (f"DELETE FROM "
+                        f"{SQL_TABLE_NAME.tb_tricolor_history} "
+                        f"WHERE "
+                        f"{SQL_KEY_HISTORY.fd_attached_tv_sn} = %s AND "
+                        f"{SQL_KEY_HISTORY.fd_tricolor_key} = %s")  # на всякий лимит
+
+        result = self.sql_query_and_get_result(
+            self.get_sql_handle(), query_string, (tv_sn, tricolor_key),
+            "_d", transaction=False)  # Запрос типа аасоциативного массива
+        if result is False:  # Errorrrrrrrrrrrrr based data
+            return False
+
+        return True
 
     def get_device_data(self, device_sn: str):
 
@@ -130,7 +199,7 @@ class CSQLSNQuerys(CSqlAgent):
                         )
 
         result = self.sql_query_and_get_result(
-            self.get_sql_handle(), query_string, (assy_id, ), "_d", 1, False)  #
+            self.get_sql_handle(), query_string, (assy_id,), "_d", 1, False)  #
 
         return result
 

@@ -8,6 +8,9 @@ class SQL_TABLE_NAME:
     tv_scan_type = "tv_scan_type"
     pallet_sn = "pallets_sn"
     pallet_scanned = "pallets_scanned"
+    tb_tricolor_keys_base = "tricolor_key_base"
+    tb_tricolor_history = "tricolor_attached_history"
+    tb_process_atached = "tricolor_keys_attached"
 
 
 # поля в паллетах
@@ -51,9 +54,7 @@ class SQL_ASSEMBLED_TV_FIELDS:
     fd_ops_mac = 'ops_mac'
     fd_usbc_mac = 'usbc_mac'
     fd_storage_sn = 'storage_sn'
-
-
-
+    fd_tricolor_key = "tricolor_id"
 
 
 # Название полей в конфиге настройки аккаунта юзеров
@@ -137,7 +138,6 @@ class SQL_LOG_FIELDS:
 
 
 class SQL_MASK_FIELDS:
-
     mfd_scan_type_id = 'scan_type_id'
     mfd_scan_name = 'type_name'
 
@@ -176,3 +176,23 @@ class SQL_MASK_FIELDS:
 
     mfd_scan_storage_sn = 'scan_storage_sn'
     mfd_storage_template = 'storage_template'
+
+
+class SQL_KEY_HISTORY:  # таблица созданных
+    fd_assy_id = "assy_id"
+    fd_tricolor_key = "tricolor_id"  #
+    fd_load_key_date = "load_key_date"  #
+    fd_attach_on_device_date = "attach_on_device_date"  #
+    fd_assembled_line = "assembled_line"  #
+    fd_attached_tv_sn = "used_device_sn"  #
+    fd_attach_on_device_fk = "tv_fk"  #
+
+
+class SQL_KEY_PROCESS_BASE:  # таблица созданных
+    fd_assy_id = "assy_id"
+    fd_tricolor_key = "tricolor_id"  #
+    fd_tv_fk = "tv_fk"  #
+    fd_used_device_sn = "used_device_sn"  #
+    fd_load_key_date = "load_key_date"  #
+    fd_attach_on_device_date = "attach_on_device_date"  #
+    fd_assembled_line = "assembled_line"  #

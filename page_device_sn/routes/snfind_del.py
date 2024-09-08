@@ -22,7 +22,7 @@ cpages = CPages(cdebug)
 cuser_access = CUserAccess()
 cuser = CUser()
 
-def set_delete_sn_ajax_ajax(device_sn: str, assy_id: int):
+def set_delete_sn_ajax(device_sn: str, assy_id: int):
     response_for_client = {
         "error_text": "",
         "result": False
@@ -39,6 +39,14 @@ def set_delete_sn_ajax_ajax(device_sn: str, assy_id: int):
             if data is not False:
                 in_pallet_code = csql.is_device_in_any_pallet(device_sn)
                 if not in_pallet_code:
+
+                    tv_data = csql.get_assembled_tv_from_tricolor_key(device_sn)
+                    if tv_data is not False:
+                        tv_fk, tv_sn, completed_scan_time, tv_name, assembled_line, tricolor_key = tv_data
+                        if tricolor_key is not None and len(tricolor_key) > 0:
+                            if csql.insert_key_in_attached_base(
+                                    tv_fk, tv_sn, tricolor_key, assembled_line, completed_scan_time) is True:
+                                csql.delete_key_from_key_history(tv_sn, tricolor_key)
 
                     device_data = csql.get_device_data_log(device_sn)
                     data = csql.delete_sn(assy_id)

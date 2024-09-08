@@ -103,8 +103,8 @@ def delete_sn_ajax_ajax():
         dassy_id = json_ajax.get('assy_id')
         if dsn_device and isinstance(dsn_device, str) and isinstance(dassy_id, int) and dassy_id > 0:
             if is_devicesn_valid(dsn_device):
-                from page_device_sn.routes.snfind_del import set_delete_sn_ajax_ajax
-                return set_delete_sn_ajax_ajax(dsn_device, dassy_id)
+                from page_device_sn.routes.snfind_del import set_delete_sn_ajax
+                return set_delete_sn_ajax(dsn_device, dassy_id)
             else:
                 response_for_client.update({"error_text": "Вы неверно ввели серийный номер/mac/sn mb!"})
         else:
