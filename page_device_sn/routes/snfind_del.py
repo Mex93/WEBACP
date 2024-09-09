@@ -47,6 +47,7 @@ def set_delete_sn_ajax(device_sn: str, assy_id: int):
                             if csql.insert_key_in_attached_base(
                                     tv_fk, tv_sn, tricolor_key, assembled_line, completed_scan_time) is True:
                                 csql.delete_key_from_key_history(tv_sn, tricolor_key)
+                                csql.insert_key_in_returned_keys(tv_fk, tv_sn, tricolor_key, assembled_line, f"Удаление SN в панели управления технологом [{account_name}[{account_idx}]]")
 
                     device_data = csql.get_device_data_log(device_sn)
                     data = csql.delete_sn(assy_id)

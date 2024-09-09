@@ -4,7 +4,8 @@ from engine.sql.sql_data import (SQL_TABLE_NAME,
                                  SQL_ASSEMBLED_TV_FIELDS,
                                  SQL_PALLET_SCANNED_FIELDS,
                                  SQL_KEY_PROCESS_BASE,
-                                 SQL_KEY_HISTORY
+                                 SQL_KEY_HISTORY,
+                                 SQL_KEY_RETURNED
                                  )
 
 
@@ -96,7 +97,7 @@ class CSQLSNQuerys(CSqlAgent):
         else:
             load_date = str(load_date)
 
-        query_string = (f"INSERT INTO {SQL_TABLE_NAME.tb_process_atached} "
+        query_string = (f"INSERT INTO {SQL_TABLE_NAME.tb_tricolor_process_atached} "
                         f"({SQL_KEY_PROCESS_BASE.fd_tv_fk}, "
                         f"{SQL_KEY_PROCESS_BASE.fd_load_key_date}, "
                         f"{SQL_KEY_PROCESS_BASE.fd_assembled_line}, "
@@ -106,6 +107,25 @@ class CSQLSNQuerys(CSqlAgent):
 
         result = self.sql_query_and_get_result(
             self.get_sql_handle(), query_string, (tv_fk, load_date, assembled_line, tricolor_key, tv_sn),
+            "_i", transaction=False)  # Запрос типа аасоциативного массива
+        if result is False:  # Errorrrrrrrrrrrrr based data
+            return False
+
+        return True
+
+    def insert_key_in_returned_keys(self, tv_fk: int, tv_sn: str, tricolor_key: str, assembled_line: int,
+                                    reason: str) -> bool:
+
+        query_string = (f"INSERT INTO {SQL_TABLE_NAME.tb_tricolor_returned_keys} "
+                        f"({SQL_KEY_RETURNED.fd_tv_fk}, "
+                        f"{SQL_KEY_RETURNED.fd_assembled_line}, "
+                        f"{SQL_KEY_RETURNED.fd_reason}, "
+                        f"{SQL_KEY_RETURNED.fd_tricolor_key}, "
+                        f"{SQL_KEY_RETURNED.fd_tv_sn})"
+                        f"VALUES (%s, %s, %s, %s, %s) RETURNING {SQL_KEY_RETURNED.fd_assy_id}")  # на всякий лимит
+
+        result = self.sql_query_and_get_result(
+            self.get_sql_handle(), query_string, (tv_fk, assembled_line, reason, tricolor_key, tv_sn),
             "_i", transaction=False)  # Запрос типа аасоциативного массива
         if result is False:  # Errorrrrrrrrrrrrr based data
             return False

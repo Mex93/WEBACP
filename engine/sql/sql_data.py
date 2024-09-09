@@ -10,7 +10,8 @@ class SQL_TABLE_NAME:
     pallet_scanned = "pallets_scanned"
     tb_tricolor_keys_base = "tricolor_key_base"
     tb_tricolor_history = "tricolor_attached_history"
-    tb_process_atached = "tricolor_keys_attached"
+    tb_tricolor_process_atached = "tricolor_keys_attached"
+    tb_tricolor_returned_keys = "tricolor_returned_key"
 
 
 # поля в паллетах
@@ -186,6 +187,15 @@ class SQL_KEY_HISTORY:  # таблица созданных
     fd_assembled_line = "assembled_line"  #
     fd_attached_tv_sn = "used_device_sn"  #
     fd_attach_on_device_fk = "tv_fk"  #
+
+class SQL_KEY_RETURNED:  # таблица лог возвратов ключей
+    fd_assy_id = "assy_id"
+    fd_tv_fk = "tv_fk"
+    fd_tricolor_key = "tricolor_key"  #
+    fd_tv_sn = "tv_sn"  #
+    fd_returned_data = "rdate"  #
+    fd_reason = "rreason"  #
+    fd_assembled_line = "assembled_line"
 
 
 class SQL_KEY_PROCESS_BASE:  # таблица созданных
