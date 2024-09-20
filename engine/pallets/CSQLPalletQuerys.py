@@ -275,6 +275,29 @@ class CSQLPalletQuerys(CSqlAgent):
             self.get_sql_handle(), query_string, (pallete_code, assy_id, device_sn,),
             "_d", )  # Запрос типа аасоциативного массива
 
+    def get_pallet_id_from_tv_sn(self, tv_sn: str) -> str | bool:
+        """Проверка на наличие tv sn в других паллетах """
+        query_string = (f"SELECT "
+                        f"{SQL_PALLET_SCANNED_FIELDS.fd_assy_id}, "
+                        f"{SQL_PALLET_SCANNED_FIELDS.fd_pallet_code}, "
+                        f"{SQL_PALLET_SCANNED_FIELDS.fd_tv_model_fk} "
+                        f"FROM {SQL_TABLE_NAME.pallet_scanned} "
+                        f"WHERE {SQL_PALLET_SCANNED_FIELDS.fd_tv_sn} = %s "
+                        f"ORDER BY {SQL_PALLET_SCANNED_FIELDS.fd_assy_id} ASC "
+                        f"LIMIT 1")  # на всякий лимит
+
+        result = self.sql_query_and_get_result(
+            self.get_sql_handle(), query_string, (tv_sn,), "_1", )  # Запрос типа аасоциативного массива
+        if result is False:  # Errorrrrrrrrrrrrr based data
+            return False
+
+        sql_pass = result[0].get(SQL_PALLET_SCANNED_FIELDS.fd_pallet_code, None)
+        if sql_pass is None:
+            return False
+
+        return sql_pass
+
+
     def get_pallet_sn_from_devices(self, device_sn: str) -> dict | bool:
 
         query_string = (f"SELECT * "

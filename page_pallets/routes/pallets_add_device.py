@@ -55,38 +55,47 @@ def set_pallet_add_device_ajax(pallet_sn: str, pallet_sql_id: int, devicesn: str
                                     if device_line_fk == pallet_line:
                                         model_fk = device_data.get(SQL_ASSEMBLED_TV_FIELDS.fd_tvfk, None)
                                         if model_fk is not None:
-                                            insert_result = csql.insert_scanned_tv_on_pallet(pallet_sn, devicesn,
-                                                                                             model_fk)
-                                            if insert_result is not False:
-                                                if isinstance(insert_result, tuple):
+                                            is_pallet_any_device_sn = csql.get_pallet_id_from_tv_sn(devicesn)
+                                            if is_pallet_any_device_sn is False:
+                                                insert_result = csql.insert_scanned_tv_on_pallet(pallet_sn, devicesn,
+                                                                                                 model_fk)
+                                                if insert_result is not False:
+                                                    if isinstance(insert_result, tuple):
 
-                                                    result = csql.get_pallet_devices_data_log(pallet_sn)
-                                                    if result:
-                                                        cdebug.debug_sql_print(f'{account_name}[{account_idx}]',
-                                                                               'Запрос списка девайсов паллета после добавления нового устройства',
-                                                                               result)
+                                                        result = csql.get_pallet_devices_data_log(pallet_sn)
+                                                        if result:
+                                                            cdebug.debug_sql_print(f'{account_name}[{account_idx}]',
+                                                                                   'Запрос списка девайсов паллета после добавления нового устройства',
+                                                                                   result)
 
-                                                    #################################
-                                                    text = f"Пользователь ID: [{account_name}[{account_idx}]] добавил устройство '{devicesn}' к паллету '{pallet_sn}']"
-                                                    CSQLUserLogQuerys.send_log(
-                                                        account_idx,
-                                                        LOG_OBJECT_TYPE.LGOT_USER,
-                                                        LOG_TYPE.LGT_PALLETS,
-                                                        LOG_SUBTYPE.LGST_ADD,
-                                                        text)
+                                                        #################################
+                                                        text = f"Пользователь ID: [{account_name}[{account_idx}]] добавил устройство '{devicesn}' к паллету '{pallet_sn}']"
+                                                        CSQLUserLogQuerys.send_log(
+                                                            account_idx,
+                                                            LOG_OBJECT_TYPE.LGOT_USER,
+                                                            LOG_TYPE.LGT_PALLETS,
+                                                            LOG_SUBTYPE.LGST_ADD,
+                                                            text)
 
-                                                    response_for_client.update(
-                                                        {
-                                                            "error_text": f"Указанное устройство '{devicesn}' успешно добавлено к паллету '{pallet_sn}'!"})
-                                                    response_for_client.update({"assyid": insert_result[0]})
-                                                    response_for_client.update({"model_fk": model_fk})
-                                                    response_for_client.update({
-                                                                                   "scanned_data": convert_date_from_sql_format(
-                                                                                       str(insert_result[1]))})
-                                                    response_for_client.update({"result": True})
-                                                    cdebug.debug_print(
-                                                        f"get_pallet_sn_data AJAX -> [Привязка устройства '{devicesn}' к паллету '{pallet_sn} [{pallet_sql_id}]] -> [IDX:{account_idx}, {account_name}] -> "
-                                                        f"[Удачно] -> [Указанное устройство '{devicesn}' успешно добавлено к паллету '{pallet_sn}'!] ")
+                                                        response_for_client.update(
+                                                            {
+                                                                "error_text": f"Указанное устройство '{devicesn}' успешно добавлено к паллету '{pallet_sn}'!"})
+                                                        response_for_client.update({"assyid": insert_result[0]})
+                                                        response_for_client.update({"model_fk": model_fk})
+                                                        response_for_client.update({
+                                                                                       "scanned_data": convert_date_from_sql_format(
+                                                                                           str(insert_result[1]))})
+                                                        response_for_client.update({"result": True})
+                                                        cdebug.debug_print(
+                                                            f"get_pallet_sn_data AJAX -> [Привязка устройства '{devicesn}' к паллету '{pallet_sn} [{pallet_sql_id}]] -> [IDX:{account_idx}, {account_name}] -> "
+                                                            f"[Удачно] -> [Указанное устройство '{devicesn}' успешно добавлено к паллету '{pallet_sn}'!] ")
+                                            else:
+                                                response_for_client.update(
+                                                    {
+                                                        "error_text": f"Устройство '{devicesn}' уже числится за паллетом '{pallet_sn}' !"})
+                                                cdebug.debug_print(
+                                                    f"set_pallet_add_device_ajax AJAX -> [Привязка устройства '{devicesn}' к паллету '{pallet_sn} [{pallet_sql_id}]] -> [IDX:{account_idx}, {account_name}] -> "
+                                                    f"[Ошибка] [Устройство '{devicesn}' уже числится за паллетом '{pallet_sn}' !]")
                                         else:
                                             response_for_client.update(
                                                 {
