@@ -82,10 +82,7 @@
 
                     <div  id = "error_box_result">
                     </div><br>
-                    <div class = "table-asr" id = "table_asr_id">
-
-                    </div>
-                    <div class = "inline_buttom">
+                     <div class = "inline_buttom">
 
                             {% if access_unit.is_access_for_panel(access_type.ACCESS_ASR_EDIT) == True %}
                                <button id = "btn_edit" type="submit" name = "edit" value = "edit" class = "btm_submit-common">Редактировать</button>
@@ -98,6 +95,10 @@
                             {% if access_unit.is_access_for_panel(access_type.ACCESS_ASR_DELETE) == True %}
                                <button id = "btn_del" type="submit" name = "delete" value = "delete" class = "btm_submit-common delete">Удалить</button>
                             {% endif %}
+                    </div>
+                    <br>
+                    <div class = "table-asr" id = "table_asr_id">
+
                     </div>
                 </form>
             </div>
