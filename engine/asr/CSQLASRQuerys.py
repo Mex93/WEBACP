@@ -123,7 +123,6 @@ class CSQLASRQuerys(CSqlAgent):
                         f"{SQL_ASSEMBLED_TV_FIELDS.fd_tv_mac} = %s  OR "
                         f"{SQL_ASSEMBLED_TV_FIELDS.fd_tv_mb_sn} = %s "
                         "LIMIT 1")
-
         result = self.sql_query_and_get_result(
             self.get_sql_handle(), query_string, (mac, mainboard_sn,), "_1", )  #
         # Запрос типа аасоциативного массива

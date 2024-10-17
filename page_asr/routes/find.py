@@ -149,7 +149,7 @@ def asr_replace_ajax(asr_name, asr_id, replace_list):
                                         if sql_mb_sn is not None or sql_mac is not None:
                                             result_assembled = line_csql.check_asr_data_in_assembled_table(sql_mb_sn,
                                                                                                            sql_mac)
-                                            if result_assembled:
+                                            if result_assembled is not False:
                                                 result_assembled = result_assembled[0]
                                                 assembled_tv_sn = result_assembled.get(SQL_ASSEMBLED_TV_FIELDS.fd_tv_sn, None)
 
@@ -280,10 +280,9 @@ def asr_del_ajax(asr_name, asr_id):
 
                             if sql_mb_sn is not None or sql_mac is not None:
                                 result_assembled = line_csql.check_asr_data_in_assembled_table(sql_mb_sn, sql_mac)
-                                if result_assembled:
+                                if result_assembled is not False:
                                     result_assembled = result_assembled[0]
                                     assembled_tv_sn = result_assembled.get(SQL_ASSEMBLED_TV_FIELDS.fd_tv_sn, None)
-
                                     response_for_client.update(
                                         {
                                             "error_text": f"MAC или SN МП из ASR: '{sql_asr_name}' найден в собранном устр. SN: '{assembled_tv_sn}'!"})
