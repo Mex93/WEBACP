@@ -20,7 +20,7 @@ class CSQLTemplatesQuerys(CSqlAgent):
                         f"WHERE "
                         f"{SQL_TABLE_NAME.tv_scan_type}.{SQL_MASK_FIELDS.mfd_scan_type_id} = %s AND "
                         f"{SQL_TABLE_NAME.tv_model_info_tv}.{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_scan_type_fk} = %s AND "
-                        f"{SQL_TABLE_NAME.tv_model_info_tv}.{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_id} = %s"
+                        f"{SQL_TABLE_NAME.tv_model_info_tv}.{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_id} = %s "
                         "LIMIT 1")
 
         result = self.sql_query_and_get_result(
@@ -113,7 +113,7 @@ class CSQLTemplatesQuerys(CSqlAgent):
                         f"WHERE "
                         f"{SQL_TABLE_NAME.tv_scan_type}.{SQL_MASK_FIELDS.mfd_scan_type_id} = %s AND "
                         f"{SQL_TABLE_NAME.tv_model_info_tv}.{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_scan_type_fk} = %s AND "
-                        f"{SQL_TABLE_NAME.tv_model_info_tv}.{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_id} = %s"
+                        f"{SQL_TABLE_NAME.tv_model_info_tv}.{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_id} = %s "
                         "LIMIT 1")
 
         result = self.sql_query_and_get_result(
@@ -143,7 +143,7 @@ class CSQLTemplatesQuerys(CSqlAgent):
                         f"WHERE "
                         f"{SQL_TABLE_NAME.tv_scan_type}.{SQL_MASK_FIELDS.mfd_scan_type_id} = %s AND "
                         f"{SQL_TABLE_NAME.tv_model_info_tv}.{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_scan_type_fk} = %s AND "
-                        f"{SQL_TABLE_NAME.tv_model_info_tv}.{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_id} = %s"
+                        f"{SQL_TABLE_NAME.tv_model_info_tv}.{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_id} = %s "
                         "LIMIT 1")
 
         result = self.sql_query_and_get_result(
@@ -167,7 +167,7 @@ class CSQLTemplatesQuerys(CSqlAgent):
 
             query_string = (f"DELETE FROM {SQL_TABLE_NAME.tv_model_info_tv}"
                             f" WHERE "
-                            f"{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_id} = %s"
+                            f"{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_id} = %s "
                             )
 
             result = self.sql_query_and_get_result(
@@ -178,7 +178,7 @@ class CSQLTemplatesQuerys(CSqlAgent):
 
             query_string = (f"DELETE FROM {SQL_TABLE_NAME.tv_scan_type}"
                             f" WHERE "
-                            f"{SQL_MASK_FIELDS.mfd_scan_type_id} = %s"
+                            f"{SQL_MASK_FIELDS.mfd_scan_type_id} = %s "
                             )
 
             result = self.sql_query_and_get_result(
@@ -206,7 +206,7 @@ class CSQLTemplatesQuerys(CSqlAgent):
 
             query_string = (f"UPDATE {table_name} SET {template_str} "
                             f" WHERE "
-                            f"{target_value} = %s"
+                            f"{target_value} = %s "
                             )
             result = self.sql_query_and_get_result(
                 self.get_sql_handle(), query_string, (*values_list, scan_fk,), "_u", 1, False)  #
@@ -224,7 +224,7 @@ class CSQLTemplatesQuerys(CSqlAgent):
 
             query_string = (f"UPDATE {table_name} SET {state_str} "
                             f" WHERE "
-                            f"{target_value} = %s"
+                            f"{target_value} = %s "
                             )
 
             result = self.sql_query_and_get_result(
@@ -237,7 +237,7 @@ class CSQLTemplatesQuerys(CSqlAgent):
         if model_id_fk:
             query_string = (f"UPDATE {SQL_TABLE_NAME.tv_model_info_tv} SET last_updated_time = now()"
                             f" WHERE "
-                            f"{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_id} = %s"
+                            f"{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_id} = %s "
                             )
             result = self.sql_query_and_get_result(
                 self.get_sql_handle(), query_string, (model_id_fk,), "_u", 1, False)  #
@@ -249,7 +249,7 @@ class CSQLTemplatesQuerys(CSqlAgent):
         query_string = (f"SELECT {SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_name} "
                         f"FROM {SQL_TABLE_NAME.tv_model_info_tv} "
                         f"WHERE "
-                        f"{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_name} = %s"
+                        f"{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_name} = %s "
                         "LIMIT 1")
 
         result = self.sql_query_and_get_result(
@@ -268,7 +268,7 @@ class CSQLTemplatesQuerys(CSqlAgent):
         query_string = (f"SELECT {SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_vendor_code} "
                         f"FROM {SQL_TABLE_NAME.tv_model_info_tv} "
                         f"WHERE "
-                        f"{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_vendor_code} = %s"
+                        f"{SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_vendor_code} = %s "
                         "LIMIT 1")
 
         result = self.sql_query_and_get_result(
