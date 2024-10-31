@@ -17,3 +17,4 @@ class PAGE_ID(IntEnum):
     INDEX = 9,
     ABOUT = 10,
     PAGE_NOT_FOUND = 11,
+    PALLETS_INFO = 12,

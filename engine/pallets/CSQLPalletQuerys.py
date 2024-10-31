@@ -2,7 +2,8 @@ from engine.sql.CSQLAgent import CSqlAgent
 from engine.sql.sql_data import (SQL_TABLE_NAME,
                                  SQL_PALLET_SCANNED_FIELDS,
                                  SQL_PALLET_SN_FIELDS,
-                                 SQL_ASSEMBLED_TV_FIELDS
+                                 SQL_ASSEMBLED_TV_FIELDS,
+                                 SQL_TV_MODEL_INFO_FIELDS
                                  )
 
 
@@ -25,6 +26,23 @@ class CSQLPalletQuerys(CSqlAgent):
         # print(result)
 
         return dict(result[0])
+
+    def get_tv_model_name(self, tv_fk: int) -> bool | str:
+        """Инфа о моделе телевизора """
+        query_string = (f"SELECT {SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_name} "
+                        f"FROM {SQL_TABLE_NAME.tv_model_info_tv} "
+                        f"WHERE {SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_id} = %s "
+                        f"LIMIT 1")  # на всякий лимит
+
+        result = self.sql_query_and_get_result(
+            self.get_sql_handle(), query_string, (tv_fk,), "_1", )  # Запрос типа аасоциативного массива
+        if result is False:  # Errorrrrrrrrrrrrr based data
+            return False
+        name = result[0].get(SQL_TV_MODEL_INFO_FIELDS.tvmi_fd_tv_name, None)
+        if name is None:
+            return False
+        # print(result)
+        return name
 
     def get_pallet_data_log(self, pallet_sn: str, pallet_assy: int) -> str | bool:
 
@@ -317,6 +335,8 @@ class CSQLPalletQuerys(CSqlAgent):
             return result
 
         return False
+
+
 
     def get_pallet_sn_from_devices_ex(self, pallet_sn: str) -> dict | bool | None:
 

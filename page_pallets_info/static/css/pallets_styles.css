@@ -1,0 +1,37 @@
+.table-palletesn {
+	display: inline-block;
+	margin: 2%;
+	align-items: center;
+}
+.table-palletesn .custom-table {
+	width: 100%;
+}
+.inline_buttom .btm_submit-common#btn_del_all {
+	background: red;
+}
+#device_table .btm_submit-common.btn_del_device {
+	background: red;
+}
+
+#errors {
+	background: red;
+	font-size: medium;
+}
+
+.input_pallet {
+	display: inline-block;
+	background-color: white;
+	background-position: 10px 10px;
+	background-repeat: no-repeat;
+	padding-left: 40px;
+	border-radius: 30px;
+	padding: 10px;
+	margin: 10px;
+	width: 20%;
+	height: 5%;
+	font-size: 15px;
+}
+#buttoms .block_buttoms {
+}
+
+

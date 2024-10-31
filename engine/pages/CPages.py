@@ -14,6 +14,8 @@ class CPages:
         path_to_based_module = ""
         # templates name
         # acc
+        self.__template_name_pallet_info = 'pinfo'
+
         self.__template_name_login = 'login'
         self.__template_name_logout = 'logout'
         self.__template_name_account_main = 'main'
@@ -39,6 +41,8 @@ class CPages:
 
         # templates path
         # templates
+        self.__template_path_pallets_info = 'pinfo'
+
         self.__template_path_template_find = 'std'
         #
         self.__template_path_pallets_find = 'pallets'
@@ -58,6 +62,7 @@ class CPages:
 
         # url routs
         # templates
+        self.__route_name_pallets_info = 'ex/pinfo'
         self.__route_name_pallets_find = 'pallets/get'
         #
         self.__route_name_devicesn_find = 'devicesn/get'
@@ -116,6 +121,9 @@ class CPages:
             case PAGE_ID.PALLETS_FIND:
                 name = self.__template_path_pallets_find
 
+            case PAGE_ID.PALLETS_INFO:
+                name = self.__template_path_pallets_info
+
             # case PAGE_ID.PAGE_NOT_FOUND:
             #     name = self.__template_path_404
             case _:
@@ -149,6 +157,9 @@ class CPages:
             case PAGE_ID.PALLETS_FIND:
                 name = self.__templates_pallets_name
 
+            case PAGE_ID.PALLETS_INFO:
+                name = self.__template_name_pallet_info
+
             # case PAGE_ID.PAGE_NOT_FOUND:
             #     name = self.__template_name_404
             case _:
@@ -181,6 +192,9 @@ class CPages:
 
             case PAGE_ID.PALLETS_FIND:
                 name = self.__route_name_pallets_find
+
+            case PAGE_ID.PALLETS_INFO:
+                name = self.__route_name_pallets_info
 
             # case PAGE_ID.PAGE_NOT_FOUND:
             #     name = self.__route_name_404

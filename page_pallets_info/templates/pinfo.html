@@ -1,0 +1,29 @@
+
+
+{% block title %}
+
+{% endblock %}
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename = 'css/base/main.css') }}">
+<link rel="stylesheet" href="{{ url_for('.static', filename = 'css/pallets_styles.css') }}">
+{% endblock %}
+ <div class = 'container-common container'>
+     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+     <div id = "errors">
+
+    </div>
+     <div id = "header" class = "" >
+        <h1>Поиск паллета</h1>
+    </div>
+    <div id = "buttoms" class = "btm_submit-common" >
+
+    </div>
+     <div id = "pallets_info_block">
+
+    </div>
+
+ </div>
+{% block js %}
+ <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script type = "module" src="{{ url_for('static', filename = '/js/engine/modules/pallets/pallets_info_eng.js') }}"></script>
+{% endblock %}

@@ -92,10 +92,10 @@ def set_pallet_add_device_ajax(pallet_sn: str, pallet_sql_id: int, devicesn: str
                                             else:
                                                 response_for_client.update(
                                                     {
-                                                        "error_text": f"Устройство '{devicesn}' уже числится за паллетом '{pallet_sn}' !"})
+                                                        "error_text": f"Устройство '{devicesn}' уже числится за паллетом '{is_pallet_any_device_sn}' !"})
                                                 cdebug.debug_print(
                                                     f"set_pallet_add_device_ajax AJAX -> [Привязка устройства '{devicesn}' к паллету '{pallet_sn} [{pallet_sql_id}]] -> [IDX:{account_idx}, {account_name}] -> "
-                                                    f"[Ошибка] [Устройство '{devicesn}' уже числится за паллетом '{pallet_sn}' !]")
+                                                    f"[Ошибка] [Устройство '{devicesn}' уже числится за паллетом '{is_pallet_any_device_sn}' !]")
                                         else:
                                             response_for_client.update(
                                                 {
