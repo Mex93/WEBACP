@@ -432,17 +432,18 @@ $(document).ready(function()
     {
         let div_btms = document.createElement('div');
         div_btms.className = 'block_buttoms'
-
-        let input = document.createElement('input');
-        input.placeholder = 'Введите Номер паллета или телевизора:'
-        input.className = 'input_pallet'
-        div_btms.append(input)
-
-        let btn_find = document.createElement('button');
-        btn_find.onclick = function (ev)
+        function move(ev)
         {
             onUserFindPallet(input);
         };
+        let input = document.createElement('input');
+        input.placeholder = 'Введите Номер паллета или телевизора:'
+        input.className = 'input_pallet'
+        input.onchange = move;
+        div_btms.append(input)
+
+        let btn_find = document.createElement('button');
+        btn_find.onclick = move;
         btn_find.textContent = 'Найти паллет';
         btn_find.className = 'btm_submit-common'
         div_btms.append(btn_find)
